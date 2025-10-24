@@ -35,14 +35,14 @@ export default function About() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 py-20 gap-16"
+      className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 sm:px-6 py-12 sm:py-20 gap-8 sm:gap-12 md:gap-16"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       {/* Logo with tilt effect */}
       <motion.div
         style={{ rotateX, rotateY, }}
-        className="relative w-[30vw] h-[30vh] perspective-1000"
+        className="relative w-[60vw] sm:w-[45vw] md:w-[30vw] h-[30vh] perspective-1000"
       >
         <Image
           src="https://teraawatt.com/teraawattLogo.png"
@@ -55,7 +55,7 @@ export default function About() {
       {/* Intro Text */}
       <motion.p
         style={{ rotateX, rotateY,}}
-        className="text-center max-w-3xl text-xl md:text-2xl leading-relaxed"
+        className="text-center max-w-3xl text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed px-2"
       >
         We're creating a connected ecosystem that powers your EV, your journeys, and your lifestyle.
       </motion.p>
@@ -64,7 +64,7 @@ export default function About() {
       <motion.button
         style={{ rotateX, rotateY,  }}
         whileHover={{ scale: 1.1 }}
-        className="bg-green-500 hover:bg-green-600 transition-all text-black font-bold py-3 px-6 rounded-full"
+        className="bg-green-500 hover:bg-green-600 transition-all text-black font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full text-sm sm:text-base"
       >
         Explore our solutions
       </motion.button>
@@ -72,7 +72,7 @@ export default function About() {
       {/* Recharge Image */}
       <motion.div
         style={{ rotateX, rotateY,  }}
-        className="relative w-full max-w-3xl h-64 md:h-96"
+        className="relative w-full max-w-3xl h-40 sm:h-64 md:h-96"
       >
         <Image
           src="https://teraawatt.com/recharge.png"
@@ -85,27 +85,27 @@ export default function About() {
       {/* Text Sections */}
       <motion.div
         style={{ rotateX, rotateY,  }}
-        className="flex text-center flex-col gap-10 max-w-4xl"
+        className="flex text-center flex-col gap-6 sm:gap-8 md:gap-10 max-w-4xl px-2"
       >
-        <p className="text-lg md:text-xl">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
           We make EV driving easier with seamless charging, AI-powered trip planning, and a vision to make EVs as accessible as petrol cars for cities and beyond
         </p>
 
-        <h2 className="text-[4vw] font-bold">Our <span className="text-[#05DF72]">Products</span></h2>
-        <p>Comprehensive solutions for the future of electric mobility</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[4vw] font-bold">Our <span className="text-[#05DF72]">Products</span></h2>
+        <p className="text-xs sm:text-sm md:text-base">Comprehensive solutions for the future of electric mobility</p>
 
-        <h3 className="text-[4vw] font-bold">TeraaCoins</h3>
-        <p>
+        <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-[4vw] font-bold">TeraaCoins</h3>
+        <p className="text-xs sm:text-sm md:text-base leading-relaxed">
           Our digital currency system that rewards sustainable driving behavior. Earn coins for using our charging network, reducing carbon footprint, and participating in our green mobility ecosystem.
         </p>
 
-        <h3 className="text-[4vw] font-bold">TeraaVouchers</h3>
-        <p>
+        <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-[4vw] font-bold">TeraaVouchers</h3>
+        <p className="text-xs sm:text-sm md:text-base leading-relaxed">
           Flexible payment solutions for EV charging and services. Prepaid vouchers that make EV ownership more accessible and provide discounts for frequent users of our charging network.
         </p>
 
-        <h3 className="text-[4vw] font-bold">TeraaMart</h3>
-        <p>
+        <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-[4vw] font-bold">TeraaMart</h3>
+        <p className="text-xs sm:text-sm md:text-base leading-relaxed">
           Your one-stop marketplace for EV accessories, charging equipment, and sustainable mobility products. Quality products curated specifically for electric vehicle owners and enthusiasts.
         </p>
       </motion.div>

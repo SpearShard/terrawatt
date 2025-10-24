@@ -7,7 +7,7 @@ import { OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 const DashboardAnimation = dynamic(
   () => import("../components/DashboardAnimation"),
   { ssr: false }
@@ -20,9 +20,11 @@ gsap.registerPlugin(ScrollTrigger);
 function Car({
   rearLightsRef,
   dashboardRef,
+  scale = 1.2,
 }: {
   rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
+  scale?: number;
 }) {
   const { scene } = useGLTF("/models/car.glb");
 
@@ -96,7 +98,7 @@ function Car({
     }
   }, [scene, rearLightsRef, dashboardRef]);
 
-  return <primitive object={scene} scale={1.2} />;
+  return <primitive object={scene} scale={scale} />;
 }
 
 
@@ -108,17 +110,24 @@ function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.Mutable
     camera.position.set(0, 50, 580);
     camera.lookAt(0, 1, 0);
 
+    const isMobile = window.innerWidth < 768;
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#scroll-container",
         start: "top top",
-        end: "bottom bottom",
+        end: isMobile ? "80% bottom" : "bottom bottom",
         scrub: true,
       },
     });
 
     // Camera movement
-    tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
+    // tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
+    tl.to(camera.position, {
+      z: isMobile ? 15 : -0.3,
+      y: isMobile ? 18 : 20,
+      duration: 3,
+    });
 
     // Animate all rear lights
     // defensive: ensure we have lights array before animating
@@ -174,14 +183,36 @@ function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObjec
 export default function Home() {
   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
+  const [carScale, setCarScale] = useState(1.2);
 
-    return (
-    <main style={{ background: "black", minHeight: "400vh", color: "white" }}>
+  // Responsive scroll height and car scale
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setCarScale(0.6); // Mobile
+      } else if (width < 1024) {
+        setCarScale(0.9); // Tablet
+      } else {
+        setCarScale(1.2); // Desktop
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "400vh";
+  const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "120vh" : "300vh";
+
+  return (
+    <main style={{ background: "black", minHeight: scrollHeight, color: "white" }}>
       {/* 🧭 Navbar stays fixed at top */}
       <Navbar />
 
       {/* 🚗 3D Car Section */}
-      <div id="scroll-container" style={{ height: "400vh" }}>
+      <div id="scroll-container" style={{ height: scrollHeight }}>
         <Canvas
           camera={{ position: [0, 1.5, 8], fov: 50 }}
           style={{
@@ -189,11 +220,12 @@ export default function Home() {
             top: 0,
             height: "100vh",
             width: "100vw",
+            pointerEvents: "none",
           }}
         >
           <ambientLight intensity={0.6} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
-          <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} />
+          <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
           <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
           <FlickerLights rearLightsRef={rearLightsRef} />
           <DashboardAnimation dashboardRef={dashboardRef} />
@@ -202,10 +234,10 @@ export default function Home() {
 
         <div
           style={{
-            height: "300vh",
+            height: contentHeight,
             textAlign: "center",
-            fontSize: "2rem",
-            paddingTop: "150vh",
+            fontSize: "clamp(1rem, 5vw, 2rem)",
+            paddingTop: "50%",
           }}
         >
           {/* add any scroll content here */}
