@@ -1,65 +1,223 @@
-import Image from "next/image";
+"use client";
+import dynamic from "next/dynamic";
+import Navbar from "../components/Navbar";
+import About from "../components/About";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import * as THREE from "three";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from "react";
+const DashboardAnimation = dynamic(
+  () => import("../components/DashboardAnimation"),
+  { ssr: false }
+);
+
+// import DashboardOverlay from "../components/DashboardOverlay";
+
+gsap.registerPlugin(ScrollTrigger);
+
+function Car({
+  rearLightsRef,
+  dashboardRef,
+}: {
+  rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
+  dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
+}) {
+  const { scene } = useGLTF("/models/car.glb");
+
+  useEffect(() => {
+    // rear lights
+    if (!(rearLightsRef.current && rearLightsRef.current.length)) {
+      const lights: THREE.Mesh[] = [];
+      scene.traverse((child) => {
+        if ((child as THREE.Object3D).type === "Mesh") {
+          const name = (child as THREE.Object3D).name || "";
+          if (/rear|tail|brake|light/i.test(name)) {
+            lights.push(child as THREE.Mesh);
+          }
+        }
+      });
+
+      lights.forEach((light) => {
+        const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+        if (!mat.emissive) mat.emissive = new THREE.Color(0xff0000);
+        mat.emissiveIntensity = 0; // start off
+      });
+
+      rearLightsRef.current = lights;
+    }
+
+    // dashboard LCD — try to find likely LCD/display nodes by name and path
+    if (dashboardRef && !(dashboardRef.current && dashboardRef.current.length)) {
+      const allMeshNames: string[] = [];
+      scene.traverse((c) => {
+        if ((c as THREE.Object3D).type === "Mesh") allMeshNames.push((c as THREE.Object3D).name || "(unnamed)");
+      });
+      console.debug("[Car] total mesh count:", allMeshNames.length);
+
+      // search for likely candidates by common keywords
+      const keywordRegex = /lcd|screen|display|panel|monitor|gui|ui|dash/i;
+      const candidates: THREE.Object3D[] = [];
+      scene.traverse((c) => {
+        if ((c as THREE.Object3D).type === "Mesh") {
+          const name = (c as THREE.Object3D).name || "";
+          if (keywordRegex.test(name)) candidates.push(c as THREE.Object3D);
+        }
+      });
+
+      if (candidates.length > 0) {
+        console.info("[Car] dashboard candidates found:");
+        candidates.slice(0, 20).forEach((node) => {
+          // build a simple path from root to this node
+          const path: string[] = [];
+          let cur: THREE.Object3D | null = node;
+          while (cur) {
+            path.unshift(cur.name || '(unnamed)');
+            cur = cur.parent;
+          }
+          console.info(" - ", path.join("/"));
+        });
+
+        // prefer exact name if present, otherwise pick the first candidate
+        const exact = candidates.find((n) => n.name === "LCDs_LCDs.0_0") as THREE.Mesh | undefined;
+        const pick = exact || (candidates[0] as THREE.Mesh);
+        if (pick && pick.type === "Mesh") {
+          const mesh = pick as THREE.Mesh;
+          const mat: any = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+          if (!mat.emissive) mat.emissive = new THREE.Color(0x00aaff);
+          mat.emissiveIntensity = 0;
+          dashboardRef.current = [mesh];
+          console.info("[Car] Assigned dashboardRef to:", pick.name || '(unnamed)');
+        }
+      } else {
+        console.warn("[Car] No dashboard/display candidates found. Sample mesh names:", allMeshNames.slice(0, 40));
+      }
+    }
+  }, [scene, rearLightsRef, dashboardRef]);
+
+  return <primitive object={scene} scale={1.2} />;
+}
+
+
+
+function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    camera.position.set(0, 50, 580);
+    camera.lookAt(0, 1, 0);
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#scroll-container",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true,
+      },
+    });
+
+    // Camera movement
+    tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
+
+    // Animate all rear lights
+    // defensive: ensure we have lights array before animating
+    (rearLightsRef.current || []).forEach((light: THREE.Mesh) => {
+      const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+      if (!mat) return;
+      tl.to(mat, { emissiveIntensity: 5, duration: 1 }, 0);
+      // 0 means it starts with the camera animation
+    });
+
+    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  }, [camera, rearLightsRef]);
+
+  return null;
+}
+
+function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
+  useEffect(() => {
+    if (!rearLightsRef.current || rearLightsRef.current.length === 0) return;
+
+    // Trigger flicker when scroll reaches the top of the canvas
+    ScrollTrigger.create({
+      trigger: "#scroll-container",
+      start: "top top", // trigger as soon as scrolling starts
+      end: "+=1",       // short duration
+      once: true,       // only trigger once
+      onEnter: () => {
+        rearLightsRef.current?.forEach((light) => {
+          const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+          if (!mat) return;
+
+          // Flicker timeline (two quick flashes)
+          gsap.timeline()
+            .to(mat, { emissiveIntensity: 10, duration: 0.1 })
+            .to(mat, { emissiveIntensity: 0, duration: 0.1 })
+            .to(mat, { emissiveIntensity: 10, duration: 0.1 })
+            .to(mat, { emissiveIntensity: 12, duration: 0.2 }); // final steady intensity
+        });
+      },
+    });
+
+    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  }, [rearLightsRef]);
+
+  return null;
+}
+
+
+
+
+
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+  const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
+  const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
+
+    return (
+    <main style={{ background: "black", minHeight: "400vh", color: "white" }}>
+      {/* 🧭 Navbar stays fixed at top */}
+      <Navbar />
+
+      {/* 🚗 3D Car Section */}
+      <div id="scroll-container" style={{ height: "400vh" }}>
+        <Canvas
+          camera={{ position: [0, 1.5, 8], fov: 50 }}
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            width: "100vw",
+          }}
+        >
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[10, 10, 5]} intensity={1} />
+          <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} />
+          <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
+          <FlickerLights rearLightsRef={rearLightsRef} />
+          <DashboardAnimation dashboardRef={dashboardRef} />
+          <OrbitControls enabled={false} />
+        </Canvas>
+
+        <div
+          style={{
+            height: "300vh",
+            textAlign: "center",
+            fontSize: "2rem",
+            paddingTop: "150vh",
+          }}
+        >
+          {/* add any scroll content here */}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+      <div className="min-h-screen">
+        <About />
+      </div>
+    </main>
   );
 }
+
+
+
+useGLTF.preload("/models/car.glb");
