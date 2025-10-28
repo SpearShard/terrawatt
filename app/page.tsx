@@ -26,7 +26,7 @@ function Car({
   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
   scale?: number;
 }) {
-  const { scene } = useGLTF("/models/car.glb");
+  const { scene } = useGLTF("/models/newcar.glb");
 
   useEffect(() => {
     // rear lights
@@ -35,7 +35,7 @@ function Car({
       scene.traverse((child) => {
         if ((child as THREE.Object3D).type === "Mesh") {
           const name = (child as THREE.Object3D).name || "";
-          if (/rear|tail|brake|light/i.test(name)) {
+          if (/rear|rear_lightsl_left|tail|brake|light/i.test(name)) {
             lights.push(child as THREE.Mesh);
           }
         }
@@ -96,7 +96,196 @@ function Car({
         console.warn("[Car] No dashboard/display candidates found. Sample mesh names:", allMeshNames.slice(0, 40));
       }
     }
+
   }, [scene, rearLightsRef, dashboardRef]);
+
+  // this is the useEffect for the blue silhouette got the interiors of the car
+  useEffect(() => {
+  const rimColor = new THREE.Color("#010E78");
+
+  scene.traverse((child) => {
+    if ((child as THREE.Mesh).isMesh) {
+      const mesh = child as THREE.Mesh;
+      const name = mesh.name.toLowerCase();
+
+      if (
+        name.includes("movsteer") ||
+        name.includes("plastic") ||
+        name.includes("whiteleather") ||
+        name.includes("door") ||
+        name.includes("leather_white") ||
+        name.includes("bodysills") ||
+        name.includes("belt_belt") ||
+        name.includes("Putih.0_0") ||
+        name.includes("chrome__movsteer") ||
+        name.includes("texture_leather")
+      ) {
+        console.log("💙 Applying solid blue silhouette to:", mesh.name);
+
+        mesh.material = new THREE.ShaderMaterial({
+          uniforms: {
+            baseColor: { value: new THREE.Color(0x000000) },
+            rimColor: { value: rimColor },
+            rimStrength: { value: 3.5 },
+          },
+          vertexShader: `
+            varying vec3 vNormal;
+            varying vec3 vWorldPosition;
+            void main() {
+              vNormal = normalize(normalMatrix * normal);
+              vec4 worldPos = modelMatrix * vec4(position, 1.0);
+              vWorldPosition = worldPos.xyz;
+              gl_Position = projectionMatrix * viewMatrix * worldPos;
+            }
+          `,
+          fragmentShader: `
+            uniform vec3 baseColor;
+            uniform vec3 rimColor;
+            uniform float rimStrength;
+
+            varying vec3 vNormal;
+            varying vec3 vWorldPosition;
+
+            void main() {
+              vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+              float rim = 1.0 - abs(dot(viewDir, vNormal)); // absolute fixes transparency on backfaces
+              rim = pow(rim, 3.0);
+              float silhouette = rim * rimStrength;
+
+              // Don't make backfaces transparent — just dim them slightly
+              if (dot(vNormal, viewDir) < 0.0) silhouette *= 0.4;
+
+              vec3 finalColor = baseColor + rimColor * silhouette;
+              gl_FragColor = vec4(finalColor, 1.0);
+            }
+          `,
+          transparent: false,
+          depthWrite: true,
+          depthTest: true,
+          side: THREE.DoubleSide, // ensures both sides render
+        });
+
+        mesh.material.needsUpdate = true;
+      }
+    }
+  });
+}, [scene]);
+
+
+
+
+  useEffect(() => {
+  const tex = new THREE.TextureLoader().load("/pexels.jpg");
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.flipY = false;
+
+  setTimeout(() => {
+    scene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh && child.name === "windscreen_ok_glass0_0") {
+        const mesh = child as THREE.Mesh;
+        console.log("✅ Applying image to:", mesh.name);
+
+        // 🧩 Create fallback UVs in case the mesh has none
+        mesh.geometry.computeBoundingBox();
+        const bbox = mesh.geometry.boundingBox!;
+        const size = new THREE.Vector3();
+        bbox.getSize(size);
+
+        const positions = mesh.geometry.attributes.position;
+        const uvs = new Float32Array(positions.count * 2);
+
+        for (let i = 0; i < positions.count; i++) {
+          const x = positions.getX(i);
+          const y = positions.getY(i);
+          uvs[i * 2] = (x - bbox.min.x) / size.x;
+          uvs[i * 2 + 1] = (y - bbox.min.y) / size.y;
+        }
+
+        mesh.geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+
+        // 🖼️ Apply material with texture
+        mesh.material = new THREE.MeshStandardMaterial({
+          map: tex,
+          transparent: true,
+          opacity: 1,
+          metalness: 0.1,
+          roughness: 0.4,
+        });
+        mesh.material.needsUpdate = true;
+      }
+    });
+  }, 0);
+}, [scene]);
+
+
+
+
+  // ✨ Apply silhouette + rim glow shader
+// ✨ Apply silhouette shader only to outer body meshes
+useEffect(() => {
+
+  scene.traverse((child) => {
+    if ((child as THREE.Mesh).isMesh) {
+      const mesh = child as THREE.Mesh;
+      const name = mesh.name.toLowerCase();
+
+      // ⚪️ These meshes get the white rim-light silhouette shader
+      if (
+        name.includes("boot_primary") ||
+        name.includes("body_primary") ||
+        name.includes("whiteleather_Putih") ||
+        name.includes("glass_glass") ||
+        name.includes("JUST_BLACK") ||
+        name.includes("tembus_boot_ok_tembus") ||
+        name.includes("tembus_belakang_tembus")
+      ) {
+        mesh.material = new THREE.ShaderMaterial({
+          uniforms: {
+            baseColor: { value: new THREE.Color(0x000000) },
+            rimColor: { value: new THREE.Color(0xffffff) }, // white silhouette
+            rimStrength: { value: 4.5 }, // adjust glow intensity
+            fadeHeight: { value: 2.8 },
+          },
+          vertexShader: `
+            varying vec3 vNormal;
+            varying vec3 vWorldPosition;
+            void main() {
+              vNormal = normalize(normalMatrix * normal);
+              vec4 worldPos = modelMatrix * vec4(position, 1.0);
+              vWorldPosition = worldPos.xyz;
+              gl_Position = projectionMatrix * viewMatrix * worldPos;
+            }
+          `,
+          fragmentShader: `
+            uniform vec3 baseColor;
+            uniform vec3 rimColor;
+            uniform float rimStrength;
+            uniform float fadeHeight;
+
+            varying vec3 vNormal;
+            varying vec3 vWorldPosition;
+
+            void main() {
+              vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+              float rim = 1.0 - max(dot(viewDir, vNormal), 0.0);
+              rim = smoothstep(0.80, 0.98, rim);
+              float fade = smoothstep(0.0, fadeHeight, vWorldPosition.y);
+              float silhouette = rim * fade * rimStrength;
+              if (dot(vNormal, viewDir) < 0.0) silhouette = 0.0;
+              vec3 finalColor = mix(baseColor, rimColor, silhouette);
+              gl_FragColor = vec4(finalColor, 1.0);
+            }
+          `,
+          transparent: false,
+        });
+      } else {
+        // 🌗 Everything else keeps its original material (normal lighting)
+        return;
+      }
+    }
+  });
+}, [scene]);
+
 
   return <primitive object={scene} scale={scale} />;
 }
@@ -252,4 +441,4 @@ export default function Home() {
 
 
 
-useGLTF.preload("/models/car.glb");
+useGLTF.preload("/models/newcar.glb");
