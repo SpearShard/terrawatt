@@ -175,7 +175,7 @@ function Car({
 
 
   useEffect(() => {
-  const tex = new THREE.TextureLoader().load("/pexels.jpg");
+  const tex = new THREE.TextureLoader().load("/windscreen.png");
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.flipY = false;
 

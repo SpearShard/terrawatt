@@ -18,7 +18,7 @@ export default function DashboardAnimation({
     if (!dashboardMesh || videoTextureRef.current) return;
 
     const video = document.createElement("video");
-    video.src = "/dash.mp4"; // file in public folder
+    video.src = "/dashvid.mp4"; // file in public folder
     video.crossOrigin = "anonymous";
     video.loop = true;
     video.muted = true;
@@ -26,32 +26,19 @@ export default function DashboardAnimation({
     video.preload = "auto";
     videoRef.current = video;
 
-    const handleCanPlay = () => {
-      console.log("✅ Video ready — creating texture");
-      const texture = new THREE.VideoTexture(video);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.minFilter = THREE.LinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      texture.format = THREE.RGBFormat;
-      videoTextureRef.current = texture;
+    const texture = new THREE.VideoTexture(video);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBFormat;
+    videoTextureRef.current = texture;
 
-      // Apply texture directly to the plane’s material (avoid state updates)
-      if (planeRef.current) {
-        const mat = planeRef.current.material as THREE.MeshBasicMaterial;
-        mat.map = texture;
-        mat.needsUpdate = true;
-      }
+    if (planeRef.current) {
+      const mat = planeRef.current.material as THREE.MeshBasicMaterial;
+      mat.map = texture;
+      mat.needsUpdate = true;
+    }
 
-      video
-        .play()
-        .then(() => console.log("▶️ Video playing"))
-        .catch((err) => console.warn("Video play error:", err));
-    };
-
-    video.addEventListener("canplay", handleCanPlay);
-    video.load();
-
-    // Attach UI group once dashboard mesh is ready
     requestAnimationFrame(() => {
       dashboardMesh.add(uiGroup.current);
       uiGroup.current.position.set(0, 0.7, 0.17);
@@ -59,12 +46,9 @@ export default function DashboardAnimation({
     });
 
     return () => {
-      video.removeEventListener("canplay", handleCanPlay);
       dashboardMesh?.remove(uiGroup.current);
-      if (videoTextureRef.current) {
-        videoTextureRef.current.dispose();
-        videoTextureRef.current = null;
-      }
+      videoTextureRef.current?.dispose();
+      videoTextureRef.current = null;
     };
   }, [dashboardRef]);
 
@@ -74,15 +58,25 @@ export default function DashboardAnimation({
     }
   });
 
+  // Automatically play when mounted
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play().catch((err) =>
+        console.warn("⚠️ Video autoplay failed (likely browser policy):", err)
+      );
+    }
+  }, []);
+
   return (
     <group ref={uiGroup}>
       <mesh ref={planeRef}>
-        <planeGeometry args={[0.37, 0.28]} />
+        <planeGeometry args={[0.47, 0.28]} />
         <meshBasicMaterial
           toneMapped={false}
           transparent
           opacity={1}
-          color={"white"} // fallback color until video plays
+          color={"white"}
         />
       </mesh>
     </group>
