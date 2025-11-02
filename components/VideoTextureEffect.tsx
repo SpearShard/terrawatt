@@ -15,6 +15,7 @@ export default function VideoTextureEffect() {
       windscreen_ok_glass0_0: "/light_streaks.mp4",
       door_lf_glass0_0: "/leftdown.mp4",
       door_rf_glass0_0: "/rightdown.mp4",
+  
     };
 
     const createVideoTexture = (src: string) => {
@@ -47,6 +48,7 @@ export default function VideoTextureEffect() {
       windscreen_ok_glass0_0: createVideoTexture(videoSources.windscreen_ok_glass0_0),
       door_lf_glass0_0: createVideoTexture(videoSources.door_lf_glass0_0),
       door_rf_glass0_0: createVideoTexture(videoSources.door_rf_glass0_0),
+    
     };
 
     const timeoutId = setTimeout(() => {
