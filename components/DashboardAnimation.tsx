@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 
@@ -9,76 +9,91 @@ export default function DashboardAnimation({
   dashboardRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
 }) {
   const uiGroup = useRef<THREE.Group>(new THREE.Group());
-  const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const planeRef = useRef<THREE.Mesh | null>(null);
+  const scrollRef = useRef(0);
+  const smoothScrollRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const [textures, setTextures] = useState<THREE.Texture[]>([]);
+  const totalFrames = 100; 
 
+  // 🔹 Load textures once
   useEffect(() => {
-    const dashboardMesh = dashboardRef.current?.[0];
-    if (!dashboardMesh || videoTextureRef.current) return;
+    const loader = new THREE.TextureLoader();
+    const frames: THREE.Texture[] = [];
 
-    const video = document.createElement("video");
-    video.src = "/dashvid.mp4"; // file in public folder
-    video.crossOrigin = "anonymous";
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "auto";
-    videoRef.current = video;
-
-    const texture = new THREE.VideoTexture(video);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.format = THREE.RGBFormat;
-    videoTextureRef.current = texture;
-
-    if (planeRef.current) {
-      const mat = planeRef.current.material as THREE.MeshBasicMaterial;
-      mat.map = texture;
-      mat.needsUpdate = true;
+    for (let i = 1; i <= totalFrames; i++) {
+      const fileNumber = i.toString().padStart(4, "0");
+      const url = `/frames/frame_${fileNumber}.jpg`; 
+      frames.push(loader.load(url));
     }
-
-    requestAnimationFrame(() => {
-      dashboardMesh.add(uiGroup.current);
-      uiGroup.current.position.set(0, 0.7, 0.17);
-      uiGroup.current.rotation.set(1.35, 0, 0);
-    });
+    setTextures(frames);
 
     return () => {
-      dashboardMesh?.remove(uiGroup.current);
-      videoTextureRef.current?.dispose();
-      videoTextureRef.current = null;
+      frames.forEach((t) => t.dispose());
+    };
+  }, []);
+
+  // 🔹 Scroll tracking
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        rafRef.current = requestAnimationFrame(() => {
+          const maxScroll = document.body.scrollHeight - window.innerHeight;
+          scrollRef.current = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  // 🔹 Attach UI group to dashboard mesh
+  useEffect(() => {
+    const dashboardMesh = dashboardRef.current?.[0];
+    if (!dashboardMesh) return;
+
+    dashboardMesh.add(uiGroup.current);
+    uiGroup.current.position.set(0, 0.7, 0.17);
+    uiGroup.current.rotation.set(1.35, 0, 0);
+
+    return () => {
+      dashboardMesh.remove(uiGroup.current);
     };
   }, [dashboardRef]);
 
-  useFrame(() => {
-    if (uiGroup.current) {
-      uiGroup.current.rotation.y += 0; // optional motion
+  
+  useFrame((_state, delta) => {
+    if (!textures.length || !planeRef.current) return;
+
+    const lerpFactor = Math.min(delta * 6, 1);
+    smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * lerpFactor;
+
+    const frameIndex = Math.floor(smoothScrollRef.current * (textures.length - 1));
+    const currentTexture = textures[frameIndex];
+
+    const mat = planeRef.current.material as THREE.MeshBasicMaterial;
+    if (mat.map !== currentTexture) {
+      mat.map = currentTexture;
+      mat.needsUpdate = true;
     }
   });
-
-  // Automatically play when mounted
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.play().catch((err) =>
-        console.warn("⚠️ Video autoplay failed (likely browser policy):", err)
-      );
-    }
-  }, []);
 
   return (
     <group ref={uiGroup}>
       <mesh ref={planeRef}>
         <planeGeometry args={[0.47, 0.28]} />
-        <meshBasicMaterial
-          toneMapped={false}
-          transparent
-          opacity={1}
-          color={"white"}
-        />
+        <meshBasicMaterial toneMapped={false} transparent opacity={1} />
       </mesh>
     </group>
   );
 }
+
+
+

@@ -35,3 +35,9 @@ body {
   font-family: "return";
   src: url('/fonts/Returns.ttf') format('truetype');
 }
+
+
+.sticky-canvas.sticky {
+  position: sticky;
+  top: 0;
+}
