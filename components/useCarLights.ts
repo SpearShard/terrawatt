@@ -40,8 +40,8 @@ export function useCarLights(
 
                 // Apply emissive yellow material
                 const mat = new THREE.MeshStandardMaterial({
-                    color: 0x000000,
-                    emissive: new THREE.Color(0xffff00), // yellow
+                    color: 0xff6600,
+                    emissive: new THREE.Color(0xff6600), // yellow
                     emissiveIntensity: 0, // start off
                     toneMapped: false,
                 });
@@ -125,7 +125,7 @@ export function useCarLights(
                     onUpdate: () => {
                         // Blend color from red → yellow based on scroll progress
                         const color = new THREE.Color(0xff0000).lerp(
-                            new THREE.Color(0xffa500),
+                            new THREE.Color(0xff6600),
                             scrollProgress
                         );
                         mat.emissive.copy(color);

@@ -12,9 +12,9 @@ export default function VideoTextureEffect() {
     if (hasInitialized.current) return; // Prevent re-running
 
     const videoSources = {
-      windscreen_ok_glass0_0: "/light_streaks.mp4",
-      door_lf_glass0_0: "/leftdown.mp4",
-      door_rf_glass0_0: "/rightdown.mp4",
+      windscreen_ok_glass0_0: "streaks_left_right.mp4",
+      door_lf_glass0_0: "/windshield/leftdown2.mp4",
+      door_rf_glass0_0: "/windshield/rightdown2.mp4",
   
     };
 
@@ -77,7 +77,7 @@ export default function VideoTextureEffect() {
               const x = positions.getX(i);
               const y = positions.getY(i);
               uvs[i * 2] = (x - bbox.min.x) / size.x;
-              uvs[i * 2 + 1] = (y - bbox.min.y) / size.y;
+              uvs[i * 2 + 1] = 1 - (y - bbox.min.y) / size.y;
             }
 
             mesh.geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));

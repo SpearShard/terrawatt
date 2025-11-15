@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import Navbar from "../components/Navbar";
 import About from "../components/About";
+import Video from "@/components/video";
 import { applyWhiteRimShader } from "@/components/applyWhiteRimShader";
 import { applyBlueInteriorShader } from "@/components/applyBlueInteriorShader";
 import { useCarScrollTriggers } from "../components/useCarScrollTriggers";
@@ -11,7 +12,8 @@ import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import VideoTextureEffect from "../components/VideoTextureEffect";
-import {useCarLights} from "../components/useCarLights";
+import { useCarLights } from "../components/useCarLights";
+import { Suspense } from "react";
 import { useEffect, useRef, useState, useMemo } from "react";
 const DashboardAnimation = dynamic(
   () => import("../components/DashboardAnimation"),
@@ -73,7 +75,7 @@ function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.Mutable
   const { camera } = useThree();
 
   useEffect(() => {
-    camera.position.set(0, 50, 580);
+    camera.position.set(0, 50, 480);
     camera.lookAt(0, 1, 0);
 
     const isMobile = window.innerWidth < 768;
@@ -171,7 +173,7 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "1800vh";
+  const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "1100vh";
   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "120vh" : "300vh";
 
   // useCarScrollTriggers();
@@ -187,52 +189,58 @@ export default function Home() {
 
 
       {/* Wrapper for scroll animation */}
-<div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
-  {/* Sticky 3D Canvas */}
-  <div
-    style={{
-      position: "sticky",
-      top: 0,
-      height: "100vh",
-      width: "100%",
-      overflow: "hidden",
-      zIndex: 1,
-    }}
-  >
-    <Canvas
-      camera={{ position: [0, 1.5, 8], fov: 50 }}
-      style={{
-        height: "100vh",
-        width: "100vw",
-        pointerEvents: "none",
-        willChange: "transform",
-      }}
-      dpr={[1, 1.5]}
-      performance={{ min: 0.5, max: 1 }}
-      gl={{
-        antialias: false,
-        powerPreference: "high-performance",
-        alpha: false,
-        stencil: false,
-        depth: true,
-      }}
-    >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
-      <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
-      <FlickerLights rearLightsRef={rearLightsRef} />
-      <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
-      <VideoTextureEffect />
-      <OrbitControls enabled={false} />
-    </Canvas>
-  </div>
-</div>
+      <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
+        {/* Sticky 3D Canvas */}
+        <div
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            width: "100%",
+            overflow: "hidden",
+            zIndex: 1,
+          }}
+        >
+          <Canvas
+            camera={{ position: [0, 1.5, 8], fov: 50 }}
+            style={{
+              height: "100vh",
+              width: "100vw",
+              pointerEvents: "none",
+              willChange: "transform",
+            }}
+            dpr={[1, 1.5]}
+            performance={{ min: 0.5, max: 1 }}
+            gl={{
+              antialias: false,
+              powerPreference: "high-performance",
+              alpha: false,
+              stencil: false,
+              depth: true,
+            }}
+          >
+            <ambientLight intensity={0.6} />
+            <directionalLight position={[10, 10, 5]} intensity={1} />
+            <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
+            <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
+            <FlickerLights rearLightsRef={rearLightsRef} />
+            <Suspense fallback={null}>
+              <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
+            </Suspense>
+            <VideoTextureEffect />
+            <OrbitControls enabled={false} />
+          </Canvas>
+        </div>
 
-{/* Normal content appears after scroll section */}
-<div className="min-h-screen">
-  <About />
-</div>
+      </div>
+
+      {/* Normal content appears after scroll section */}
+      <div className="min-h-screen">
+        <Video />
+      </div>
+      <div className="min-h-screen">
+        <About />
+      </div>
 
     </main>
   );

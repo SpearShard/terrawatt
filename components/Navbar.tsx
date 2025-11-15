@@ -136,7 +136,7 @@ export default function Navbar() {
         isScrolled ? "py-3" : "py-5"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
+      <div className="max-w-7xl mx-auto flex items-center justify-center gap-[6vw] px-6">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image
