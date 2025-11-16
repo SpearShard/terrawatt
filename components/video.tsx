@@ -1,125 +1,98 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Canvas } from "@react-three/fiber";
+import ScrollingCoin from "./ScrollingCoin";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Video() {
-  return (
-    <div className="relative w-full min-h-[200vh] bg-white">
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frameRef = useRef(0);
+  const scrollProgressRef = useRef(0);
 
-      {/* Your original video */}
-      <div className="sticky top-0 bg-linear-to-b from-white via-[#F5FCFF] to-[#E6E4E2] flex justify-center h-screen">
-        <video
-          src="/ticket1.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="h-full z-10 relative"
-        />
-      </div>
+  const [loaded, setLoaded] = useState(false);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
 
-      {/* Coin overlay */}
-      <div className="pointer-events-none absolute inset-0 z-20">
-        <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
-          <ambientLight intensity={2} />
-          <pointLight position={[2, 3, 3]} intensity={3} />
-          <ScrollingCoin />
-        </Canvas>
-      </div>
-    </div>
-  );
-}
+  const frameCount = 450;
 
-/* ---------------- COIN COMPONENT ---------------- */
-
-function ScrollingCoin() {
-  const coinRef = useRef<THREE.Mesh>(null);
-  const progressRef = useRef(0);
-
-  const goldMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffd700,
-    metalness: 1,
-    roughness: 0.1,
-  });
-
-  /* ---------------- GSAP SCROLL LISTENER ---------------- */
+  
   useEffect(() => {
-    const obj = { p: 0 };
+    const frames: HTMLImageElement[] = [];
 
-    gsap.to(obj, {
-      p: 1,
+    for (let i = 1; i <= frameCount; i++) {
+      const img = document.createElement("img"); 
+      img.src = `/phone_frames/frame_${String(i).padStart(4, "0")}.jpg`;
+      frames.push(img);
+    }
+
+    imagesRef.current = frames;
+
+    
+    frames[0].onload = () => {
+      setLoaded(true);
+    };
+  }, []);
+
+  
+  useEffect(() => {
+    if (!loaded) return;
+
+    const canvas = canvasRef.current!;
+    const context = canvas.getContext("2d")!;
+
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    const render = () => {
+      const frameIndex = Math.floor(frameRef.current);
+      const img = imagesRef.current[frameIndex];
+      if (!img) return;
+      context.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+
+    gsap.to(frameRef, {
+      current: frameCount - 1,
       ease: "none",
       scrollTrigger: {
-        trigger: document.body,
+        trigger: ".scroll-container",
         start: "top top",
         end: "bottom bottom",
         scrub: 1,
-      },
-      onUpdate: () => {
-        progressRef.current = obj.p;
+        onUpdate: (self) => {
+          scrollProgressRef.current = self.progress;
+          render();
+        },
       },
     });
 
-    return () => ScrollTrigger.killAll();
-  }, []);
-
-  /* ---------------- THREE.JS ANIMATION ---------------- */
-  useFrame(() => {
-    const coin = coinRef.current;
-    if (!coin) return;
-
-    const p = progressRef.current; // 0 → 1
-
-    /* ---------------- ENTRANCE FALL ---------------- */
-    const startY = 2.2;      // off-screen top
-    const midY = 0.2;        // slight drop below center
-
-    let y;
-    if (p <= 0.4) {
-      const t = p / 0.4;  // 0 → 1 between 0%–40%
-      y = startY + (midY - startY) * t; // fall-in
-    } else {
-      y = midY;  // hold position
-    }
-    coin.position.y = y;
-
-    /* ---------------- FADE + SHRINK OUT ---------------- */
-   /* ---------------- FADE + SHRINK OUT ---------------- */
-if (p > 0.4) {
-  const fadeProgress = (p - 0.4) / 0.6; // 0 → 1 fade
-
-  // scale out
-  const scale = THREE.MathUtils.lerp(1, 0, fadeProgress * 1.2);
-  coin.scale.set(scale, scale, scale);
-
-  // fade all materials on the coin
-  const materials = Array.isArray(coin.material)
-    ? coin.material
-    : [coin.material];
-
-  materials.forEach((m) => {
-    m.transparent = true;
-    m.opacity = 1 - fadeProgress;
-  });
-}
-
-
-    /* ---------------- SPIN ---------------- */
-    coin.rotation.y += 0.12;
-    coin.rotation.x += 0.05;
-  });
+    render();
+    ScrollTrigger.refresh();
+  }, [loaded]);
 
   return (
-    <mesh ref={coinRef} position={[0, 2.2, 0]}>
-      <cylinderGeometry args={[0.07, 0.07, 0.01, 64]} />
-      <meshStandardMaterial {...goldMaterial} />
-    </mesh>
+    <div className="scroll-container relative w-full min-h-[500vh] bg-white">
+
+      <div className="sticky top-0 h-screen flex justify-center items-center bg-[#FFF9EF]">
+
+        
+        <canvas ref={canvasRef} className="absolute w-auto h-full" />
+
+        
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
+            <ambientLight intensity={3} />
+            <directionalLight position={[5, 5, 5]} intensity={4} />
+            <directionalLight position={[-5, 5, 5]} intensity={2} />
+            <pointLight position={[0, 1, 3]} intensity={3} />
+            <ScrollingCoin progressRef={scrollProgressRef} />
+          </Canvas>
+        </div>
+
+      </div>
+    </div>
   );
 }
 
