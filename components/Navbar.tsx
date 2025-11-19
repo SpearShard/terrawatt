@@ -109,6 +109,7 @@
 
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function Navbar() {
@@ -122,12 +123,11 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    "Pulse",
-    "TeraaMart",
-    "TeraaCharge",
-    "Investors",
-    "Partners",
-    "Insights",
+    { name: "Pulse", href: "/" },
+    { name: "TeraaMart", href: "/teraa-mart" },
+    { name: "TeraaCharge", href: "/teraa-charge" },
+    { name: "Investors & Partners", href: "/investors-and-partners" },
+    { name: "Insights", href: "/insights" },
   ];
 
   return (
@@ -137,6 +137,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-center gap-[6vw] px-6">
+        
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image
@@ -151,18 +152,21 @@ export default function Navbar() {
         {/* Navigation */}
         <div className="hidden md:flex items-center space-x-8 text-white font-medium">
           {navItems.map((item) => (
-            <button
-              key={item}
-              onClick={() => setActive(item)}
+            <Link
+              key={item.name}
+              href={item.href}
+              onClick={() => setActive(item.name)}
               className={`relative pb-1 transition-all duration-200 ${
-                active === item ? "text-white" : "text-gray-300 hover:text-white"
+                active === item.name
+                  ? "text-white"
+                  : "text-gray-300 hover:text-white"
               }`}
             >
-              {item}
-              {active === item && (
+              {item.name}
+              {active === item.name && (
                 <span className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500 rounded-full"></span>
               )}
-            </button>
+            </Link>
           ))}
 
           {/* Connect button */}
