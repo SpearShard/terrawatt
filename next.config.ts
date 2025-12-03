@@ -1,9 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images:{
-    domains: ['teraawatt.com'],
-  }
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "teraawatt.com",
+      },
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+      }
+    ],
+  },
 };
 
 export default nextConfig;

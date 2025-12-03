@@ -76,7 +76,7 @@ function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.Mutable
 
   useEffect(() => {
     camera.position.set(0, 50, 480);
-    camera.lookAt(0, 1, 0);
+    camera.lookAt(0, 50, 0);
 
     const isMobile = window.innerWidth < 768;
 
@@ -92,7 +92,7 @@ function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.Mutable
     // Camera movement
     // tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
     tl.to(camera.position, {
-      z: isMobile ? 15 : -0.3,
+      z: isMobile ? 15 : 1,
       y: isMobile ? 18 : 20,
       duration: 3,
     });
@@ -192,6 +192,7 @@ export default function Home() {
       <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
         {/* Sticky 3D Canvas */}
         <div
+      
           style={{
             position: "sticky",
             top: 0,
@@ -199,10 +200,11 @@ export default function Home() {
             width: "100%",
             overflow: "hidden",
             zIndex: 1,
+            transformOrigin : "center center"
           }}
         >
           <Canvas
-            camera={{ position: [0, 1.5, 8], fov: 50 }}
+            camera={{ position: [0, 1.5, 25], fov: 50 }}
             style={{
               height: "100vh",
               width: "100vw",
