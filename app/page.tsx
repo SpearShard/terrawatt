@@ -34,7 +34,7 @@ function Car({
   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
   scale?: number;
 }) {
-  const { scene } = useGLTF("/models/newcar.glb");
+  const { scene } = useGLTF("/models/car2.glb");
 
 
 
@@ -214,7 +214,7 @@ export default function Home() {
             dpr={[1, 1.5]}
             performance={{ min: 0.5, max: 1 }}
             gl={{
-              antialias: false,
+              antialias: true,
               powerPreference: "high-performance",
               alpha: false,
               stencil: false,
@@ -250,6 +250,6 @@ export default function Home() {
 
 
 
-useGLTF.preload("/models/newcar.glb");
+useGLTF.preload("/models/car2.glb");
 
 

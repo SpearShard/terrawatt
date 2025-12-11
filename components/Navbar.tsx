@@ -15,8 +15,8 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Pulse", href: "/" },
-    { name: "TeraaMart", href: "/teraa-mart" },
     { name: "TeraaCharge", href: "/teraa-charge" },
+    { name: "TeraaMart", href: "/teraa-mart" },
     { name: "Investors & Partners", href: "/investors-and-partners" },
     { name: "Insights", href: "/insights" },
     { name: "Connect", href: "/connect", isButton: true }, // Still part of nav
@@ -88,3 +88,7 @@ export default function Navbar() {
     </nav>
   );
 }
+
+
+
+
