@@ -173,8 +173,8 @@
 
 
 
-
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
@@ -195,7 +195,7 @@ export default function InsightsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://65.2.124.237:8000/api/v1/users/blog/all")
+    fetch("/api/blogs")
       .then(r => r.json())
       .then(data => {
         setBlogs(data.data?.blogs || []);
