@@ -36,7 +36,7 @@ export function useCarLights(
             // 🎯 Rear Lights
             if (rearLightNames.includes(name)) {
                 foundRearLights.push(child);
-                console.log("💡 Found rear light:", name);
+                // console.log("💡 Found rear light:", name);
 
                 // Apply emissive yellow material
                 const mat = new THREE.MeshStandardMaterial({

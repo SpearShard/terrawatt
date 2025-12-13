@@ -43,5 +43,14 @@ body {
 }
 
 
+/* 
+#coin-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999999 !important;
+  pointer-events: none;
+   background: red !important;
+} */
+
 
 

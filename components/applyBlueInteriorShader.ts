@@ -29,7 +29,7 @@ export function applyBlueInteriorShader(scene: THREE.Scene | THREE.Group) {
           processedMeshes.add(mesh);
 
           if (process.env.NODE_ENV === 'development') {
-            console.log("💙 Applying solid blue silhouette to:", mesh.name);
+            // console.log("💙 Applying solid blue silhouette to:", mesh.name);
           }
 
           mesh.material = new THREE.ShaderMaterial({
