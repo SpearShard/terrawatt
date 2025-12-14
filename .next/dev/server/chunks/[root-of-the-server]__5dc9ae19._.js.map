@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/jayad/Desktop/silhouette/terrawatt/app/api/blogs/%5Bid%5D/route.ts"],"sourcesContent":["import { NextResponse } from \"next/server\";\r\n\r\nexport async function GET(\r\n  _req: Request,\r\n  { params }: { params: { id: string } }\r\n) {\r\n  try {\r\n    const res = await fetch(\r\n      `http://65.2.124.237:8000/api/v1/users/blog/${params.id}`,\r\n      { cache: \"no-store\" }\r\n    );\r\n\r\n    const data = await res.json();\r\n    return NextResponse.json(data);\r\n  } catch {\r\n    return NextResponse.json(\r\n      { status: false, error: \"Failed to fetch blog\" },\r\n      { status: 500 }\r\n    );\r\n  }\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;;AAEO,eAAe,IACpB,IAAa,EACb,EAAE,MAAM,EAA8B;IAEtC,IAAI;QACF,MAAM,MAAM,MAAM,MAChB,CAAC,2CAA2C,EAAE,OAAO,EAAE,EAAE,EACzD;YAAE,OAAO;QAAW;QAGtB,MAAM,OAAO,MAAM,IAAI,IAAI;QAC3B,OAAO,gJAAY,CAAC,IAAI,CAAC;IAC3B,EAAE,OAAM;QACN,OAAO,gJAAY,CAAC,IAAI,CACtB;YAAE,QAAQ;YAAO,OAAO;QAAuB,GAC/C;YAAE,QAAQ;QAAI;IAElB;AACF"}}]
+}

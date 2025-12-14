@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 40, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/jayad/Downloads/teraawatt-website_v1/app/api/blogs/route.ts"],"sourcesContent":["export async function GET() {\r\n  try {\r\n    const res = await fetch(\r\n      \"http://65.2.124.237:8000/api/v1/users/blog/all\",\r\n      { cache: \"no-store\" }\r\n    );\r\n\r\n    const data = await res.json();\r\n\r\n    return Response.json(data);\r\n  } catch (error) {\r\n    return new Response(\r\n      JSON.stringify({ status: false, error: \"Failed to fetch blogs\" }),\r\n      { status: 500 }\r\n    );\r\n  }\r\n}\r\n"],"names":[],"mappings":";;;;AAAO,eAAe;IACpB,IAAI;QACF,MAAM,MAAM,MAAM,MAChB,kDACA;YAAE,OAAO;QAAW;QAGtB,MAAM,OAAO,MAAM,IAAI,IAAI;QAE3B,OAAO,SAAS,IAAI,CAAC;IACvB,EAAE,OAAO,OAAO;QACd,OAAO,IAAI,SACT,KAAK,SAAS,CAAC;YAAE,QAAQ;YAAO,OAAO;QAAwB,IAC/D;YAAE,QAAQ;QAAI;IAElB;AACF"}}]
+}
