@@ -249,7 +249,7 @@ export default function DashboardAnimation({
 
     for (let i = 1; i <= totalFrames; i++) {
       const fileNumber = i.toString().padStart(5, "0");
-      const url = `https://ik.imagekit.io/m064cyjlx/finalframes/frame_${fileNumber}.jpg`;
+      const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
       
 
 

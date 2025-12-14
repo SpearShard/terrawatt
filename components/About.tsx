@@ -133,6 +133,7 @@
 
 "use client";
 import React, { useRef } from "react";
+import Link from "next/link";
 import {
   motion,
   useScroll,
@@ -160,7 +161,7 @@ const products: ProductData[] = [
         subtitle: "The Charging Network",
         description:
           "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform. Powering your electric journey, effortlessly.",
-        image: "./TeraaCharge.png", // Assuming you have an image for TeraaCharge
+        image: "./Terracharge.png", // Assuming you have an image for TeraaCharge
         accentColor: "#22D3EE", // Cyan/Light Blue for Charging
         features: [
           "Real-time station availability",
@@ -396,9 +397,11 @@ export default function About() {
             The future of mobility is electric, connected, and rewarding. Don't
             just drive—drive smart.
           </p>
+          <Link href={"/connect"}>
           <button className="relative z-10 px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-[#05DF72] transition-colors duration-300 transform hover:scale-105">
             Get Started Now
           </button>
+          </Link>
         </section>
       </main>
     </div>

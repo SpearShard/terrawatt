@@ -237,7 +237,7 @@ export default function InsightsPage() {
         />
 
         {/* CONTENT */}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent pt-32 pb-24 px-8">
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent  pb-24 px-8">
           <div className="max-w-7xl mx-auto">
 
             {/* TITLE */}

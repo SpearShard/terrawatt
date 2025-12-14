@@ -97,7 +97,7 @@ export default function Connect() {
         {/* 🔥 Smooth Looping Video Background */}
         <video
           ref={videoRef}
-          src="https://ik.imagekit.io/m064cyjlx/contactbg.mp4"
+          src="/Contact_page/robot.mp4"
           autoPlay
           muted
           loop
