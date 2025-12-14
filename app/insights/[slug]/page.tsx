@@ -30,7 +30,9 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
     async function loadBlog() {
       try {
         // 1️⃣ Fetch all to match slug
-        const res = await fetch("http://65.2.124.237:8000/api/v1/users/blog/all");
+        // const res = await fetch("http://65.2.124.237:8000/api/v1/users/blog/all");
+        const res = await fetch("/api/blogs", { cache: "no-store" });
+
         const json = await res.json();
         const blogs: Blog[] = json?.data?.blogs || [];
         const match = blogs.find((b) => b.slug === slug);
@@ -41,7 +43,11 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
         }
 
         // 2️⃣ Fetch details
-        const res2 = await fetch(`http://65.2.124.237:8000/api/v1/users/blog/${match.id}`);
+        // const res2 = await fetch(`http://65.2.124.237:8000/api/v1/users/blog/${match.id}`);
+        const res2 = await fetch(`/api/blogs/${match.id}`, {
+  cache: "no-store",
+});
+
         const fullBlog = await res2.json();
 
         setBlog(fullBlog?.data || match);
