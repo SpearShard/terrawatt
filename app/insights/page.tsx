@@ -182,7 +182,7 @@ import Link from "next/link";
 
 interface Blog {
   id: string;
-  slug: string; // 👈 required for linking
+  slug: string;
   title: string;
   shortDescription: string;
   content?: string;
@@ -190,21 +190,38 @@ interface Blog {
   images: { url: string }[];
 }
 
+const PAGE_SIZE = 6;
+const TOTAL_PAGES = 2; // 👈 we force 2 pages
+
 export default function InsightsPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetch("/api/blogs")
-      .then(r => r.json())
-      .then(data => {
+      .then((r) => r.json())
+      .then((data) => {
         setBlogs(data.data?.blogs || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  const items = [...blogs.slice(0, 6), ...Array(Math.max(0, 6 - blogs.length)).fill(null)];
+  // -------- Pagination logic --------
+  let items: (Blog | null)[] = [];
+
+  if (page === 1) {
+    const realBlogs = blogs.slice(0, PAGE_SIZE);
+    items = [
+      ...realBlogs,
+      ...Array(Math.max(0, PAGE_SIZE - realBlogs.length)).fill(null),
+    ];
+  }
+
+  if (page === 2) {
+    items = Array(4).fill(null); // 👈 4 placeholder blogs
+  }
 
   return (
     <>
@@ -223,18 +240,17 @@ export default function InsightsPage() {
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent pt-32 pb-24 px-8">
           <div className="max-w-7xl mx-auto">
 
-            {/* TITLE SECTION */}
+            {/* TITLE */}
             <div className="text-center mb-20">
               <h1 className="text-6xl md:text-8xl font-black text-cyan-400 mb-4">
                 Stories for a Smarter<br />Electric Journey
               </h1>
-              <p className="text-cyan-200/90 text-xl md:text-2xl font-light tracking-wide">
-                Learn, explore, and stay informed with curated EV insights<br />
-                from the <span className="text-white font-semibold">TeraaWatt team.</span>
+              <p className="text-cyan-200/90 text-xl md:text-2xl font-light">
+                Learn, explore, and stay informed with curated EV insights
               </p>
             </div>
 
-            {/* BLOG CARDS */}
+            {/* BLOG GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
               {items.map((blog, i) =>
                 blog ? (
@@ -244,6 +260,37 @@ export default function InsightsPage() {
                 )
               )}
             </div>
+
+            {/* PAGINATION */}
+            <div className="flex justify-center items-center gap-6 mt-20">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className={`px-6 py-2 rounded-full border transition ${
+                  page === 1
+                    ? "border-neutral-700 text-neutral-600 cursor-not-allowed"
+                    : "border-neutral-500 text-white hover:bg-neutral-800"
+                }`}
+              >
+                ← Previous
+              </button>
+
+              <span className="text-neutral-400 text-sm">
+                Page {page} of {TOTAL_PAGES}
+              </span>
+
+              <button
+                disabled={page === TOTAL_PAGES}
+                onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
+                className={`px-6 py-2 rounded-full border transition ${
+                  page === TOTAL_PAGES
+                    ? "border-neutral-700 text-neutral-600 cursor-not-allowed"
+                    : "border-neutral-500 text-white hover:bg-neutral-800"
+                }`}
+              >
+                Next →
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -251,13 +298,13 @@ export default function InsightsPage() {
   );
 }
 
-/* BLOG CARD → Now opens a new URL */
+/* BLOG CARD */
 function BlogCard({ blog }: { blog: Blog }) {
   const thumb = blog.images?.[0]?.url;
 
   return (
     <Link href={`/insights/${blog.slug}`} className="group">
-      <div className="rounded-3xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition-all duration-500 shadow-2xl">
+      <div className="rounded-3xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition shadow-2xl">
         <div className="h-64 overflow-hidden">
           {thumb ? (
             <img
@@ -272,18 +319,12 @@ function BlogCard({ blog }: { blog: Blog }) {
 
         <div className="p-8 space-y-4">
           <p className="text-cyan-400 text-sm font-medium">
-            {new Date(blog.publishDate).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+            {new Date(blog.publishDate).toLocaleDateString()}
           </p>
-
-          <h3 className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-2">
+          <h3 className="text-2xl font-bold text-white line-clamp-2">
             {blog.title}
           </h3>
-
-          <p className="text-gray-300 text-base line-clamp-3">
+          <p className="text-gray-300 line-clamp-3">
             {blog.shortDescription}
           </p>
         </div>
@@ -292,7 +333,7 @@ function BlogCard({ blog }: { blog: Blog }) {
   );
 }
 
-/* SHIMMER PLACEHOLDER CARD */
+/* SHIMMER CARD */
 function ShimmerCard() {
   return (
     <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden">
@@ -300,10 +341,11 @@ function ShimmerCard() {
         <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
       </div>
       <div className="p-8 space-y-4">
-        <div className="h-4 w-32 bg-white/10 rounded-full animate-pulse" />
+        <div className="h-4 w-32 bg-white/10 rounded animate-pulse" />
         <div className="h-8 w-full bg-white/10 rounded animate-pulse" />
         <div className="h-4 w-5/6 bg-white/10 rounded animate-pulse" />
       </div>
     </div>
   );
 }
+

@@ -458,7 +458,7 @@ export default function Home() {
 
   useEffect(() => {
   function handleJump() {
-    const targetProgress = 804 / 1644; // frame / total frames
+    const targetProgress = 774 / 1464; // frame / total frames
 
     // Smoothly scroll the window to the correct point
     const scrollContainer = document.getElementById("scroll-container");
@@ -478,6 +478,8 @@ export default function Home() {
   window.addEventListener("scrollToFrame804", handleJump);
   return () => window.removeEventListener("scrollToFrame804", handleJump);
 }, []);
+
+
 
 useEffect(() => {
   const action = localStorage.getItem("TW_action");
@@ -576,7 +578,7 @@ useEffect(() => {
             <Suspense fallback={null}>
               <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
             </Suspense>
-            <VideoTextureEffect />
+            <VideoTextureEffect progressRef={progressRef} />
             <OrbitControls enabled={false} />
           </Canvas>
         </div>

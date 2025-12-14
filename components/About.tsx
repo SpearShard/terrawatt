@@ -155,6 +155,21 @@ interface ProductData {
 // --- Data ---
 const products: ProductData[] = [
   {
+        id: "charge",
+        title: "TeraaCharge",
+        subtitle: "The Charging Network",
+        description:
+          "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform. Powering your electric journey, effortlessly.",
+        image: "./TeraaCharge.png", // Assuming you have an image for TeraaCharge
+        accentColor: "#22D3EE", // Cyan/Light Blue for Charging
+        features: [
+          "Real-time station availability",
+          "Fast & Ultra-fast charging options",
+          "Seamless app integration",
+          "24/7 customer support",
+        ],
+      },
+  {
     id: "coins",
     title: "TeraaCoins",
     subtitle: "Digital Currency",

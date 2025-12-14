@@ -46,7 +46,7 @@ export default function Video() {
 
     for (let i = 1; i <= FG_FRAMES; i++) {
       loadImage(
-        `https://ik.imagekit.io/m064cyjlx/phone/frame_${String(i).padStart(5, "0")}.png`,
+        `https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`,
         fgImagesRef.current
       );
     }
@@ -120,6 +120,41 @@ export default function Video() {
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, [loaded]);
+
+
+  useEffect(() => {
+  const jumpToFrame = (e: Event) => {
+    const targetFrame = 589; // 👈 your Terramart frame
+    const progress = targetFrame / (FG_FRAMES - 1);
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const st = ScrollTrigger.getAll().find(
+      (t) => t.trigger === container
+    );
+
+    if (!st) return;
+
+    const scrollStart = st.start as number;
+    const scrollEnd = st.end as number;
+
+    const targetScroll =
+      scrollStart + progress * (scrollEnd - scrollStart);
+
+    window.scrollTo({
+      top: targetScroll,
+      behavior: "smooth",
+    });
+  };
+
+  window.addEventListener("scrollToPhoneFrame598", jumpToFrame);
+
+  return () => {
+    window.removeEventListener("scrollToPhoneFrame598", jumpToFrame);
+  };
+}, []);
+
 
   return (
     <div ref={containerRef} className="relative w-full bg-black">

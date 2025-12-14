@@ -240,7 +240,7 @@ export default function DashboardAnimation({
   const rafRef = useRef<number | null>(null);
 
   const [textures, setTextures] = useState<THREE.Texture[]>([]);
-  const totalFrames = 1644;
+  const totalFrames = 1464;
 
   // Load dashboard frames
   useEffect(() => {
