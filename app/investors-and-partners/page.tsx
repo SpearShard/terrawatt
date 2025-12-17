@@ -2,113 +2,129 @@
 
 // import { useEffect, useRef } from "react";
 // import Navbar from "@/components/Navbar";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// gsap.registerPlugin(ScrollTrigger);
 
-// // === CONFIGURE YOUR SEQUENCE HERE ===
-// const FOLDER = "hs4kf";        // Change to your folder name
-// const FRAME_COUNT = 239;       // Total number of frames
-// const FPS = 30;                // Playback speed (30 or 60 recommended)
-// // ====================================
+// type FrameFolder = "investpartner";
 
-// export default function SimpleVideo() {
+// const FRAME_SETS: Record<FrameFolder, number> = {
+//   investpartner: 776,
+// };
+
+// const sections: { id: FrameFolder; fade: "top" | "bottom" | "both" }[] = [
+//   { id: "investpartner", fade: "bottom" }
+// ];
+
+
+
+// function FrameScroller({
+//   folder,
+//   frameCount,
+//   fadeType,
+// }: {
+//   folder: FrameFolder;
+//   frameCount: number;
+//   fadeType: "top" | "bottom" | "both";
+// }) {
+//   const containerRef = useRef<HTMLDivElement>(null);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   const frameIndexRef = useRef(0);
 //   const imagesRef = useRef<HTMLImageElement[]>([]);
-//   const loadedCountRef = useRef(0);
-//   const isPlayingRef = useRef(false);
+//   const loadedRef = useRef(false);
+//   const frameRef = useRef(0);
 
+//   // Load frames
 //   useEffect(() => {
-//     // Preload all frames
-//     imagesRef.current = new Array(FRAME_COUNT);
+//     let loaded = 0;
 
-//     for (let i = 0; i < FRAME_COUNT; i++) {
+//     for (let i = 1; i <= frameCount; i++) {
 //       const img = new Image();
-//       const frameNumber = String(i + 1).padStart(5, "0");
-//       img.src = `https://ik.imagekit.io/m064cyjlx/${FOLDER}/frame_${frameNumber}.jpg`;
+//       img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(
+//         i
+//       ).padStart(5, "0")}.jpg`;
 
 //       img.onload = () => {
-//         imagesRef.current[i] = img;
-//         loadedCountRef.current++;
-
-//         // Start playing as soon as ALL frames are loaded
-//         if (loadedCountRef.current === FRAME_COUNT && !isPlayingRef.current) {
-//           isPlayingRef.current = true;
-//           startAnimation();
+//         loaded++;
+//         if (loaded === frameCount) {
+//           loadedRef.current = true;
 //         }
 //       };
 
-//       img.onerror = () => {
-//         console.error(`Failed to load frame_${frameNumber}.jpg`);
-//       };
+//       imagesRef.current.push(img);
 //     }
+//   }, [folder, frameCount]);
 
-//     // Animation loop
-//     let animationId: number;
-//     let lastTime = 0;
-//     const frameDuration = 1000 / FPS;
+//   // Scroll → frame animation WITH PINNING
+//   useEffect(() => {
+//     const section = containerRef.current;
+//     const canvas = canvasRef.current;
+//     if (!section || !canvas) return;
 
-//     const animate = (currentTime: number) => {
-//       if (!lastTime) lastTime = currentTime;
-//       const delta = currentTime - lastTime;
+//     const ctx = canvas.getContext("2d")!;
+//     canvas.width = 1080;
+//     canvas.height = 1920;
 
-//       if (delta >= frameDuration) {
-//         // Advance frame
-//         frameIndexRef.current = (frameIndexRef.current + 1) % FRAME_COUNT;
-//         lastTime = currentTime - (delta % frameDuration);
+//     const render = () => {
+//       const index = Math.floor(frameRef.current);
+//       const img = imagesRef.current[index];
 
-//         // Draw current frame
-//         const canvas = canvasRef.current;
-//         const ctx = canvas?.getContext("2d");
-//         if (ctx && canvas) {
-//           const img = imagesRef.current[frameIndexRef.current];
-//           if (img?.complete) {
-//             ctx.clearRect(0, 0, canvas.width, canvas.height);
-//             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-//           }
-//         }
-//       }
+//       if (!img) return;
 
-//       animationId = requestAnimationFrame(animate);
+//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+//       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 //     };
 
-//     const startAnimation = () => {
-//       animationId = requestAnimationFrame(animate);
-//     };
+//     const ST = ScrollTrigger.create({
+//       trigger: section,
+//       start: "top top",
+//       end: `+=${frameCount * 6}px`, // 👈 stay longer the more frames there are
+//       scrub: 1,
+//       pin: true,
+//       onUpdate: (self) => {
+//         if (!loadedRef.current) return;
 
-//     // Start immediately if images are already cached (e.g., on reload)
-//     if (loadedCountRef.current === FRAME_COUNT) {
-//       isPlayingRef.current = true;
-//       startAnimation();
-//     }
+//         const progress = self.progress; // 0 → 1
+//         frameRef.current = progress * (frameCount - 1);
 
-//     return () => {
-//       if (animationId) cancelAnimationFrame(animationId);
-//     };
-//   }, []);
+//         render();
+//       },
+//     });
+
+//     return () => ST.kill();
+//   }, [frameCount]);
+
+//   // Fade mask
 
 //   return (
-//     <>
-//       <Navbar />
-//       <div className="fixed inset-0 bg-[#04111E] overflow-hidden">
-//         <canvas
-//           ref={canvasRef}
-//           width={1080}
-//           height={1920}
-//           className="w-full h-full object-cover"
-//         />
-//       </div>
-//     </>
+//     <div ref={containerRef} className="w-full">
+//       <canvas
+//         ref={canvasRef}
+//         className={`w-full h-[100vh] block `}
+//       />
+//     </div>
 //   );
 // }
 
 
+// export default function SimpleVideo() {
+//   return (
+//     <>
+//       <Navbar />
 
-
-
-
-
-
-
-
+//       <div className="w-full  flex flex-col overflow-hidden bg-[#04111E]">
+//         {sections.map((s) => (
+//           <div key={s.id} className="w-full ">
+//             <FrameScroller
+//               folder={s.id}
+//               frameCount={FRAME_SETS[s.id]}
+//               fadeType={s.fade}
+//             />
+//           </div>
+//         ))}
+//       </div>
+//     </>
+//   );
+// }
 
 
 
@@ -128,6 +144,7 @@ import { useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 gsap.registerPlugin(ScrollTrigger);
 
 type FrameFolder = "investpartner";
@@ -137,19 +154,15 @@ const FRAME_SETS: Record<FrameFolder, number> = {
 };
 
 const sections: { id: FrameFolder; fade: "top" | "bottom" | "both" }[] = [
-  { id: "investpartner", fade: "bottom" }
+  { id: "investpartner", fade: "bottom" },
 ];
-
-
 
 function FrameScroller({
   folder,
   frameCount,
-  fadeType,
 }: {
   folder: FrameFolder;
   frameCount: number;
-  fadeType: "top" | "bottom" | "both";
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -157,91 +170,152 @@ function FrameScroller({
   const loadedRef = useRef(false);
   const frameRef = useRef(0);
 
-  // Load frames
+  // Canvas render function
+  const render = (forcedFrame?: number) => {
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d")!;
+    const index = forcedFrame ?? Math.floor(frameRef.current);
+    const img = imagesRef.current[index];
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (img && img.complete) {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    } else {
+      // Fallback background while loading
+      ctx.fillStyle = "#04111E";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+
+  // Load all frames
   useEffect(() => {
-    let loaded = 0;
+    const images: HTMLImageElement[] = [];
+    let loadedCount = 0;
 
     for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
-      img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(
-        i
-      ).padStart(5, "0")}.jpg`;
+      img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+      // img.src = `/frames/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
 
       img.onload = () => {
-        loaded++;
-        if (loaded === frameCount) {
+        loadedCount++;
+        images[i - 1] = img; // Store in correct order
+
+        if (loadedCount === frameCount) {
+          imagesRef.current = images;
           loadedRef.current = true;
+          render(0); // Force first frame when fully loaded
         }
       };
 
-      imagesRef.current.push(img);
+      img.onerror = () => {
+        console.error(`Failed to load frame ${i}`);
+      };
     }
+
+    // Try to render frame 0 immediately (in case cached)
+    render(0);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folder, frameCount]);
 
-  // Scroll → frame animation WITH PINNING
+  // ScrollTrigger setup
   useEffect(() => {
-    const section = containerRef.current;
-    const canvas = canvasRef.current;
-    if (!section || !canvas) return;
+    if (!containerRef.current || !canvasRef.current) return;
 
+    const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d")!;
     canvas.width = 1080;
     canvas.height = 1920;
 
-    const render = () => {
-      const index = Math.floor(frameRef.current);
-      const img = imagesRef.current[index];
+    // Kill any existing ScrollTriggers to prevent duplicates/ghosts
+    ScrollTrigger.getAll().forEach((st) => st.kill());
 
-      if (!img) return;
+    // Initial render
+    render(0);
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    // Delay trigger creation to let layout & images settle
+    const initTimeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+
+      const st = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top top",
+        end: `+=${frameCount * 6}px`, // Adjust multiplier if needed for smoother pacing
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (!loadedRef.current) {
+            frameRef.current = 0;
+            render(0);
+            return;
+          }
+          frameRef.current = self.progress * (frameCount - 1);
+          render();
+        },
+        onRefresh: () => render(),
+      });
+
+      // Cleanup on unmount
+      return () => {
+        st.kill();
+      };
+    }, 100); // Small delay helps with Next.js navigation quirks
+
+    return () => {
+      clearTimeout(initTimeout);
+      ScrollTrigger.getAll().forEach((st) => st.kill());
     };
-
-    const ST = ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: `+=${frameCount * 6}px`, // 👈 stay longer the more frames there are
-      scrub: 1,
-      pin: true,
-      onUpdate: (self) => {
-        if (!loadedRef.current) return;
-
-        const progress = self.progress; // 0 → 1
-        frameRef.current = progress * (frameCount - 1);
-
-        render();
-      },
-    });
-
-    return () => ST.kill();
   }, [frameCount]);
 
-  // Fade mask
-
   return (
-    <div ref={containerRef} className="w-full">
+    <div ref={containerRef} className="w-full relative">
       <canvas
         ref={canvasRef}
-        className={`w-full h-[100vh] block `}
+        className="w-full h-screen block sticky top-0"
       />
     </div>
   );
 }
 
+export default function InvestorsPage() {
+  // Handle scroll restoration properly for client-side navigation
+  useEffect(() => {
+    // Allow browser to restore scroll on back/forward, but force top on direct visit
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "auto";
+    }
 
-export default function SimpleVideo() {
+    // Always start at top when entering this page
+    window.scrollTo(0, 0);
+
+    // Refresh ScrollTrigger if page becomes visible again (e.g. tab switch)
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        ScrollTrigger.refresh();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
+
   return (
     <>
       <Navbar />
 
-      <div className="w-full  flex flex-col overflow-hidden bg-[#04111E]">
+      <div className="w-full flex flex-col overflow-hidden bg-[#04111E]">
         {sections.map((s) => (
-          <div key={s.id} className="w-full ">
+          <div key={s.id} className="w-full">
             <FrameScroller
               folder={s.id}
               frameCount={FRAME_SETS[s.id]}
-              fadeType={s.fade}
             />
           </div>
         ))}

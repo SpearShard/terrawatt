@@ -19,7 +19,7 @@
 //   const rafRef = useRef<number | null>(null);
 
 //   const [textures, setTextures] = useState<THREE.Texture[]>([]);
-//   const totalFrames = 1644;
+//   const totalFrames = 1464;
 
 //   // Load dashboard frames
 //   useEffect(() => {
@@ -28,7 +28,9 @@
 
 //     for (let i = 1; i <= totalFrames; i++) {
 //       const fileNumber = i.toString().padStart(5, "0");
-//       const url = `https://ik.imagekit.io/m064cyjlx/dashframes/frame_${fileNumber}.png`;
+//       const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
+//       // const url = `/frames/percentage/frame_${fileNumber}.jpg`;
+      
 
 
 //       const tex = loader.load(url);
@@ -210,15 +212,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
 "use client";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
@@ -250,6 +243,7 @@ export default function DashboardAnimation({
     for (let i = 1; i <= totalFrames; i++) {
       const fileNumber = i.toString().padStart(5, "0");
       const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
+      
       
 
 
@@ -420,15 +414,3 @@ export default function DashboardAnimation({
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-

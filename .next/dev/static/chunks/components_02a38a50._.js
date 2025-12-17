@@ -304,14 +304,15 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //   const smoothScrollRef = useRef(0);
 //   const rafRef = useRef<number | null>(null);
 //   const [textures, setTextures] = useState<THREE.Texture[]>([]);
-//   const totalFrames = 1644;
+//   const totalFrames = 1464;
 //   // Load dashboard frames
 //   useEffect(() => {
 //     const loader = new THREE.TextureLoader();
 //     const frames: THREE.Texture[] = [];
 //     for (let i = 1; i <= totalFrames; i++) {
 //       const fileNumber = i.toString().padStart(5, "0");
-//       const url = `https://ik.imagekit.io/m064cyjlx/dashframes/frame_${fileNumber}.png`;
+//       const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
+//       // const url = `/frames/percentage/frame_${fileNumber}.jpg`;
 //       const tex = loader.load(url);
 //       tex.colorSpace = THREE.SRGBColorSpace;
 //       // 🔥 MAKE EDGES SMOOTH
@@ -451,7 +452,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/three/build/three.core.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__ = __turbopack_context__.i("[project]/node_modules/@react-three/fiber/dist/events-f8cd670d.esm.js [app-client] (ecmascript) <export D as useFrame>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/CoinAnimation.tsx [app-client] (ecmascript)"); // ⭐ NEW IMPORT
+var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/CoinAnimation.tsx [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
@@ -463,68 +464,64 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     _s();
     const uiGroup = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Group"]());
     const planeRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const videoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const videoTextureRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const scrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothScrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
-    const rafRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const [textures, setTextures] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const totalFrames = 1464;
-    // Load dashboard frames
+    const hasStartedVideo = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    // Scroll progress tracking
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
-            const loader = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextureLoader"]();
-            const frames = [];
-            for(let i = 1; i <= totalFrames; i++){
-                const fileNumber = i.toString().padStart(5, "0");
-                const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
-                const tex = loader.load(url);
-                tex.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
-                // 🔥 MAKE EDGES SMOOTH
-                tex.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
-                tex.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
-                tex.generateMipmaps = true;
-                frames.push(tex);
-            }
-            setTextures(frames);
-            return ({
-                "DashboardAnimation.useEffect": ()=>frames.forEach({
-                        "DashboardAnimation.useEffect": (t)=>t.dispose()
-                    }["DashboardAnimation.useEffect"])
-            })["DashboardAnimation.useEffect"];
-        }
-    }["DashboardAnimation.useEffect"], []);
-    // Track scroll progress
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "DashboardAnimation.useEffect": ()=>{
-            let ticking = false;
             const handleScroll = {
                 "DashboardAnimation.useEffect.handleScroll": ()=>{
-                    if (ticking) return;
-                    ticking = true;
-                    rafRef.current = requestAnimationFrame({
-                        "DashboardAnimation.useEffect.handleScroll": ()=>{
-                            const scrollContainer = document.querySelector("#scroll-container");
-                            const startHeight = scrollContainer ? scrollContainer.offsetHeight * 0.7 : window.innerHeight * 2;
-                            const endHeight = scrollContainer ? scrollContainer.offsetHeight - window.innerHeight : document.body.scrollHeight - window.innerHeight;
-                            const rawScroll = Math.max(0, window.scrollY - startHeight);
-                            const maxScroll = Math.max(1, endHeight - startHeight);
-                            scrollRef.current = Math.max(0, Math.min(1, rawScroll / maxScroll));
-                            ticking = false;
-                        }
-                    }["DashboardAnimation.useEffect.handleScroll"]);
+                    const scrollContainer = document.querySelector("#scroll-container");
+                    const startHeight = scrollContainer ? scrollContainer.offsetHeight * 0.7 : window.innerHeight * 2;
+                    const endHeight = scrollContainer ? scrollContainer.offsetHeight - window.innerHeight : document.body.scrollHeight - window.innerHeight;
+                    const rawScroll = Math.max(0, window.scrollY - startHeight);
+                    const maxScroll = Math.max(1, endHeight - startHeight);
+                    scrollRef.current = Math.max(0, Math.min(1, rawScroll / maxScroll));
+                    // Lazy-load video when user gets close
+                    if (!hasStartedVideo.current && scrollRef.current > 0.1) {
+                        hasStartedVideo.current = true;
+                        startVideo();
+                    }
                 }
             }["DashboardAnimation.useEffect.handleScroll"];
             window.addEventListener("scroll", handleScroll, {
                 passive: true
             });
+            handleScroll(); // Initial check
             return ({
-                "DashboardAnimation.useEffect": ()=>{
-                    window.removeEventListener("scroll", handleScroll);
-                    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-                }
+                "DashboardAnimation.useEffect": ()=>window.removeEventListener("scroll", handleScroll)
             })["DashboardAnimation.useEffect"];
         }
     }["DashboardAnimation.useEffect"], []);
-    // Attach UI group onto dashboard
+    // Create and start video
+    const startVideo = ()=>{
+        if (videoRef.current) return;
+        const video = document.createElement("video");
+        video.src = "/dashvod.mp4"; // Place your compressed video in /public/dashboard.mp4
+        video.crossOrigin = "anonymous";
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        video.play().catch((e)=>console.log("Video autoplay prevented:", e));
+        videoRef.current = video;
+        // Create texture once video has metadata
+        video.addEventListener("loadedmetadata", ()=>{
+            if (!planeRef.current) return;
+            const videoTexture = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["VideoTexture"](video);
+            videoTexture.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            videoTexture.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            videoTexture.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
+            videoTextureRef.current = videoTexture;
+            const mat = planeRef.current.material;
+            mat.map = videoTexture;
+            mat.needsUpdate = true;
+        });
+    };
+    // Attach to car dashboard
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
             const dashboardMesh = dashboardRef.current?.[0];
@@ -534,29 +531,44 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
             uiGroup.current.rotation.set(1.35, 0, 0);
             return ({
                 "DashboardAnimation.useEffect": ()=>{
-                    dashboardMesh.remove(uiGroup.current);
+                    if (dashboardMesh) dashboardMesh.remove(uiGroup.current);
                 }
             })["DashboardAnimation.useEffect"];
         }
     }["DashboardAnimation.useEffect"], [
         dashboardRef
     ]);
-    // Frame animation
+    // Sync video time with scroll
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])({
         "DashboardAnimation.useFrame": (_state, delta)=>{
-            if (!textures.length || !planeRef.current) return;
-            const lerpFactor = Math.min(delta * 6, 1);
+            if (!videoRef.current || !videoRef.current.duration) return;
+            const lerpFactor = Math.min(delta * 10, 1);
             smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * lerpFactor;
-            const frameIndex = Math.floor(smoothScrollRef.current * (textures.length - 1));
             progressRef.current = smoothScrollRef.current;
-            const currentTexture = textures[frameIndex];
-            const mat = planeRef.current.material;
-            if (mat.map !== currentTexture) {
-                mat.map = currentTexture;
-                mat.needsUpdate = true;
+            const targetTime = smoothScrollRef.current * videoRef.current.duration;
+            // Only update if significantly different (reduces GPU work)
+            if (Math.abs(videoRef.current.currentTime - targetTime) > 0.05) {
+                videoRef.current.currentTime = targetTime;
             }
         }
     }["DashboardAnimation.useFrame"]);
+    // Cleanup
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "DashboardAnimation.useEffect": ()=>{
+            return ({
+                "DashboardAnimation.useEffect": ()=>{
+                    if (videoRef.current) {
+                        videoRef.current.pause();
+                        videoRef.current.src = "";
+                        videoRef.current.load();
+                    }
+                    if (videoTextureRef.current) {
+                        videoTextureRef.current.dispose();
+                    }
+                }
+            })["DashboardAnimation.useEffect"];
+        }
+    }["DashboardAnimation.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("group", {
         ref: uiGroup,
         children: [
@@ -582,7 +594,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 352,
+                                lineNumber: 348,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshStandardMaterial", {
@@ -591,13 +603,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 metalness: 0.1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 353,
+                                lineNumber: 349,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 351,
+                        lineNumber: 347,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -614,22 +626,20 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 362,
+                                lineNumber: 354,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                                color: "#000",
-                                transparent: true,
-                                opacity: 1
+                                color: "#000000"
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 363,
+                                lineNumber: 355,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 361,
+                        lineNumber: 353,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -647,139 +657,26 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 372,
+                                lineNumber: 360,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                                toneMapped: false,
-                                transparent: true,
-                                opacity: 1
+                                toneMapped: false
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 373,
+                                lineNumber: 361,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 371,
+                        lineNumber: 359,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 348,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("group", {
-                position: [
-                    0,
-                    0,
-                    0.05
-                ],
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
-                        position: [
-                            0,
-                            0,
-                            -0.015
-                        ],
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("boxGeometry", {
-                                args: [
-                                    0.50,
-                                    0.33,
-                                    0.03
-                                ]
-                            }, void 0, false, {
-                                fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 386,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshStandardMaterial", {
-                                color: "#111111",
-                                roughness: 0.6,
-                                metalness: 0.1
-                            }, void 0, false, {
-                                fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 387,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 385,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
-                        position: [
-                            0,
-                            0,
-                            0
-                        ],
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("planeGeometry", {
-                                args: [
-                                    0.47,
-                                    0.29
-                                ]
-                            }, void 0, false, {
-                                fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 396,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                                color: "#000",
-                                transparent: true,
-                                opacity: 1
-                            }, void 0, false, {
-                                fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 397,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 395,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
-                        ref: planeRef,
-                        position: [
-                            0,
-                            0,
-                            0.001
-                        ],
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("planeGeometry", {
-                                args: [
-                                    0.47,
-                                    0.29
-                                ]
-                            }, void 0, false, {
-                                fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 406,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                                toneMapped: false,
-                                transparent: true,
-                                opacity: 1
-                            }, void 0, false, {
-                                fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 408,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 405,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 382,
+                lineNumber: 345,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -787,17 +684,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 dashboardRef: dashboardRef
             }, void 0, false, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 417,
+                lineNumber: 365,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/DashboardAnimation.tsx",
-        lineNumber: 345,
+        lineNumber: 343,
         columnNumber: 5
     }, this);
 }
-_s(DashboardAnimation, "FdP2DoJGv5h4xUuXub/dy65Uljk=", false, function() {
+_s(DashboardAnimation, "2pWM8cKOzRLkv3CFhNWKCG1d1W4=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"]
     ];

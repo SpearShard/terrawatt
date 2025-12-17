@@ -5,6 +5,7 @@ import About from "../components/About";
 import Video from "@/components/video";
 import { applyWhiteRimShader } from "@/components/applyWhiteRimShader";
 import { applyBlueInteriorShader } from "@/components/applyBlueInteriorShader";
+import PhoneVideo from "@/components/video";
 
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
@@ -201,12 +202,12 @@ export default function Home() {
       }
     }
 
-    // if (action === "go_mart") {
-    //   const section = document.querySelector("#video-section");
-    //   if (section) {
-    //     section.scrollIntoView({ behavior: "smooth" });
-    //   }
-    // }
+    if (action === "go_mart") {
+      const section = document.querySelector("#video-section");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    }
 
   }, []);
 
@@ -286,9 +287,11 @@ export default function Home() {
             <Suspense fallback={null}>
               <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
             </Suspense>
+            
             <VideoTextureEffect progressRef={progressRef} />
             <OrbitControls enabled={false} />
           </Canvas>
+            
         </div>
 
       </div>

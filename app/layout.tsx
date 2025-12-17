@@ -1,8 +1,13 @@
+
+
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "../components/Footer";
 import Navbar from "@/components/Navbar";
+import PreloadImages from "@/components/PreloadImages";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        
+        <PreloadImages />
         {children}
         <Footer />
       </body>
@@ -41,11 +46,17 @@ export default function RootLayout({
 
 
 
+
+
+
+
+// "use client";
+
 // import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
+// import { useEffect } from "react";
 // import "./globals.css";
 // import Footer from "../components/Footer";
-// import LenisSmoothScroll from "../components/LenisSmoothScroll"; // 👈 import here
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -66,16 +77,23 @@ export default function RootLayout({
 
 // export default function RootLayout({
 //   children,
-// }: Readonly<{
+// }: {
 //   children: React.ReactNode;
-// }>) {
+// }) {
+
+//   // 🔥 THIS IS THE FIX
+//   useEffect(() => {
+//     if ("scrollRestoration" in window.history) {
+//       window.history.scrollRestoration = "manual";
+//     }
+//   }, []);
+
 //   return (
 //     <html lang="en">
 //       <body
 //         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 //         suppressHydrationWarning
 //       >
-//         <LenisSmoothScroll /> {/* ✅ enable Lenis globally */}
 //         {children}
 //         <Footer />
 //       </body>

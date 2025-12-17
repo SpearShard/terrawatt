@@ -2,199 +2,6 @@
 "[project]/components/Navbar.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { useState, useEffect } from "react";
-// import { usePathname } from "next/navigation";
-// import { motion } from "framer-motion";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// if (typeof window !== "undefined") {
-//   gsap.registerPlugin(ScrollTrigger);
-// }
-// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
-// export default function Navbar() {
-//   const [active, setActive] = useState("Pulse");
-//   const [isScrolled, setIsScrolled] = useState(false);
-//   const pathname = usePathname();
-//   // --- Scroll Detection ---
-//   useEffect(() => {
-//     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-//     window.addEventListener("scroll", handleScroll);
-//     return () => window.removeEventListener("scroll", handleScroll);
-//   }, []);
-//   // --- State Initialization & URL Sync (THE FIX) ---
-//   useEffect(() => {
-//     // 1. Check for stored intention after a redirect
-//     const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
-//     if (storedActive) {
-//       setActive(storedActive);
-//       // Clear the key immediately so the state doesn't persist on refresh
-//       localStorage.removeItem(ACTIVE_NAV_KEY); 
-//       return; // Stop here, use the stored state
-//     }
-//     // 2. Standard URL Sync (if no stored intention)
-//     if (pathname === "/") {
-//       // Only default to Pulse if no other special tab is currently active
-//       if (active !== "TeraaCharge" && active !== "TeraaMart") {
-//         setActive("Pulse");
-//       }
-//     } else if (pathname.includes("investors")) {
-//       setActive("Investors & Partners");
-//     } else if (pathname.includes("insights")) {
-//       setActive("Insights");
-//     } else if (pathname.includes("connect")) {
-//       setActive("Connect");
-//     }
-//   }, [pathname]); // active is no longer a dependency here for the initial load fix
-//   const navItems = [
-//     { name: "Pulse", href: "/" },
-//     { name: "TeraaCharge", href: "/teraa-charge" },
-//     { name: "TeraaMart", href: "/teraa-mart" },
-//     { name: "Investors & Partners", href: "/investors-and-partners" },
-//     { name: "Insights", href: "/insights" },
-//     { name: "Connect", href: "/connect", isButton: true },
-//   ];
-//   // Function to handle custom routing and setting state
-//   const handleCustomNavigation = (itemName: string) => {
-//     const isOnPulse = window.location.pathname === "/";
-//     if (itemName === "TeraaCharge") {
-//       setActive("TeraaCharge");
-//       if (!isOnPulse) {
-//         // Save the intention before redirecting
-//         localStorage.setItem(ACTIVE_NAV_KEY, "TeraaCharge");
-// localStorage.setItem("TW_action", "go_charge");
-// window.location.href = "/";
-//       } else {
-//         // Already on Pulse → trigger animation
-//         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-//       }
-//       return true; // Navigation handled
-//     }
-//     if (itemName === "TeraaMart") {
-//       setActive("TeraaMart");
-//       if (!isOnPulse) {
-//         // Save the intention before redirecting
-//         localStorage.setItem(ACTIVE_NAV_KEY, "TeraaMart");
-// localStorage.setItem("TW_action", "go_mart");
-// window.location.href = "/";
-//       } else {
-//         // Already on Pulse → trigger animation
-//         ScrollTrigger.getAll().forEach((t) => {
-//           if (t.vars.id === "carScroll") t.disable();
-//         });
-//         const section = document.querySelector("#video-section");
-//         if (section) {
-//           section.scrollIntoView({ behavior: "smooth" });
-//           setTimeout(() => {
-//             window.dispatchEvent(new CustomEvent("scrollToPhoneFrame598"));
-//           }, 1800);
-//         }
-//       }
-//       return true; // Navigation handled
-//     }
-//     return false; // Not a custom route
-//   };
-//   return (
-//     <nav
-//       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-//         isScrolled
-//           ? "bg-black/90 backdrop-blur-xl border-b border-white/10 shadow-lg"
-//           : "py-6 bg-transparent"
-//       }`}
-//     >
-//       <div className="justify-center w-fit mx-auto flex items-center px-10">
-//         <div className="flex items-center space-x-10">
-//           {/* Logo */}
-//           <Link
-//             href="/"
-//             className="flex items-center"
-//             onClick={() => setActive("Pulse")}
-//           >
-//             <Image
-//               src="/teraawatt.svg"
-//               alt="TeraaWatt Logo"
-//               width={125}
-//               height={45}
-//               className="object-contain"
-//             />
-//           </Link>
-//           {/* Nav Items Container */}
-//           <div className="hidden md:flex items-center space-x-8 text-white font-normal relative">
-//             {navItems.map((item) => (
-//               <Link
-//                 key={item.name}
-//                 href={item.href}
-//                 className="relative px-2 py-1 group"
-//               >
-//                 <span
-//                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${
-//                     active === item.name
-//                       ? "text-white"
-//                       : "text-neutral-400 group-hover:text-white"
-//                   }`}
-//                   onClick={(e) => {
-//                     const handled = handleCustomNavigation(item.name);
-//                     if (handled) {
-//                         e.preventDefault();
-//                     } else {
-//                         // Standard Navigation
-//                         setActive(item.name);
-//                     }
-//                   }}
-//                 >
-//                   {/* Render Text or Button Image */}
-//                   {!item.isButton ? (
-//                     item.name
-//                   ) : (
-//                     <Image
-//                       src="/Contact_page/connect.svg"
-//                       alt="Connect"
-//                       width={130}
-//                       height={48}
-//                       className={`transition duration-300 ${
-//                         active === "Connect"
-//                           ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
-//                           : "opacity-80 hover:opacity-100"
-//                       }`}
-//                     />
-//                   )}
-//                 </span>
-//                 {/* --- THE REFINED INDICATOR (Cyan/Glassy) --- */}
-//                 {!item.isButton && active === item.name && (
-//                   <motion.div
-//                     layoutId="navbar-indicator"
-//                     className="absolute inset-0 z-10 rounded-full"
-//                     style={{
-//                        // Subtle glassy background gradient
-//                        background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-//                        // Subtle cyan bottom glow for activation
-//                        boxShadow: '0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)',
-//                     }}
-//                     transition={{
-//                       type: "spring",
-//                       bounce: 0.2,
-//                       stiffness: 100,
-//                       damping: 10,
-//                     }}
-//                   />
-//                 )}
-//                  {/* Hover Glow Effect */}
-//                  {!item.isButton && (
-//                     <div 
-//                         className="absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 
-//                                    group-hover:opacity-100 group-hover:bg-white/5" 
-//                     />
-//                  )}
-//               </Link>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// }
 __turbopack_context__.s([
     "default",
     ()=>Navbar
@@ -273,11 +80,11 @@ function Navbar() {
         },
         {
             name: "TeraaCharge",
-            href: "/teraa-charge"
+            href: "/"
         },
         {
             name: "TeraaMart",
-            href: "/teraa-mart"
+            href: "/"
         },
         {
             name: "Investors & Partners",
@@ -312,12 +119,14 @@ function Navbar() {
         if (itemName === "TeraaMart") {
             setActive("TeraaMart");
             if (!isOnPulse) {
+                localStorage.setItem(ACTIVE_NAV_KEY, "TeraaMart");
                 localStorage.setItem("TW_action", "go_mart");
                 window.location.href = "/";
             } else {
                 localStorage.setItem("TW_action", "go_mart");
                 window.dispatchEvent(new Event("triggerVideoJump"));
             }
+            // window.location.href = "/teraamart";
             return true;
         }
         return false; // Not a custom route
@@ -341,12 +150,12 @@ function Navbar() {
                             className: "object-contain"
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 364,
+                            lineNumber: 120,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 359,
+                        lineNumber: 115,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -374,12 +183,12 @@ function Navbar() {
                                             className: `transition duration-300 ${active === "Connect" ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : "opacity-80 hover:opacity-100"}`
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 401,
+                                            lineNumber: 157,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 381,
+                                        lineNumber: 137,
                                         columnNumber: 17
                                     }, this),
                                     !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -399,41 +208,41 @@ function Navbar() {
                                         }
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 416,
+                                        lineNumber: 172,
                                         columnNumber: 19
                                     }, this),
                                     !item.isButton && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300    group-hover:opacity-100 group-hover:bg-white/5"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 435,
+                                        lineNumber: 191,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, item.name, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 376,
+                                lineNumber: 132,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 374,
+                        lineNumber: 130,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 357,
+                lineNumber: 113,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/Navbar.tsx",
-            lineNumber: 356,
+            lineNumber: 112,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 350,
+        lineNumber: 106,
         columnNumber: 5
     }, this);
 }
@@ -455,90 +264,108 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 // "use client";
 // import { useEffect, useRef } from "react";
 // import Navbar from "@/components/Navbar";
-// // === CONFIGURE YOUR SEQUENCE HERE ===
-// const FOLDER = "hs4kf";        // Change to your folder name
-// const FRAME_COUNT = 239;       // Total number of frames
-// const FPS = 30;                // Playback speed (30 or 60 recommended)
-// // ====================================
-// export default function SimpleVideo() {
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// gsap.registerPlugin(ScrollTrigger);
+// type FrameFolder = "investpartner";
+// const FRAME_SETS: Record<FrameFolder, number> = {
+//   investpartner: 776,
+// };
+// const sections: { id: FrameFolder; fade: "top" | "bottom" | "both" }[] = [
+//   { id: "investpartner", fade: "bottom" }
+// ];
+// function FrameScroller({
+//   folder,
+//   frameCount,
+//   fadeType,
+// }: {
+//   folder: FrameFolder;
+//   frameCount: number;
+//   fadeType: "top" | "bottom" | "both";
+// }) {
+//   const containerRef = useRef<HTMLDivElement>(null);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   const frameIndexRef = useRef(0);
 //   const imagesRef = useRef<HTMLImageElement[]>([]);
-//   const loadedCountRef = useRef(0);
-//   const isPlayingRef = useRef(false);
+//   const loadedRef = useRef(false);
+//   const frameRef = useRef(0);
+//   // Load frames
 //   useEffect(() => {
-//     // Preload all frames
-//     imagesRef.current = new Array(FRAME_COUNT);
-//     for (let i = 0; i < FRAME_COUNT; i++) {
+//     let loaded = 0;
+//     for (let i = 1; i <= frameCount; i++) {
 //       const img = new Image();
-//       const frameNumber = String(i + 1).padStart(5, "0");
-//       img.src = `https://ik.imagekit.io/m064cyjlx/${FOLDER}/frame_${frameNumber}.jpg`;
+//       img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(
+//         i
+//       ).padStart(5, "0")}.jpg`;
 //       img.onload = () => {
-//         imagesRef.current[i] = img;
-//         loadedCountRef.current++;
-//         // Start playing as soon as ALL frames are loaded
-//         if (loadedCountRef.current === FRAME_COUNT && !isPlayingRef.current) {
-//           isPlayingRef.current = true;
-//           startAnimation();
+//         loaded++;
+//         if (loaded === frameCount) {
+//           loadedRef.current = true;
 //         }
 //       };
-//       img.onerror = () => {
-//         console.error(`Failed to load frame_${frameNumber}.jpg`);
-//       };
+//       imagesRef.current.push(img);
 //     }
-//     // Animation loop
-//     let animationId: number;
-//     let lastTime = 0;
-//     const frameDuration = 1000 / FPS;
-//     const animate = (currentTime: number) => {
-//       if (!lastTime) lastTime = currentTime;
-//       const delta = currentTime - lastTime;
-//       if (delta >= frameDuration) {
-//         // Advance frame
-//         frameIndexRef.current = (frameIndexRef.current + 1) % FRAME_COUNT;
-//         lastTime = currentTime - (delta % frameDuration);
-//         // Draw current frame
-//         const canvas = canvasRef.current;
-//         const ctx = canvas?.getContext("2d");
-//         if (ctx && canvas) {
-//           const img = imagesRef.current[frameIndexRef.current];
-//           if (img?.complete) {
-//             ctx.clearRect(0, 0, canvas.width, canvas.height);
-//             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-//           }
-//         }
-//       }
-//       animationId = requestAnimationFrame(animate);
+//   }, [folder, frameCount]);
+//   // Scroll → frame animation WITH PINNING
+//   useEffect(() => {
+//     const section = containerRef.current;
+//     const canvas = canvasRef.current;
+//     if (!section || !canvas) return;
+//     const ctx = canvas.getContext("2d")!;
+//     canvas.width = 1080;
+//     canvas.height = 1920;
+//     const render = () => {
+//       const index = Math.floor(frameRef.current);
+//       const img = imagesRef.current[index];
+//       if (!img) return;
+//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+//       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 //     };
-//     const startAnimation = () => {
-//       animationId = requestAnimationFrame(animate);
-//     };
-//     // Start immediately if images are already cached (e.g., on reload)
-//     if (loadedCountRef.current === FRAME_COUNT) {
-//       isPlayingRef.current = true;
-//       startAnimation();
-//     }
-//     return () => {
-//       if (animationId) cancelAnimationFrame(animationId);
-//     };
-//   }, []);
+//     const ST = ScrollTrigger.create({
+//       trigger: section,
+//       start: "top top",
+//       end: `+=${frameCount * 6}px`, // 👈 stay longer the more frames there are
+//       scrub: 1,
+//       pin: true,
+//       onUpdate: (self) => {
+//         if (!loadedRef.current) return;
+//         const progress = self.progress; // 0 → 1
+//         frameRef.current = progress * (frameCount - 1);
+//         render();
+//       },
+//     });
+//     return () => ST.kill();
+//   }, [frameCount]);
+//   // Fade mask
+//   return (
+//     <div ref={containerRef} className="w-full">
+//       <canvas
+//         ref={canvasRef}
+//         className={`w-full h-[100vh] block `}
+//       />
+//     </div>
+//   );
+// }
+// export default function SimpleVideo() {
 //   return (
 //     <>
 //       <Navbar />
-//       <div className="fixed inset-0 bg-[#04111E] overflow-hidden">
-//         <canvas
-//           ref={canvasRef}
-//           width={1080}
-//           height={1920}
-//           className="w-full h-full object-cover"
-//         />
+//       <div className="w-full  flex flex-col overflow-hidden bg-[#04111E]">
+//         {sections.map((s) => (
+//           <div key={s.id} className="w-full ">
+//             <FrameScroller
+//               folder={s.id}
+//               frameCount={FRAME_SETS[s.id]}
+//               fadeType={s.fade}
+//             />
+//           </div>
+//         ))}
 //       </div>
 //     </>
 //   );
 // }
 __turbopack_context__.s([
     "default",
-    ()=>SimpleVideo
+    ()=>InvestorsPage
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
@@ -546,7 +373,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx_
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/gsap/index.js [app-client] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/gsap/ScrollTrigger.js [app-client] (ecmascript)");
 ;
-var _s = __turbopack_context__.k.signature();
+var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
@@ -562,133 +389,207 @@ const sections = [
         fade: "bottom"
     }
 ];
-function FrameScroller({ folder, frameCount, fadeType }) {
+function FrameScroller({ folder, frameCount }) {
     _s();
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const imagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])([]);
     const loadedRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
     const frameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
-    // Load frames
+    // Canvas render function
+    const render = (forcedFrame)=>{
+        if (!canvasRef.current) return;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const index = forcedFrame ?? Math.floor(frameRef.current);
+        const img = imagesRef.current[index];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (img && img.complete) {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        } else {
+            // Fallback background while loading
+            ctx.fillStyle = "#04111E";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    };
+    // Load all frames
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "FrameScroller.useEffect": ()=>{
-            let loaded = 0;
+            const images = [];
+            let loadedCount = 0;
             for(let i = 1; i <= frameCount; i++){
                 const img = new Image();
                 img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+                // img.src = `/frames/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
                 img.onload = ({
                     "FrameScroller.useEffect": ()=>{
-                        loaded++;
-                        if (loaded === frameCount) {
+                        loadedCount++;
+                        images[i - 1] = img; // Store in correct order
+                        if (loadedCount === frameCount) {
+                            imagesRef.current = images;
                             loadedRef.current = true;
+                            render(0); // Force first frame when fully loaded
                         }
                     }
                 })["FrameScroller.useEffect"];
-                imagesRef.current.push(img);
+                img.onerror = ({
+                    "FrameScroller.useEffect": ()=>{
+                        console.error(`Failed to load frame ${i}`);
+                    }
+                })["FrameScroller.useEffect"];
             }
+            // Try to render frame 0 immediately (in case cached)
+            render(0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         }
     }["FrameScroller.useEffect"], [
         folder,
         frameCount
     ]);
-    // Scroll → frame animation WITH PINNING
+    // ScrollTrigger setup
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "FrameScroller.useEffect": ()=>{
-            const section = containerRef.current;
+            if (!containerRef.current || !canvasRef.current) return;
             const canvas = canvasRef.current;
-            if (!section || !canvas) return;
             const ctx = canvas.getContext("2d");
             canvas.width = 1080;
             canvas.height = 1920;
-            const render = {
-                "FrameScroller.useEffect.render": ()=>{
-                    const index = Math.floor(frameRef.current);
-                    const img = imagesRef.current[index];
-                    if (!img) return;
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            // Kill any existing ScrollTriggers to prevent duplicates/ghosts
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].getAll().forEach({
+                "FrameScroller.useEffect": (st)=>st.kill()
+            }["FrameScroller.useEffect"]);
+            // Initial render
+            render(0);
+            // Delay trigger creation to let layout & images settle
+            const initTimeout = setTimeout({
+                "FrameScroller.useEffect.initTimeout": ()=>{
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+                    const st = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
+                        trigger: containerRef.current,
+                        start: "top top",
+                        end: `+=${frameCount * 6}px`,
+                        scrub: 1,
+                        pin: true,
+                        anticipatePin: 1,
+                        invalidateOnRefresh: true,
+                        onUpdate: {
+                            "FrameScroller.useEffect.initTimeout.st": (self)=>{
+                                if (!loadedRef.current) {
+                                    frameRef.current = 0;
+                                    render(0);
+                                    return;
+                                }
+                                frameRef.current = self.progress * (frameCount - 1);
+                                render();
+                            }
+                        }["FrameScroller.useEffect.initTimeout.st"],
+                        onRefresh: {
+                            "FrameScroller.useEffect.initTimeout.st": ()=>render()
+                        }["FrameScroller.useEffect.initTimeout.st"]
+                    });
+                    // Cleanup on unmount
+                    return ({
+                        "FrameScroller.useEffect.initTimeout": ()=>{
+                            st.kill();
+                        }
+                    })["FrameScroller.useEffect.initTimeout"];
                 }
-            }["FrameScroller.useEffect.render"];
-            const ST = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
-                trigger: section,
-                start: "top top",
-                end: `+=${frameCount * 6}px`,
-                scrub: 1,
-                pin: true,
-                onUpdate: {
-                    "FrameScroller.useEffect.ST": (self)=>{
-                        if (!loadedRef.current) return;
-                        const progress = self.progress; // 0 → 1
-                        frameRef.current = progress * (frameCount - 1);
-                        render();
-                    }
-                }["FrameScroller.useEffect.ST"]
-            });
+            }["FrameScroller.useEffect.initTimeout"], 100); // Small delay helps with Next.js navigation quirks
             return ({
-                "FrameScroller.useEffect": ()=>ST.kill()
+                "FrameScroller.useEffect": ()=>{
+                    clearTimeout(initTimeout);
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].getAll().forEach({
+                        "FrameScroller.useEffect": (st)=>st.kill()
+                    }["FrameScroller.useEffect"]);
+                }
             })["FrameScroller.useEffect"];
         }
     }["FrameScroller.useEffect"], [
         frameCount
     ]);
-    // Fade mask
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         ref: containerRef,
-        className: "w-full",
+        className: "w-full relative",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
             ref: canvasRef,
-            className: `w-full h-[100vh] block `
+            className: "w-full h-screen block sticky top-0"
         }, void 0, false, {
             fileName: "[project]/app/investors-and-partners/page.tsx",
-            lineNumber: 224,
+            lineNumber: 277,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/investors-and-partners/page.tsx",
-        lineNumber: 223,
+        lineNumber: 276,
         columnNumber: 5
     }, this);
 }
 _s(FrameScroller, "m/BEgA2TqYXKfVNI8lmsgpUJxms=");
 _c = FrameScroller;
-function SimpleVideo() {
+function InvestorsPage() {
+    _s1();
+    // Handle scroll restoration properly for client-side navigation
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "InvestorsPage.useEffect": ()=>{
+            // Allow browser to restore scroll on back/forward, but force top on direct visit
+            if ("scrollRestoration" in history) {
+                history.scrollRestoration = "auto";
+            }
+            // Always start at top when entering this page
+            window.scrollTo(0, 0);
+            // Refresh ScrollTrigger if page becomes visible again (e.g. tab switch)
+            const handleVisibility = {
+                "InvestorsPage.useEffect.handleVisibility": ()=>{
+                    if (!document.hidden) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+                    }
+                }
+            }["InvestorsPage.useEffect.handleVisibility"];
+            document.addEventListener("visibilitychange", handleVisibility);
+            return ({
+                "InvestorsPage.useEffect": ()=>{
+                    document.removeEventListener("visibilitychange", handleVisibility);
+                }
+            })["InvestorsPage.useEffect"];
+        }
+    }["InvestorsPage.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 236,
+                lineNumber: 311,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-full  flex flex-col overflow-hidden bg-[#04111E]",
+                className: "w-full flex flex-col overflow-hidden bg-[#04111E]",
                 children: sections.map((s)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-full ",
+                        className: "w-full",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FrameScroller, {
                             folder: s.id,
-                            frameCount: FRAME_SETS[s.id],
-                            fadeType: s.fade
+                            frameCount: FRAME_SETS[s.id]
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 241,
+                            lineNumber: 316,
                             columnNumber: 13
                         }, this)
                     }, s.id, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 240,
+                        lineNumber: 315,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 238,
+                lineNumber: 313,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
-_c1 = SimpleVideo;
+_s1(InvestorsPage, "OD7bBpZva5O2jO+Puf00hKivP7c=");
+_c1 = InvestorsPage;
 var _c, _c1;
 __turbopack_context__.k.register(_c, "FrameScroller");
-__turbopack_context__.k.register(_c1, "SimpleVideo");
+__turbopack_context__.k.register(_c1, "InvestorsPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

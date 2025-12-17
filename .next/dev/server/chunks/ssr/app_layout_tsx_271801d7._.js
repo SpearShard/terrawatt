@@ -1,10 +1,13 @@
 module.exports = [
 "[project]/app/layout.tsx [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
+// "use client"
 // import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 // import "./globals.css";
 // import Footer from "../components/Footer";
+// import Navbar from "@/components/Navbar";
+// import { useEffect } from "react";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -35,11 +38,12 @@ module.exports = [
 //     </html>
 //   );
 // }
+// "use client";
 // import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
+// import { useEffect } from "react";
 // import "./globals.css";
 // import Footer from "../components/Footer";
-// import LenisSmoothScroll from "../components/LenisSmoothScroll"; // 👈 import here
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -56,16 +60,21 @@ module.exports = [
 // };
 // export default function RootLayout({
 //   children,
-// }: Readonly<{
+// }: {
 //   children: React.ReactNode;
-// }>) {
+// }) {
+//   // 🔥 THIS IS THE FIX
+//   useEffect(() => {
+//     if ("scrollRestoration" in window.history) {
+//       window.history.scrollRestoration = "manual";
+//     }
+//   }, []);
 //   return (
 //     <html lang="en">
 //       <body
 //         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 //         suppressHydrationWarning
 //       >
-//         <LenisSmoothScroll /> {/* ✅ enable Lenis globally */}
 //         {children}
 //         <Footer />
 //       </body>
