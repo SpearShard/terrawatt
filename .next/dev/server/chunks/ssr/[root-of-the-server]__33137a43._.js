@@ -1385,7 +1385,13 @@ function Video() {
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.src = url;
-            img.onload = img.onerror = ()=>{
+            img.onload = ()=>{
+                img.loaded = true;
+                loadedCount++;
+                if (loadedCount >= total) setLoaded(true);
+            };
+            img.onerror = ()=>{
+                img.loaded = false;
                 loadedCount++;
                 if (loadedCount >= total) setLoaded(true);
             };
@@ -1435,13 +1441,13 @@ function Video() {
         const render = ()=>{
             const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
             const fgImg = fgImagesRef.current[fgIndex];
-            if (fgImg?.complete) {
+            if (fgImg?.loaded) {
                 fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
                 fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
             }
             const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
             const bgImg = bgImagesRef.current[bgIndex];
-            if (bgImg?.complete) {
+            if (bgImg?.loaded) {
                 bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
                 bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
             }
@@ -1527,7 +1533,7 @@ function Video() {
                     className: "absolute inset-0 w-full h-full object-fit"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 405,
+                    lineNumber: 411,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
@@ -1535,7 +1541,7 @@ function Video() {
                     className: "relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 410,
+                    lineNumber: 416,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1555,28 +1561,28 @@ function Video() {
                             progressRef: scrollProgressRef
                         }, void 0, false, {
                             fileName: "[project]/components/video.tsx",
-                            lineNumber: 417,
+                            lineNumber: 423,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/video.tsx",
-                        lineNumber: 416,
+                        lineNumber: 422,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 415,
+                    lineNumber: 421,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/video.tsx",
-            lineNumber: 404,
+            lineNumber: 410,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/video.tsx",
-        lineNumber: 403,
+        lineNumber: 409,
         columnNumber: 5
     }, this);
 }

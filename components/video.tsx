@@ -251,7 +251,13 @@ export default function Video() {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.src = url;
-      img.onload = img.onerror = () => {
+      img.onload = () => {
+        (img as any).loaded = true;
+        loadedCount++;
+        if (loadedCount >= total) setLoaded(true);
+      };
+      img.onerror = () => {
+        (img as any).loaded = false;
         loadedCount++;
         if (loadedCount >= total) setLoaded(true);
       };
@@ -310,14 +316,14 @@ export default function Video() {
     const render = () => {
       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
       const fgImg = fgImagesRef.current[fgIndex];
-      if (fgImg?.complete) {
+      if ((fgImg as any)?.loaded) {
         fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
         fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
       }
 
       const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
       const bgImg = bgImagesRef.current[bgIndex];
-      if (bgImg?.complete) {
+      if ((bgImg as any)?.loaded) {
         bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
         bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
       }
