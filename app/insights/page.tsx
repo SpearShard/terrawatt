@@ -230,15 +230,15 @@ export default function InsightsPage() {
       {/* FULL BACKGROUND */}
       <div className="relative">
         <img
-          src="/insightbg.jpg"
+          src="/insights.jpeg"
           alt="Insights Background"
-          className="w-full object-cover object-top"
-          style={{ height: "480vh" }}
+          className="w-full object-contain object-top"
+          style={{ height: "400vh", width : "100vw" }}
         />
 
         {/* CONTENT */}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent  pb-24 px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className=" mx-auto">
 
             {/* TITLE */}
             <div className="text-center mb-20">

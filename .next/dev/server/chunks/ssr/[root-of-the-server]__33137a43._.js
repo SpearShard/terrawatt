@@ -1201,6 +1201,8 @@ function VideoCoin({ progressRef }) {
 //   const fgFrameRef = useRef(0);
 //   const bgFrameRef = useRef(0);
 //   const scrollProgressRef = useRef(0);
+//   // Critical: store the ScrollTrigger instance
+//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 //   const [loaded, setLoaded] = useState(false);
 //   const fgImagesRef = useRef<HTMLImageElement[]>([]);
 //   const bgImagesRef = useRef<HTMLImageElement[]>([]);
@@ -1209,34 +1211,62 @@ function VideoCoin({ progressRef }) {
 //   const START_BG_AT = 130;
 //   const CANVAS_W = 1080;
 //   const CANVAS_H = 1920;
-//   // Load all images
+//   const targetProgress = 589 / (FG_FRAMES - 1);
+//   // Load all images with batching to prevent network congestion
 //   useEffect(() => {
 //     let loadedCount = 0;
 //     const total = FG_FRAMES + BG_FRAMES;
+//     const batchSize = 50; // Load 50 images at a time
+//     const delayBetweenBatches = 100; // ms
 //     const loadImage = (url: string, arr: HTMLImageElement[]) => {
 //       const img = new Image();
 //       img.crossOrigin = "anonymous";
 //       img.src = url;
-//       img.onload = img.onerror = () => {
+//       img.onload = () => {
+//         (img as any).loaded = true;
+//         loadedCount++;
+//         if (loadedCount >= total) setLoaded(true);
+//       };
+//       img.onerror = () => {
+//         (img as any).loaded = false;
 //         loadedCount++;
 //         if (loadedCount >= total) setLoaded(true);
 //       };
 //       arr.push(img);
 //     };
+//     const loadBatch = (start: number, end: number, urls: string[], arr: HTMLImageElement[]) => {
+//       for (let i = start; i < Math.min(end, urls.length); i++) {
+//         loadImage(urls[i], arr);
+//       }
+//     };
+//     const fgUrls: string[] = [];
 //     for (let i = 1; i <= FG_FRAMES; i++) {
-//       loadImage(
-//         `https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`,
-//         fgImagesRef.current
-//       );
+//       fgUrls.push(`https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`);
 //     }
+//     const bgUrls: string[] = [];
 //     for (let i = 1; i <= BG_FRAMES; i++) {
-//       loadImage(
-//         `https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`,
-//         bgImagesRef.current
-//       );
+//       bgUrls.push(`https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
 //     }
+//     let fgBatchIndex = 0;
+//     let bgBatchIndex = 0;
+//     const loadNextBatch = () => {
+//       if (fgBatchIndex < fgUrls.length) {
+//         const end = Math.min(fgBatchIndex + batchSize, fgUrls.length);
+//         loadBatch(fgBatchIndex, end, fgUrls, fgImagesRef.current);
+//         fgBatchIndex = end;
+//       }
+//       if (bgBatchIndex < bgUrls.length) {
+//         const end = Math.min(bgBatchIndex + batchSize, bgUrls.length);
+//         loadBatch(bgBatchIndex, end, bgUrls, bgImagesRef.current);
+//         bgBatchIndex = end;
+//       }
+//       if (fgBatchIndex < fgUrls.length || bgBatchIndex < bgUrls.length) {
+//         setTimeout(loadNextBatch, delayBetweenBatches);
+//       }
+//     };
+//     loadNextBatch();
 //   }, []);
-//   // MAIN ANIMATION — FIXED & PERFECT
+//   // Main scroll-triggered animation
 //   useEffect(() => {
 //     if (!loaded || !containerRef.current || !fgCanvasRef.current || !bgCanvasRef.current) return;
 //     const fgCanvas = fgCanvasRef.current;
@@ -1246,33 +1276,33 @@ function VideoCoin({ progressRef }) {
 //     fgCanvas.width = bgCanvas.width = CANVAS_W;
 //     fgCanvas.height = bgCanvas.height = CANVAS_H;
 //     const render = () => {
-//       // FOREGROUND (phone)
-//       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001)); // +0.0001 forces update
+//       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
 //       const fgImg = fgImagesRef.current[fgIndex];
-//       if (fgImg?.complete) {
+//       if ((fgImg as any)?.loaded) {
 //         fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 //         fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
 //       }
-//       // BACKGROUND (tickets)
 //       const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
 //       const bgImg = bgImagesRef.current[bgIndex];
-//       if (bgImg?.complete) {
+//       if ((bgImg as any)?.loaded) {
 //         bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 //         bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
 //       }
 //     };
-//     // THE ONLY SCROLLTRIGGER YOU NEED
-//     ScrollTrigger.create({
+//     // Kill any old trigger
+//     if (scrollTriggerRef.current) {
+//       scrollTriggerRef.current.kill();
+//     }
+//     const st = ScrollTrigger.create({
 //       trigger: containerRef.current,
 //       start: "top top",
-//       end: "+=800%",
+//       end: "+=400%",
 //       scrub: 1,
 //       pin: true,
 //       anticipatePin: 1,
 //       onUpdate: (self) => {
 //         const progress = self.progress;
-//         // THIS LINE WAS BROKEN — NOW FIXED
-//         fgFrameRef.current = progress * (FG_FRAMES - 1);  // ← This was the bug!
+//         fgFrameRef.current = progress * (FG_FRAMES - 1);
 //         if (fgFrameRef.current >= START_BG_AT) {
 //           const bgProgress = (fgFrameRef.current - START_BG_AT) / (FG_FRAMES - START_BG_AT);
 //           bgFrameRef.current = bgProgress * (BG_FRAMES - 1);
@@ -1280,42 +1310,49 @@ function VideoCoin({ progressRef }) {
 //           bgFrameRef.current = 0;
 //         }
 //         scrollProgressRef.current = progress;
-//         render(); // ← Call render every update
+//         render();
 //       },
 //     });
+//     scrollTriggerRef.current = st;
 //     render();
 //     return () => {
-//       ScrollTrigger.getAll().forEach((t) => t.kill());
+//       st.kill();
+//       scrollTriggerRef.current = null;
 //     };
 //   }, [loaded]);
-// useEffect(() => {
-//   if (!loaded) return;
-//   const jumpToTerramart = () => {
-//     const targetFrame = 589;
-//     const progress = targetFrame / (FG_FRAMES - 1);
-//     const st = ScrollTrigger.getAll().find(
-//       (t) => t.trigger === containerRef.current
-//     );
-//     if (!st) return;
-//     const scrollStart = st.start as number;
-//     const scrollEnd = st.end as number;
-//     window.scrollTo({
-//       top: scrollStart + progress * (scrollEnd - scrollStart),
-//       behavior: "smooth",
-//     });
-//   };
-//   // 🔹 Case 1: Coming from another page (Connect / Investors / Insights)
-//   const action = localStorage.getItem("TW_action");
-//   if (action === "go_mart") {
-//     requestAnimationFrame(jumpToTerramart);
-//     localStorage.removeItem("TW_action");
-//   }
-//   // 🔹 Case 2: Already on Pulse / TerraCharge
-//   window.addEventListener("triggerVideoJump", jumpToTerramart);
-//   return () => {
-//     window.removeEventListener("triggerVideoJump", jumpToTerramart);
-//   };
-// }, [loaded]);
+//   // Handle navigation from other pages
+//   useEffect(() => {
+//     const action = localStorage.getItem("TW_action");
+//     if (action === "go_mart") {
+//       localStorage.removeItem("TW_action");
+//       const waitAndJump = () => {
+//         if (scrollTriggerRef.current) {
+//           ScrollTrigger.refresh();
+//           const st = scrollTriggerRef.current;
+//           const scrollPos = st.start + targetProgress * (st.end - st.start);
+//           st.scroll(scrollPos);
+//         } else {
+//           requestAnimationFrame(waitAndJump);
+//         }
+//       };
+//       waitAndJump();
+//     }
+//   }, []);
+//     useEffect(() => {
+//     if (!loaded) return;
+//     const handleTrigger = () => {
+//       window.scrollTo(0, 0);
+//       const st = scrollTriggerRef.current;
+//       if (st) {
+//         const scrollPos = st.start + targetProgress * (st.end - st.start);
+//           window.scrollTo({ top: scrollPos });
+//       }
+//     };
+//     window.addEventListener("triggerVideoJump", handleTrigger);
+//     return () => {
+//       window.removeEventListener("triggerVideoJump", handleTrigger);
+//     };
+//   }, [loaded]);
 //   return (
 //     <div ref={containerRef} className="relative w-full bg-black">
 //       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
@@ -1328,10 +1365,7 @@ function VideoCoin({ progressRef }) {
 //           className="relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
 //         />
 //         <div className="absolute inset-0 z-20 pointer-events-none">
-//           <Canvas camera={{ position: [0, 0, 2.5], near:0.001, far:1000, fov: 50 }}>
-//             {/* <ambientLight intensity={3} />
-//             <directionalLight position={[5, 5, 5]} intensity={4} />
-//             <pointLight position={[0, 1, 3]} intensity={3} /> */}
+//           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
 //             <ScrollingCoin progressRef={scrollProgressRef} />
 //           </Canvas>
 //         </div>
@@ -1369,12 +1403,12 @@ function Video() {
     const [loaded, setLoaded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const fgImagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
     const bgImagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
-    const FG_FRAMES = 810;
+    const FG_FRAMES = 405;
     const BG_FRAMES = 191;
     const START_BG_AT = 130;
     const CANVAS_W = 1080;
     const CANVAS_H = 1920;
-    const targetProgress = 589 / (FG_FRAMES - 1);
+    const targetProgress = 289 / (FG_FRAMES - 1);
     // Load all images with batching to prevent network congestion
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         let loadedCount = 0;
@@ -1404,7 +1438,7 @@ function Video() {
         };
         const fgUrls = [];
         for(let i = 1; i <= FG_FRAMES; i++){
-            fgUrls.push(`https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`);
+            fgUrls.push(`/iphoneframes/frame_${String(i).padStart(5, "0")}.webp`);
         }
         const bgUrls = [];
         for(let i = 1; i <= BG_FRAMES; i++){
@@ -1533,7 +1567,7 @@ function Video() {
                     className: "absolute inset-0 w-full h-full object-fit"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 411,
+                    lineNumber: 449,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
@@ -1541,7 +1575,7 @@ function Video() {
                     className: "relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 416,
+                    lineNumber: 454,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1561,28 +1595,28 @@ function Video() {
                             progressRef: scrollProgressRef
                         }, void 0, false, {
                             fileName: "[project]/components/video.tsx",
-                            lineNumber: 423,
+                            lineNumber: 461,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/video.tsx",
-                        lineNumber: 422,
+                        lineNumber: 460,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 421,
+                    lineNumber: 459,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/video.tsx",
-            lineNumber: 410,
+            lineNumber: 448,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/video.tsx",
-        lineNumber: 409,
+        lineNumber: 447,
         columnNumber: 5
     }, this);
 }

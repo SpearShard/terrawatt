@@ -17,6 +17,9 @@
 //   const bgFrameRef = useRef(0);
 //   const scrollProgressRef = useRef(0);
 
+//   // Critical: store the ScrollTrigger instance
+//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+
 //   const [loaded, setLoaded] = useState(false);
 
 //   const fgImagesRef = useRef<HTMLImageElement[]>([]);
@@ -28,37 +31,70 @@
 //   const CANVAS_W = 1080;
 //   const CANVAS_H = 1920;
 
-//   // Load all images
+//   const targetProgress = 589 / (FG_FRAMES - 1);
+
+//   // Load all images with batching to prevent network congestion
 //   useEffect(() => {
 //     let loadedCount = 0;
 //     const total = FG_FRAMES + BG_FRAMES;
+//     const batchSize = 50; // Load 50 images at a time
+//     const delayBetweenBatches = 100; // ms
 
 //     const loadImage = (url: string, arr: HTMLImageElement[]) => {
 //       const img = new Image();
 //       img.crossOrigin = "anonymous";
 //       img.src = url;
-//       img.onload = img.onerror = () => {
+//       img.onload = () => {
+//         (img as any).loaded = true;
+//         loadedCount++;
+//         if (loadedCount >= total) setLoaded(true);
+//       };
+//       img.onerror = () => {
+//         (img as any).loaded = false;
 //         loadedCount++;
 //         if (loadedCount >= total) setLoaded(true);
 //       };
 //       arr.push(img);
 //     };
 
+//     const loadBatch = (start: number, end: number, urls: string[], arr: HTMLImageElement[]) => {
+//       for (let i = start; i < Math.min(end, urls.length); i++) {
+//         loadImage(urls[i], arr);
+//       }
+//     };
+
+//     const fgUrls: string[] = [];
 //     for (let i = 1; i <= FG_FRAMES; i++) {
-//       loadImage(
-//         `https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`,
-//         fgImagesRef.current
-//       );
+//       fgUrls.push(`https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`);
 //     }
+//     const bgUrls: string[] = [];
 //     for (let i = 1; i <= BG_FRAMES; i++) {
-//       loadImage(
-//         `https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`,
-//         bgImagesRef.current
-//       );
+//       bgUrls.push(`https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
 //     }
+
+//     let fgBatchIndex = 0;
+//     let bgBatchIndex = 0;
+
+//     const loadNextBatch = () => {
+//       if (fgBatchIndex < fgUrls.length) {
+//         const end = Math.min(fgBatchIndex + batchSize, fgUrls.length);
+//         loadBatch(fgBatchIndex, end, fgUrls, fgImagesRef.current);
+//         fgBatchIndex = end;
+//       }
+//       if (bgBatchIndex < bgUrls.length) {
+//         const end = Math.min(bgBatchIndex + batchSize, bgUrls.length);
+//         loadBatch(bgBatchIndex, end, bgUrls, bgImagesRef.current);
+//         bgBatchIndex = end;
+//       }
+//       if (fgBatchIndex < fgUrls.length || bgBatchIndex < bgUrls.length) {
+//         setTimeout(loadNextBatch, delayBetweenBatches);
+//       }
+//     };
+
+//     loadNextBatch();
 //   }, []);
 
-//   // MAIN ANIMATION — FIXED & PERFECT
+//   // Main scroll-triggered animation
 //   useEffect(() => {
 //     if (!loaded || !containerRef.current || !fgCanvasRef.current || !bgCanvasRef.current) return;
 
@@ -71,36 +107,37 @@
 //     fgCanvas.height = bgCanvas.height = CANVAS_H;
 
 //     const render = () => {
-//       // FOREGROUND (phone)
-//       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001)); // +0.0001 forces update
+//       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
 //       const fgImg = fgImagesRef.current[fgIndex];
-//       if (fgImg?.complete) {
+//       if ((fgImg as any)?.loaded) {
 //         fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 //         fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
 //       }
 
-//       // BACKGROUND (tickets)
 //       const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
 //       const bgImg = bgImagesRef.current[bgIndex];
-//       if (bgImg?.complete) {
+//       if ((bgImg as any)?.loaded) {
 //         bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 //         bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
 //       }
 //     };
 
-//     // THE ONLY SCROLLTRIGGER YOU NEED
-//     ScrollTrigger.create({
+//     // Kill any old trigger
+//     if (scrollTriggerRef.current) {
+//       scrollTriggerRef.current.kill();
+//     }
+
+//     const st = ScrollTrigger.create({
 //       trigger: containerRef.current,
 //       start: "top top",
-//       end: "+=800%",
+//       end: "+=400%",
 //       scrub: 1,
 //       pin: true,
 //       anticipatePin: 1,
 //       onUpdate: (self) => {
 //         const progress = self.progress;
 
-//         // THIS LINE WAS BROKEN — NOW FIXED
-//         fgFrameRef.current = progress * (FG_FRAMES - 1);  // ← This was the bug!
+//         fgFrameRef.current = progress * (FG_FRAMES - 1);
 
 //         if (fgFrameRef.current >= START_BG_AT) {
 //           const bgProgress = (fgFrameRef.current - START_BG_AT) / (FG_FRAMES - START_BG_AT);
@@ -110,59 +147,60 @@
 //         }
 
 //         scrollProgressRef.current = progress;
-//         render(); // ← Call render every update
+//         render();
 //       },
 //     });
 
+//     scrollTriggerRef.current = st;
 //     render();
 
 //     return () => {
-//       ScrollTrigger.getAll().forEach((t) => t.kill());
+//       st.kill();
+//       scrollTriggerRef.current = null;
 //     };
 //   }, [loaded]);
 
+//   // Handle navigation from other pages
+//   useEffect(() => {
+//     const action = localStorage.getItem("TW_action");
+//     if (action === "go_mart") {
+//       localStorage.removeItem("TW_action");
+//       const waitAndJump = () => {
+//         if (scrollTriggerRef.current) {
+//           ScrollTrigger.refresh();
+//           const st = scrollTriggerRef.current;
+//           const scrollPos = st.start + targetProgress * (st.end - st.start);
+//           st.scroll(scrollPos);
+//         } else {
+//           requestAnimationFrame(waitAndJump);
+//         }
+//       };
+//       waitAndJump();
+//     }
+//   }, []);
 
-// useEffect(() => {
-//   if (!loaded) return;
+//     useEffect(() => {
+//     if (!loaded) return;
 
-//   const jumpToTerramart = () => {
-//     const targetFrame = 589;
-//     const progress = targetFrame / (FG_FRAMES - 1);
+//     const handleTrigger = () => {
+//       window.scrollTo(0, 0);
+//       const st = scrollTriggerRef.current;
+//       if (st) {
+//         const scrollPos = st.start + targetProgress * (st.end - st.start);
+//           window.scrollTo({ top: scrollPos });
+//       }
+//     };
 
-//     const st = ScrollTrigger.getAll().find(
-//       (t) => t.trigger === containerRef.current
-//     );
+//     window.addEventListener("triggerVideoJump", handleTrigger);
 
-//     if (!st) return;
-
-//     const scrollStart = st.start as number;
-//     const scrollEnd = st.end as number;
-
-//     window.scrollTo({
-//       top: scrollStart + progress * (scrollEnd - scrollStart),
-//       behavior: "smooth",
-//     });
-//   };
-
-//   // 🔹 Case 1: Coming from another page (Connect / Investors / Insights)
-//   const action = localStorage.getItem("TW_action");
-//   if (action === "go_mart") {
-//     requestAnimationFrame(jumpToTerramart);
-//     localStorage.removeItem("TW_action");
-//   }
-
-//   // 🔹 Case 2: Already on Pulse / TerraCharge
-//   window.addEventListener("triggerVideoJump", jumpToTerramart);
-
-//   return () => {
-//     window.removeEventListener("triggerVideoJump", jumpToTerramart);
-//   };
-// }, [loaded]);
+//     return () => {
+//       window.removeEventListener("triggerVideoJump", handleTrigger);
+//     };
+//   }, [loaded]);
 
 //   return (
 //     <div ref={containerRef} className="relative w-full bg-black">
 //       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-
 //         <canvas
 //           ref={bgCanvasRef}
 //           className="absolute inset-0 w-full h-full object-fit"
@@ -174,10 +212,7 @@
 //         />
 
 //         <div className="absolute inset-0 z-20 pointer-events-none">
-//           <Canvas camera={{ position: [0, 0, 2.5], near:0.001, far:1000, fov: 50 }}>
-//             {/* <ambientLight intensity={3} />
-//             <directionalLight position={[5, 5, 5]} intensity={4} />
-//             <pointLight position={[0, 1, 3]} intensity={3} /> */}
+//           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
 //             <ScrollingCoin progressRef={scrollProgressRef} />
 //           </Canvas>
 //         </div>
@@ -185,6 +220,9 @@
 //     </div>
 //   );
 // }
+
+
+
 
 
 
@@ -232,13 +270,13 @@ export default function Video() {
   const fgImagesRef = useRef<HTMLImageElement[]>([]);
   const bgImagesRef = useRef<HTMLImageElement[]>([]);
 
-  const FG_FRAMES = 810;
+  const FG_FRAMES = 405;
   const BG_FRAMES = 191;
   const START_BG_AT = 130;
   const CANVAS_W = 1080;
   const CANVAS_H = 1920;
 
-  const targetProgress = 589 / (FG_FRAMES - 1);
+  const targetProgress = 289 / (FG_FRAMES - 1);
 
   // Load all images with batching to prevent network congestion
   useEffect(() => {
@@ -272,7 +310,7 @@ export default function Video() {
 
     const fgUrls: string[] = [];
     for (let i = 1; i <= FG_FRAMES; i++) {
-      fgUrls.push(`https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`);
+      fgUrls.push(`/iphoneframes/frame_${String(i).padStart(5, "0")}.webp`);
     }
     const bgUrls: string[] = [];
     for (let i = 1; i <= BG_FRAMES; i++) {

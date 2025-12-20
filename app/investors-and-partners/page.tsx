@@ -196,8 +196,9 @@ function FrameScroller({
 
     for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
-      img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+      img.src = `https://ik.imagekit.io/yv4cjaya8/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
       // img.src = `/frames/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+      
 
       img.onload = () => {
         loadedCount++;

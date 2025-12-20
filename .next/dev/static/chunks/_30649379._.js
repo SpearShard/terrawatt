@@ -419,7 +419,7 @@ function FrameScroller({ folder, frameCount }) {
             let loadedCount = 0;
             for(let i = 1; i <= frameCount; i++){
                 const img = new Image();
-                img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+                img.src = `https://ik.imagekit.io/yv4cjaya8/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
                 // img.src = `/frames/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
                 img.onload = ({
                     "FrameScroller.useEffect": ()=>{
@@ -515,12 +515,12 @@ function FrameScroller({ folder, frameCount }) {
             className: "w-full h-screen block sticky top-0"
         }, void 0, false, {
             fileName: "[project]/app/investors-and-partners/page.tsx",
-            lineNumber: 277,
+            lineNumber: 278,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/investors-and-partners/page.tsx",
-        lineNumber: 276,
+        lineNumber: 277,
         columnNumber: 5
     }, this);
 }
@@ -557,7 +557,7 @@ function InvestorsPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 311,
+                lineNumber: 312,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -569,17 +569,17 @@ function InvestorsPage() {
                             frameCount: FRAME_SETS[s.id]
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 316,
+                            lineNumber: 317,
                             columnNumber: 13
                         }, this)
                     }, s.id, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 315,
+                        lineNumber: 316,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 313,
+                lineNumber: 314,
                 columnNumber: 7
             }, this)
         ]

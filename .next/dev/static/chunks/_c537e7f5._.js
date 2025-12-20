@@ -466,11 +466,12 @@ function InsightsPage() {
                 className: "relative",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                        src: "/insightbg.jpg",
+                        src: "/insights.jpeg",
                         alt: "Insights Background",
-                        className: "w-full object-cover object-top",
+                        className: "w-full object-contain object-top",
                         style: {
-                            height: "480vh"
+                            height: "400vh",
+                            width: "100vw"
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/insights/page.tsx",
@@ -480,7 +481,7 @@ function InsightsPage() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent  pb-24 px-8",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "max-w-7xl mx-auto",
+                            className: " mx-auto",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "text-center mb-20",

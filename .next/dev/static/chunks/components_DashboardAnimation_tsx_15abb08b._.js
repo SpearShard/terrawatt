@@ -27,7 +27,6 @@
 //     for (let i = 1; i <= totalFrames; i++) {
 //       const fileNumber = i.toString().padStart(5, "0");
 //       const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
-//       // const url = `/frames/percentage/frame_${fileNumber}.jpg`;
 //       const tex = loader.load(url);
 //       tex.colorSpace = THREE.SRGBColorSpace;
 //       // 🔥 MAKE EDGES SMOOTH
@@ -153,6 +152,125 @@
 //             transparent
 //             opacity={1}
 //           />
+//         </mesh>
+//       </group>
+//       <CoinAnimation progressRef={progressRef} dashboardRef={dashboardRef} />
+//     </group>
+//   );
+// }
+// "use client";
+// import { useEffect, useRef } from "react";
+// import * as THREE from "three";
+// import { useFrame } from "@react-three/fiber";
+// import CoinAnimation from "./CoinAnimation";
+// export default function DashboardAnimation({
+//   dashboardRef,
+//   progressRef,
+// }: {
+//   dashboardRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
+//   progressRef: React.MutableRefObject<number>;
+// }) {
+//   const uiGroup = useRef<THREE.Group>(new THREE.Group());
+//   const planeRef = useRef<THREE.Mesh | null>(null);
+//   const scrollRef = useRef(0);
+//   const smoothScrollRef = useRef(0);
+//   const rafRef = useRef<number | null>(null);
+//   const videoRef = useRef<HTMLVideoElement | null>(null);
+//   const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
+//   /* ---------------- VIDEO SETUP ---------------- */
+//   useEffect(() => {
+//     const video = document.createElement("video");
+//     video.src = "/dashboard.mp4"; // 📁 put video in /public
+//     video.muted = true;
+//     video.playsInline = true;
+//     video.preload = "auto";
+//     video.loop = false;
+//     video.pause();
+//     const texture = new THREE.VideoTexture(video);
+//     texture.colorSpace = THREE.SRGBColorSpace;
+//     texture.minFilter = THREE.LinearFilter;
+//     texture.magFilter = THREE.LinearFilter;
+//     texture.generateMipmaps = false;
+//     videoRef.current = video;
+//     videoTextureRef.current = texture;
+//     return () => {
+//       texture.dispose();
+//     };
+//   }, []);
+//   /* ---------------- SCROLL TRACKING ---------------- */
+//   useEffect(() => {
+//     let ticking = false;
+//     const handleScroll = () => {
+//       if (ticking) return;
+//       ticking = true;
+//       rafRef.current = requestAnimationFrame(() => {
+//         const scrollContainer = document.querySelector(
+//           "#scroll-container"
+//         ) as HTMLElement | null;
+//         const startHeight = scrollContainer
+//           ? scrollContainer.offsetHeight * 0.7
+//           : window.innerHeight * 2;
+//         const endHeight = scrollContainer
+//           ? scrollContainer.offsetHeight - window.innerHeight
+//           : document.body.scrollHeight - window.innerHeight;
+//         const rawScroll = Math.max(0, window.scrollY - startHeight);
+//         const maxScroll = Math.max(1, endHeight - startHeight);
+//         scrollRef.current = Math.max(0, Math.min(1, rawScroll / maxScroll));
+//         ticking = false;
+//       });
+//     };
+//     window.addEventListener("scroll", handleScroll, { passive: true });
+//     return () => {
+//       window.removeEventListener("scroll", handleScroll);
+//       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+//     };
+//   }, []);
+//   /* ---------------- ATTACH UI GROUP ---------------- */
+//   useEffect(() => {
+//     const dashboardMesh = dashboardRef.current?.[0];
+//     if (!dashboardMesh) return;
+//     dashboardMesh.add(uiGroup.current);
+//     uiGroup.current.position.set(0, 0.7, 0.17);
+//     uiGroup.current.rotation.set(1.35, 0, 0);
+//     return () => {
+//       dashboardMesh.remove(uiGroup.current);
+//     };
+//   }, [dashboardRef]);
+//   /* ---------------- FRAME LOOP ---------------- */
+//   useFrame((_state, delta) => {
+//     if (!planeRef.current || !videoRef.current || !videoTextureRef.current)
+//       return;
+//     const lerpFactor = Math.min(delta * 6, 1);
+//     smoothScrollRef.current +=
+//       (scrollRef.current - smoothScrollRef.current) * lerpFactor;
+//     progressRef.current = smoothScrollRef.current;
+//     const video = videoRef.current;
+//     const duration = video.duration || 1;
+//     video.currentTime = smoothScrollRef.current * duration;
+//     const mat = planeRef.current.material as THREE.MeshBasicMaterial;
+//     if (mat.map !== videoTextureRef.current) {
+//       mat.map = videoTextureRef.current;
+//       mat.needsUpdate = true;
+//     }
+//   });
+//   /* ---------------- RENDER ---------------- */
+//   return (
+//     <group ref={uiGroup}>
+//       {/* TABLET BODY */}
+//       <group position={[0, 0, 0.05]}>
+//         <mesh position={[0, 0, -0.015]}>
+//           <boxGeometry args={[0.5, 0.33, 0.03]} />
+//           <meshStandardMaterial color="#111" roughness={0.6} metalness={0.1} />
+//         </mesh>
+//         {/* SCREEN BACK */}
+//         <mesh position={[0, 0, 0]}>
+//           <planeGeometry args={[0.47, 0.29]} />
+//           <meshBasicMaterial color="#000" />
+//         </mesh>
+//         {/* VIDEO SCREEN */}
+//         <mesh ref={planeRef} position={[0, 0, 0.001]}>
+//           <planeGeometry args={[0.47, 0.29]} />
+//           <meshBasicMaterial toneMapped={false} transparent />
 //         </mesh>
 //       </group>
 //       <CoinAnimation progressRef={progressRef} dashboardRef={dashboardRef} />
