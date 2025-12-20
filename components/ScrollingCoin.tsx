@@ -6,10 +6,6 @@
 
 
 // function createRealisticCoin() {
-//   /* --- normal map --- */
-//   const normalMap = new THREE.TextureLoader().load("/bump.png");
-//   normalMap.colorSpace = THREE.SRGBColorSpace;
-
 //   /* --- geometry with ridges --- */
 //   const radius = 0.012;
 //   const thickness = 0.0025;
@@ -46,7 +42,7 @@
 //   pos.needsUpdate = true;
 //   geo.computeVertexNormals();
 
-//   /* --- materials --- */
+//   /* --- materials (NO normal map) --- */
 //   const matSide = new THREE.MeshStandardMaterial({
 //     color: 0xD29508,
 //     metalness: 1.0,
@@ -59,14 +55,13 @@
 //     color: 0xD29508,
 //     metalness: 1.0,
 //     roughness: 0.18,
-//     normalMap,
-//     normalScale: new THREE.Vector2(1.3, 1.3),
 //     emissive: new THREE.Color(0xD29508),
 //     emissiveIntensity: 0.5,
 //   });
 
 //   return new THREE.Mesh(geo, [matSide, matFace, matFace]);
 // }
+
 
 
 // export default function VideoCoin({
@@ -84,9 +79,9 @@
 
 //     // Starting position & scale (when scroll = 0)
 //     start: {
-//       z: 3,       // How close to your face (higher = closer)
-//       y: -0.1,       // Vertical offset at start
-//       x: -0.04,       // Vertical offset at start
+//       z: 2.46,       // How close to your face (higher = closer)
+//       y: 0,       // Vertical offset at start
+//       x: 0,       // Vertical offset at start
 //       scale: 3.8,   // How HUGE it appears at the beginning
 //     },
 
@@ -104,42 +99,58 @@
 //   };
 
 //   useFrame((_, delta) => {
-//     const mesh = meshRef.current;
-//     const p = progressRef.current;
+//   const mesh = meshRef.current;
+//   const p = progressRef.current;
 
-//     // Always spin
-//     mesh.rotation.y += delta * CONFIG.spinY;
-//     mesh.rotation.x += delta * CONFIG.spinX;
+//   // BEFORE animation starts — hide coin
+//   if (p < CONFIG.startProgress) {
+//     mesh.visible = false;
+//     return;
+//   }
 
-//     // Only animate during our defined window
-//     if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
-//       const localProgress = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
-//       const t = THREE.MathUtils.clamp(localProgress, 0, 1);
-//       const ease = THREE.MathUtils.smoothstep(t, 0, 1); // buttery smooth
+//   // FIRST MOMENT — coin appears facing you, no spin
+//   if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
+//     mesh.visible = true;
+//     mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
 
-//       mesh.visible = true;
 
-//       // Interpolate position
-//       mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
-//       mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
-//       mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+//     mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
+//     mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
+//     return;
+//   }
 
-//       // Interpolate scale
-//       const scale = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
-//       mesh.scale.set(scale, scale, scale);
+//   // If inside animation range → spin + move toward phone
+//   if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
+//     const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
+//     const t = THREE.MathUtils.clamp(local, 0, 1);
+//     const ease = THREE.MathUtils.smoothstep(t, 0, 1);
+
+//     mesh.visible = true;
+
+//     // Start spinning only AFTER leaving the face
+//     if (p > CONFIG.startProgress + 0.02) {
+//       mesh.rotation.y += delta * CONFIG.spinY;
+//       mesh.rotation.x += delta * CONFIG.spinX;
 //     }
-//     // After animation ends → lock in final state (or hide)
-//     else if (p > CONFIG.endProgress) {
-//       mesh.visible = false; // change to false if coin should disappear
-//       mesh.position.z = CONFIG.end.z;
-//       mesh.position.y = CONFIG.end.y;
-//       mesh.scale.set(CONFIG.end.scale, CONFIG.end.scale, CONFIG.end.scale);
-//     }
-//     // Before animation starts → completely hidden
-//     else {
-//       mesh.visible = false;
-//     }
-//   });
+
+//     // Move
+//     mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
+//     mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
+//     mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+
+//     // Scale
+//     const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
+//     mesh.scale.set(s, s, s);
+
+//     return;
+//   }
+
+//   // AFTER animation ends → lock final position or hide
+//   if (p > CONFIG.endProgress) {
+//     mesh.visible = false;
+//   }
+// });
+
 
 //   return (
 //     <group ref={meshRef}>
@@ -190,12 +201,26 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-
 
 function createRealisticCoin() {
   /* --- geometry with ridges --- */
@@ -236,25 +261,23 @@ function createRealisticCoin() {
 
   /* --- materials (NO normal map) --- */
   const matSide = new THREE.MeshStandardMaterial({
-    color: 0xD29508,
+    color: 0xd29508,
     metalness: 1.0,
     roughness: 0.22,
-    emissive: new THREE.Color(0xD29508),
+    emissive: new THREE.Color(0xd29508),
     emissiveIntensity: 0.5,
   });
 
   const matFace = new THREE.MeshStandardMaterial({
-    color: 0xD29508,
+    color: 0xd29508,
     metalness: 1.0,
     roughness: 0.18,
-    emissive: new THREE.Color(0xD29508),
+    emissive: new THREE.Color(0xd29508),
     emissiveIntensity: 0.5,
   });
 
   return new THREE.Mesh(geo, [matSide, matFace, matFace]);
 }
-
-
 
 export default function VideoCoin({
   progressRef,
@@ -262,6 +285,7 @@ export default function VideoCoin({
   progressRef: React.MutableRefObject<number>;
 }) {
   const meshRef = useRef<THREE.Group>(null!);
+  const coinMaterialsRef = useRef<THREE.MeshStandardMaterial[]>([]);
 
   // Tweak these values to control the animation exactly how you want
   const CONFIG = {
@@ -271,98 +295,134 @@ export default function VideoCoin({
 
     // Starting position & scale (when scroll = 0)
     start: {
-      z: 2.46,       // How close to your face (higher = closer)
-      y: 0,       // Vertical offset at start
-      x: 0,       // Vertical offset at start
-      scale: 3.8,   // How HUGE it appears at the beginning
+      z: 2.46, // How close to your face (higher = closer)
+      y: 0, // Vertical offset at start
+      x: 0, // Vertical offset at start
+      scale: 3.8, // How HUGE it appears at the beginning
     },
 
     // Final position & scale (when coin lands on phone)
     end: {
-      z: 0.01,      // Final depth (0 = on phone screen, 0.01 = slightly in front)
+      z: 0.01, // Final depth (0 = on phone screen, 0.01 = slightly in front)
       x: 0.2,
-      y: 0.4,       // Final vertical position
-      scale: 0.45,  // Final size on phone
+      y: 0.4, // Final vertical position
+      scale: 0.45, // Final size on phone
     },
 
     // Spin speed
     spinY: 4,
     spinX: 1.8,
+
+    // Fade from black to gold settings
+    goldEndProgress: 0.02, // When to finish fading to gold (0.02 = first 17% of animation)
   };
 
   useFrame((_, delta) => {
-  const mesh = meshRef.current;
-  const p = progressRef.current;
+    const mesh = meshRef.current;
+    const p = progressRef.current;
 
-  // BEFORE animation starts — hide coin
-  if (p < CONFIG.startProgress) {
-    mesh.visible = false;
-    return;
-  }
-
-  // FIRST MOMENT — coin appears facing you, no spin
-  if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
-    mesh.visible = true;
-    mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
-
-
-    mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
-    mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
-    return;
-  }
-
-  // If inside animation range → spin + move toward phone
-  if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
-    const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
-    const t = THREE.MathUtils.clamp(local, 0, 1);
-    const ease = THREE.MathUtils.smoothstep(t, 0, 1);
-
-    mesh.visible = true;
-
-    // Start spinning only AFTER leaving the face
-    if (p > CONFIG.startProgress + 0.02) {
-      mesh.rotation.y += delta * CONFIG.spinY;
-      mesh.rotation.x += delta * CONFIG.spinX;
+    // BEFORE animation starts — hide coin
+    if (p < CONFIG.startProgress) {
+      mesh.visible = false;
+      return;
     }
 
-    // Move
-    mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
-    mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
-    mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+    // FIRST MOMENT — coin appears facing you, BLACK at first
+    if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
+      mesh.visible = true;
+      mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
 
-    // Scale
-    const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
-    mesh.scale.set(s, s, s);
+      mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
+      mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
 
-    return;
-  }
+      // Start with black color
+      if (coinMaterialsRef.current.length > 0) {
+        coinMaterialsRef.current.forEach((mat) => {
+          mat.color.setHex(0x000000);
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0;
+        });
+      }
+      return;
+    }
 
-  // AFTER animation ends → lock final position or hide
-  if (p > CONFIG.endProgress) {
-    mesh.visible = false;
-  }
-});
+    // If inside animation range → spin + move toward phone
+    if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
+      const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
+      const t = THREE.MathUtils.clamp(local, 0, 1);
+      const ease = THREE.MathUtils.smoothstep(t, 0, 1);
 
+      mesh.visible = true;
+
+      // Start spinning only AFTER leaving the face
+      if (p > CONFIG.startProgress + 0.02) {
+        mesh.rotation.y += delta * CONFIG.spinY;
+        mesh.rotation.x += delta * CONFIG.spinX;
+      }
+
+      // Move
+      mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
+      mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
+      mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+
+      // Scale
+      const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
+      mesh.scale.set(s, s, s);
+
+      // Fade FROM black TO gold at the beginning
+      if (p < CONFIG.goldEndProgress) {
+        const goldLocal = (p - CONFIG.startProgress) / (CONFIG.goldEndProgress - CONFIG.startProgress);
+        const goldProgress = THREE.MathUtils.clamp(goldLocal, 0, 1);
+
+        const blackColor = new THREE.Color(0x000000);
+        const goldColor = new THREE.Color(0xd29508);
+        const fadedColor = blackColor.clone().lerp(goldColor, goldProgress);
+
+        // Update materials to fade from black to gold
+        if (coinMaterialsRef.current.length > 0) {
+          coinMaterialsRef.current.forEach((mat) => {
+            mat.color.copy(fadedColor);
+            mat.emissive.copy(fadedColor);
+            mat.emissiveIntensity = 0.5 * goldProgress; // Increase glow as it becomes gold
+          });
+        }
+      } else {
+        // Keep full gold color after fade completes
+        if (coinMaterialsRef.current.length > 0) {
+          coinMaterialsRef.current.forEach((mat) => {
+            mat.color.setHex(0xd29508);
+            mat.emissive.setHex(0xd29508);
+            mat.emissiveIntensity = 0.5;
+          });
+        }
+      }
+
+      return;
+    }
+
+    // AFTER animation ends → lock final position or hide
+    if (p > CONFIG.endProgress) {
+      mesh.visible = false;
+    }
+  });
 
   return (
     <group ref={meshRef}>
-      {/* Main golden coin */}
-      {/* <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[0.12, 0.12, 0.022, 72]} />
-        <meshStandardMaterial
-          color="#ffdd33"
-          metalness={1}
-          roughness={0.08}
-          envMapIntensity={3}
-        />
-      </mesh> */}
-      <primitive object={(() => {
-        const m = createRealisticCoin();
-        m.castShadow = true;
-        m.receiveShadow = true;
-        return m;
-      })()} />
+      <primitive
+        object={(() => {
+          const m = createRealisticCoin();
+          m.castShadow = true;
+          m.receiveShadow = true;
 
+          // Store material references for color manipulation
+          const materials = Array.isArray(m.material) ? m.material : [m.material];
+          coinMaterialsRef.current = materials.filter(
+            (mat): mat is THREE.MeshStandardMaterial => mat instanceof THREE.MeshStandardMaterial
+          );
+
+          return m;
+        })()}
+      />
 
       {/* Optional glowing ring (uncomment opacity to see) */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>

@@ -833,9 +833,6 @@ function About() {
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
 // function createRealisticCoin() {
-//   /* --- normal map --- */
-//   const normalMap = new THREE.TextureLoader().load("/bump.png");
-//   normalMap.colorSpace = THREE.SRGBColorSpace;
 //   /* --- geometry with ridges --- */
 //   const radius = 0.012;
 //   const thickness = 0.0025;
@@ -867,7 +864,7 @@ function About() {
 //   }
 //   pos.needsUpdate = true;
 //   geo.computeVertexNormals();
-//   /* --- materials --- */
+//   /* --- materials (NO normal map) --- */
 //   const matSide = new THREE.MeshStandardMaterial({
 //     color: 0xD29508,
 //     metalness: 1.0,
@@ -879,8 +876,6 @@ function About() {
 //     color: 0xD29508,
 //     metalness: 1.0,
 //     roughness: 0.18,
-//     normalMap,
-//     normalScale: new THREE.Vector2(1.3, 1.3),
 //     emissive: new THREE.Color(0xD29508),
 //     emissiveIntensity: 0.5,
 //   });
@@ -899,9 +894,9 @@ function About() {
 //     endProgress: 0.12,
 //     // Starting position & scale (when scroll = 0)
 //     start: {
-//       z: 3,       // How close to your face (higher = closer)
-//       y: -0.1,       // Vertical offset at start
-//       x: -0.04,       // Vertical offset at start
+//       z: 2.46,       // How close to your face (higher = closer)
+//       y: 0,       // Vertical offset at start
+//       x: 0,       // Vertical offset at start
 //       scale: 3.8,   // How HUGE it appears at the beginning
 //     },
 //     // Final position & scale (when coin lands on phone)
@@ -916,37 +911,46 @@ function About() {
 //     spinX: 1.8,
 //   };
 //   useFrame((_, delta) => {
-//     const mesh = meshRef.current;
-//     const p = progressRef.current;
-//     // Always spin
-//     mesh.rotation.y += delta * CONFIG.spinY;
-//     mesh.rotation.x += delta * CONFIG.spinX;
-//     // Only animate during our defined window
-//     if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
-//       const localProgress = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
-//       const t = THREE.MathUtils.clamp(localProgress, 0, 1);
-//       const ease = THREE.MathUtils.smoothstep(t, 0, 1); // buttery smooth
-//       mesh.visible = true;
-//       // Interpolate position
-//       mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
-//       mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
-//       mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
-//       // Interpolate scale
-//       const scale = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
-//       mesh.scale.set(scale, scale, scale);
+//   const mesh = meshRef.current;
+//   const p = progressRef.current;
+//   // BEFORE animation starts — hide coin
+//   if (p < CONFIG.startProgress) {
+//     mesh.visible = false;
+//     return;
+//   }
+//   // FIRST MOMENT — coin appears facing you, no spin
+//   if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
+//     mesh.visible = true;
+//     mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
+//     mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
+//     mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
+//     return;
+//   }
+//   // If inside animation range → spin + move toward phone
+//   if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
+//     const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
+//     const t = THREE.MathUtils.clamp(local, 0, 1);
+//     const ease = THREE.MathUtils.smoothstep(t, 0, 1);
+//     mesh.visible = true;
+//     // Start spinning only AFTER leaving the face
+//     if (p > CONFIG.startProgress + 0.02) {
+//       mesh.rotation.y += delta * CONFIG.spinY;
+//       mesh.rotation.x += delta * CONFIG.spinX;
 //     }
-//     // After animation ends → lock in final state (or hide)
-//     else if (p > CONFIG.endProgress) {
-//       mesh.visible = false; // change to false if coin should disappear
-//       mesh.position.z = CONFIG.end.z;
-//       mesh.position.y = CONFIG.end.y;
-//       mesh.scale.set(CONFIG.end.scale, CONFIG.end.scale, CONFIG.end.scale);
-//     }
-//     // Before animation starts → completely hidden
-//     else {
-//       mesh.visible = false;
-//     }
-//   });
+//     // Move
+//     mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
+//     mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
+//     mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+//     // Scale
+//     const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
+//     mesh.scale.set(s, s, s);
+//     return;
+//   }
+//   // AFTER animation ends → lock final position or hide
+//   if (p > CONFIG.endProgress) {
+//     mesh.visible = false;
+//   }
+// });
 //   return (
 //     <group ref={meshRef}>
 //       {/* Main golden coin */}
@@ -1010,17 +1014,17 @@ function createRealisticCoin() {
     pos.needsUpdate = true;
     geo.computeVertexNormals();
     /* --- materials (NO normal map) --- */ const matSide = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
-        color: 0xD29508,
+        color: 0xd29508,
         metalness: 1.0,
         roughness: 0.22,
-        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xD29508),
+        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508),
         emissiveIntensity: 0.5
     });
     const matFace = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
-        color: 0xD29508,
+        color: 0xd29508,
         metalness: 1.0,
         roughness: 0.18,
-        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xD29508),
+        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508),
         emissiveIntensity: 0.5
     });
     return new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Mesh"](geo, [
@@ -1031,6 +1035,7 @@ function createRealisticCoin() {
 }
 function VideoCoin({ progressRef }) {
     const meshRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const coinMaterialsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
     // Tweak these values to control the animation exactly how you want
     const CONFIG = {
         // When does the coin animation start & finish? (0–1 scroll progress)
@@ -1052,7 +1057,9 @@ function VideoCoin({ progressRef }) {
         },
         // Spin speed
         spinY: 4,
-        spinX: 1.8
+        spinX: 1.8,
+        // Fade from black to gold settings
+        goldEndProgress: 0.02
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])((_, delta)=>{
         const mesh = meshRef.current;
@@ -1062,12 +1069,20 @@ function VideoCoin({ progressRef }) {
             mesh.visible = false;
             return;
         }
-        // FIRST MOMENT — coin appears facing you, no spin
+        // FIRST MOMENT — coin appears facing you, BLACK at first
         if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
             mesh.visible = true;
             mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
             mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
             mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
+            // Start with black color
+            if (coinMaterialsRef.current.length > 0) {
+                coinMaterialsRef.current.forEach((mat)=>{
+                    mat.color.setHex(0x000000);
+                    mat.emissive.setHex(0x000000);
+                    mat.emissiveIntensity = 0;
+                });
+            }
             return;
         }
         // If inside animation range → spin + move toward phone
@@ -1088,6 +1103,31 @@ function VideoCoin({ progressRef }) {
             // Scale
             const s = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
             mesh.scale.set(s, s, s);
+            // Fade FROM black TO gold at the beginning
+            if (p < CONFIG.goldEndProgress) {
+                const goldLocal = (p - CONFIG.startProgress) / (CONFIG.goldEndProgress - CONFIG.startProgress);
+                const goldProgress = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp(goldLocal, 0, 1);
+                const blackColor = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0x000000);
+                const goldColor = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508);
+                const fadedColor = blackColor.clone().lerp(goldColor, goldProgress);
+                // Update materials to fade from black to gold
+                if (coinMaterialsRef.current.length > 0) {
+                    coinMaterialsRef.current.forEach((mat)=>{
+                        mat.color.copy(fadedColor);
+                        mat.emissive.copy(fadedColor);
+                        mat.emissiveIntensity = 0.5 * goldProgress; // Increase glow as it becomes gold
+                    });
+                }
+            } else {
+                // Keep full gold color after fade completes
+                if (coinMaterialsRef.current.length > 0) {
+                    coinMaterialsRef.current.forEach((mat)=>{
+                        mat.color.setHex(0xd29508);
+                        mat.emissive.setHex(0xd29508);
+                        mat.emissiveIntensity = 0.5;
+                    });
+                }
+            }
             return;
         }
         // AFTER animation ends → lock final position or hide
@@ -1103,11 +1143,16 @@ function VideoCoin({ progressRef }) {
                     const m = createRealisticCoin();
                     m.castShadow = true;
                     m.receiveShadow = true;
+                    // Store material references for color manipulation
+                    const materials = Array.isArray(m.material) ? m.material : [
+                        m.material
+                    ];
+                    coinMaterialsRef.current = materials.filter((mat)=>mat instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]);
                     return m;
                 })()
             }, void 0, false, {
                 fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 359,
+                lineNumber: 411,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -1125,7 +1170,7 @@ function VideoCoin({ progressRef }) {
                         ]
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 369,
+                        lineNumber: 429,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
@@ -1134,13 +1179,13 @@ function VideoCoin({ progressRef }) {
                         transparent: true
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 370,
+                        lineNumber: 430,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 368,
+                lineNumber: 428,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -1158,7 +1203,7 @@ function VideoCoin({ progressRef }) {
                         ]
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 374,
+                        lineNumber: 434,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
@@ -1167,19 +1212,19 @@ function VideoCoin({ progressRef }) {
                         transparent: true
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 375,
+                        lineNumber: 435,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 373,
+                lineNumber: 433,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/ScrollingCoin.tsx",
-        lineNumber: 348,
+        lineNumber: 410,
         columnNumber: 5
     }, this);
 }
