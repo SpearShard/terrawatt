@@ -1,8 +1,9 @@
 // "use client";
+
 // import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
-// import CoinAnimation from "./CoinAnimation"; // ⭐ NEW IMPORT
+// import CoinAnimation from "./CoinAnimation";
 
 // export default function DashboardAnimation({
 //   dashboardRef,
@@ -19,37 +20,41 @@
 //   const rafRef = useRef<number | null>(null);
 
 //   const [textures, setTextures] = useState<THREE.Texture[]>([]);
-//   const totalFrames = 1464;
+//   const totalFrames = 732;
 
 //   // Load dashboard frames
 //   useEffect(() => {
-//     const loader = new THREE.TextureLoader();
-//     const frames: THREE.Texture[] = [];
+//     const loadTextures = async () => {
+//       const loader = new THREE.TextureLoader();
+//       const promises: Promise<THREE.Texture>[] = [];
 
-//     for (let i = 1; i <= totalFrames; i++) {
-//       const fileNumber = i.toString().padStart(5, "0");
-//       const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
-      
-      
+//       for (let i = 1; i <= totalFrames; i++) {
+//         const fileNumber = i.toString().padStart(5, "0");
+//         const url = `/dashsmaller/frame_${fileNumber}.jpg`;
 
+//         const promise = new Promise<THREE.Texture>((resolve) => {
+//           const tex = loader.load(url, () => resolve(tex));
+//           tex.colorSpace = THREE.SRGBColorSpace;
+//           tex.minFilter = THREE.LinearFilter;
+//           tex.magFilter = THREE.LinearFilter;
+//           tex.generateMipmaps = true;
+//         });
+//         promises.push(promise);
+//       }
 
-//       const tex = loader.load(url);
-//       tex.colorSpace = THREE.SRGBColorSpace;
+//       const frames = await Promise.all(promises);
+//       setTextures(frames);
+//     };
 
-//       // 🔥 MAKE EDGES SMOOTH
-//       tex.minFilter = THREE.LinearFilter;
-//       tex.magFilter = THREE.LinearFilter;
-//       tex.generateMipmaps = true;
+//     loadTextures();
 
-//       frames.push(tex);
-
-//     }
-
-//     setTextures(frames);
-//     return () => frames.forEach((t) => t.dispose());
+//     return () => {
+//       // Dispose textures on unmount
+//       textures.forEach((t) => t.dispose());
+//     };
 //   }, []);
 
-//   // Track scroll progress
+//   // Scroll tracking (unchanged)
 //   useEffect(() => {
 //     let ticking = false;
 
@@ -84,7 +89,7 @@
 //     };
 //   }, []);
 
-//   // Attach UI group onto dashboard
+//   // Attach to dashboard
 //   useEffect(() => {
 //     const dashboardMesh = dashboardRef.current?.[0];
 //     if (!dashboardMesh) return;
@@ -98,13 +103,13 @@
 //     };
 //   }, [dashboardRef]);
 
-//   // Frame animation
+//   // Main animation: display frame based on scroll progress
 //   useFrame((_state, delta) => {
 //     if (!textures.length || !planeRef.current) return;
 
-//     const lerpFactor = Math.min(delta * 6, 1);
-//     smoothScrollRef.current +=
-//       (scrollRef.current - smoothScrollRef.current) * lerpFactor;
+//     const targetProgress = scrollRef.current;
+//     const lerpFactor = Math.min(delta * 10, 1);
+//     smoothScrollRef.current += (targetProgress - smoothScrollRef.current) * lerpFactor;
 
 //     const frameIndex = Math.floor(
 //       smoothScrollRef.current * (textures.length - 1)
@@ -123,10 +128,8 @@
 
 //   return (
 //     <group ref={uiGroup}>
-
 //       {/* TESLA-STYLE SIMPLE TABLET */}
 //       <group position={[0, 0, 0.05]}>
-
 //         {/* Outer Tablet Shape */}
 //         <mesh position={[0, 0, -0.015]}>
 //           <boxGeometry args={[0.50, 0.33, 0.03]} />
@@ -156,49 +159,11 @@
 //             opacity={1}
 //           />
 //         </mesh>
-
-//       </group>
-//       {/* TESLA-STYLE SIMPLE TABLET */}
-//       <group position={[0, 0, 0.05]}>
-
-//         {/* Outer Tablet Shape */}
-//         <mesh position={[0, 0, -0.015]}>
-//           <boxGeometry args={[0.50, 0.33, 0.03]} />
-//           <meshStandardMaterial
-//             color="#111111"
-//             roughness={0.6}
-//             metalness={0.1}
-//           />
-//         </mesh>
-
-//         {/* Screen Area */}
-//         <mesh position={[0, 0, 0]}>
-//           <planeGeometry args={[0.47, 0.29]} />
-//           <meshBasicMaterial
-//             color="#000"
-//             transparent
-//             opacity={1}
-//           />
-//         </mesh>
-
-//         {/* Actual Dynamic Dashboard Frames */}
-//         <mesh ref={planeRef} position={[0, 0, 0.001]}>
-//           <planeGeometry args={[0.47, 0.29]} />
-
-//           <meshBasicMaterial
-//             toneMapped={false}
-//             transparent
-//             opacity={1}
-//           />
-//         </mesh>
-
 //       </group>
 
 //       <CoinAnimation progressRef={progressRef} dashboardRef={dashboardRef} />
 //     </group>
 //   );
-
-
 // }
 
 
@@ -219,17 +184,10 @@
 
 
 
-
-
-
-
-
-
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+import { RoundedBox } from "@react-three/drei";
 import CoinAnimation from "./CoinAnimation";
 
 export default function DashboardAnimation({
@@ -281,7 +239,7 @@ export default function DashboardAnimation({
     };
   }, []);
 
-  // Scroll tracking (unchanged)
+  // Scroll tracking
   useEffect(() => {
     let ticking = false;
 
@@ -359,12 +317,13 @@ export default function DashboardAnimation({
       <group position={[0, 0, 0.05]}>
         {/* Outer Tablet Shape */}
         <mesh position={[0, 0, -0.015]}>
-          <boxGeometry args={[0.50, 0.33, 0.03]} />
-          <meshStandardMaterial
-            color="#111111"
-            roughness={0.6}
-            metalness={0.1}
-          />
+          <RoundedBox args={[0.50, 0.33, 0.03]} radius={0.015} smoothness={4}>
+            <meshStandardMaterial
+              color="#111111"
+              roughness={0.6}
+              metalness={0.1}
+            />
+          </RoundedBox>
         </mesh>
 
         {/* Screen Area */}
@@ -380,6 +339,7 @@ export default function DashboardAnimation({
         {/* Actual Dynamic Dashboard Frames */}
         <mesh ref={planeRef} position={[0, 0, 0.001]}>
           <planeGeometry args={[0.47, 0.29]} />
+          
           <meshBasicMaterial
             toneMapped={false}
             transparent
@@ -392,3 +352,9 @@ export default function DashboardAnimation({
     </group>
   );
 }
+
+
+
+
+
+

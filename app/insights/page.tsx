@@ -35,7 +35,7 @@
 //       <Navbar/>
 //       <div className="relative">
 //         <img
-//           src="/insightbg.jpg"
+//           src="/insights.jpeg"
 //           alt="Insights Background"
 //           className="w-full object-cover object-top"
 //           style={{ height: "480vh" }}
@@ -170,9 +170,6 @@
 
 
 
-
-
-
 "use client";
 export const dynamic = "force-dynamic";
 
@@ -191,7 +188,7 @@ interface Blog {
 }
 
 const PAGE_SIZE = 6;
-const TOTAL_PAGES = 2; // 👈 we force 2 pages
+const TOTAL_PAGES = 2;
 
 export default function InsightsPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -220,7 +217,7 @@ export default function InsightsPage() {
   }
 
   if (page === 2) {
-    items = Array(4).fill(null); // 👈 4 placeholder blogs
+    items = Array(4).fill(null);
   }
 
   return (
@@ -228,124 +225,250 @@ export default function InsightsPage() {
       <Navbar />
 
       {/* FULL BACKGROUND */}
-      <div className="relative">
+      <div className="relative min-h-screen" style={{ background: "#000000" }}>
         <img
-          src="/insights.jpeg"
+          src="/black.png"
           alt="Insights Background"
-          className="w-full object-contain object-top"
-          style={{ height: "400vh", width : "100vw" }}
+          className="w-full object-cover object-top absolute top-0 left-0"
+          style={{ height: "100vh", width: "100vw" }}
+        />
+
+        {/* GRADIENT OVERLAY WITH BLUR */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(10,10,10,0.8) 70%, #0A0A0A 100%)",
+          }}
         />
 
         {/* CONTENT */}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent  pb-24 px-8">
-          <div className=" mx-auto">
+        <div className="relative z-10 min-h-screen flex flex-col justify-end">
+          <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 pb-20 pt-40">
 
-            {/* TITLE */}
-            <div className="text-center mb-20">
-              <h1 className="text-6xl md:text-8xl font-black text-cyan-400 mb-4">
-                Stories for a Smarter<br />Electric Journey
+            {/* TITLE WITH STAGGERED ANIMATION */}
+            <div className="text-center mb-24 space-y-6 animate-fade-in">
+              <div className="inline-block">
+                <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full px-6 py-2 border border-cyan-500/30 backdrop-blur-sm mb-6">
+                  <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase">
+                    EV Insights & Stories
+                  </span>
+                </div>
+              </div>
+              
+              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 mb-6 leading-tight">
+                Stories for a Smarter
+                <br />
+                <span className="text-white">Electric Journey</span>
               </h1>
-              <p className="text-cyan-200/90 text-xl md:text-2xl font-light">
-                Learn, explore, and stay informed with curated EV insights
+              
+              <p className="text-cyan-100/80 text-lg sm:text-xl lg:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
+                Discover the latest innovations, expert insights, and inspiring stories shaping the future of electric mobility
               </p>
+
+              {/* DECORATIVE LINE */}
+              <div className="flex items-center justify-center gap-3 pt-8">
+                <div className="h-px w-20 bg-gradient-to-r from-transparent to-cyan-500/50"></div>
+                <div className="h-2 w-2 rounded-full bg-cyan-400/60"></div>
+                <div className="h-px w-20 bg-gradient-to-l from-transparent to-cyan-500/50"></div>
+              </div>
             </div>
 
-            {/* BLOG GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+            {/* BLOG GRID WITH ENHANCED CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
               {items.map((blog, i) =>
                 blog ? (
-                  <BlogCard key={blog.id} blog={blog} />
+                  <BlogCard key={blog.id} blog={blog} index={i} />
                 ) : (
                   <ShimmerCard key={`placeholder-${i}`} />
                 )
               )}
             </div>
 
-            {/* PAGINATION */}
-            <div className="flex justify-center items-center gap-6 mt-20">
+            {/* MODERN PAGINATION */}
+            <div className="flex justify-center items-center gap-4">
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className={`px-6 py-2 rounded-full border transition ${
+                className={`group relative px-8 py-3 rounded-full font-medium transition-all duration-300 ${
                   page === 1
-                    ? "border-neutral-700 text-neutral-600 cursor-not-allowed"
-                    : "border-neutral-500 text-white hover:bg-neutral-800"
+                    ? "bg-neutral-900/50 text-neutral-600 cursor-not-allowed border border-neutral-800"
+                    : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20"
                 }`}
               >
-                ← Previous
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Previous
+                </span>
               </button>
 
-              <span className="text-neutral-400 text-sm">
-                Page {page} of {TOTAL_PAGES}
-              </span>
+              <div className="flex items-center gap-2 px-6">
+                {[...Array(TOTAL_PAGES)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i + 1)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      page === i + 1
+                        ? "w-8 bg-gradient-to-r from-cyan-400 to-blue-400"
+                        : "w-2 bg-neutral-700 hover:bg-neutral-600"
+                    }`}
+                  />
+                ))}
+              </div>
 
               <button
                 disabled={page === TOTAL_PAGES}
                 onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
-                className={`px-6 py-2 rounded-full border transition ${
+                className={`group relative px-8 py-3 rounded-full font-medium transition-all duration-300 ${
                   page === TOTAL_PAGES
-                    ? "border-neutral-700 text-neutral-600 cursor-not-allowed"
-                    : "border-neutral-500 text-white hover:bg-neutral-800"
+                    ? "bg-neutral-900/50 text-neutral-600 cursor-not-allowed border border-neutral-800"
+                    : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20"
                 }`}
               >
-                Next →
+                <span className="flex items-center gap-2">
+                  Next
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
               </button>
             </div>
           </div>
         </div>
+
+        {/* AMBIENT GLOW EFFECTS */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
       </div>
     </>
   );
 }
 
-/* BLOG CARD */
-function BlogCard({ blog }: { blog: Blog }) {
+/* ENHANCED BLOG CARD */
+function BlogCard({ blog, index }: { blog: Blog; index: number }) {
   const thumb = blog.images?.[0]?.url;
 
   return (
-    <Link href={`/insights/${blog.slug}`} className="group">
-      <div className="rounded-3xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition shadow-2xl">
-        <div className="h-64 overflow-hidden">
+    <Link 
+      href={`/insights/${blog.slug}`} 
+      className="group block"
+      style={{
+        animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+      }}
+    >
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/10">
+        
+        {/* IMAGE CONTAINER */}
+        <div className="relative h-56 overflow-hidden">
           {thumb ? (
-            <img
-              src={thumb}
-              alt=""
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            />
+            <>
+              <img
+                src={thumb}
+                alt=""
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+            </>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black" />
+            <div className="w-full h-full bg-gradient-to-br from-cyan-900/20 via-blue-900/20 to-black relative">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+            </div>
           )}
+          
+          {/* CORNER ACCENT */}
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-cyan-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
 
-        <div className="p-8 space-y-4">
-          <p className="text-cyan-400 text-sm font-medium">
-            {new Date(blog.publishDate).toLocaleDateString()}
-          </p>
-          <h3 className="text-2xl font-bold text-white line-clamp-2">
+        {/* CONTENT */}
+        <div className="p-6 space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="h-1 w-1 rounded-full bg-cyan-400"></div>
+            <p className="text-cyan-400 text-xs font-semibold tracking-wider uppercase">
+              {new Date(blog.publishDate).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+              })}
+            </p>
+          </div>
+          
+          <h3 className="text-xl font-bold text-white line-clamp-2 group-hover:text-cyan-400 transition-colors duration-300 leading-snug">
             {blog.title}
           </h3>
-          <p className="text-gray-300 line-clamp-3">
+          
+          <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">
             {blog.shortDescription}
           </p>
+
+          {/* READ MORE INDICATOR */}
+          <div className="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span>Read More</span>
+            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </div>
         </div>
       </div>
     </Link>
   );
 }
 
-/* SHIMMER CARD */
+/* MODERN SHIMMER CARD */
 function ShimmerCard() {
   return (
-    <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden">
-      <div className="h-64 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
+    <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 overflow-hidden">
+      <div className="h-56 bg-gradient-to-br from-gray-900/50 to-black/50 relative overflow-hidden">
+        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+             style={{ animation: 'shimmer 2s infinite' }} />
       </div>
-      <div className="p-8 space-y-4">
-        <div className="h-4 w-32 bg-white/10 rounded animate-pulse" />
-        <div className="h-8 w-full bg-white/10 rounded animate-pulse" />
-        <div className="h-4 w-5/6 bg-white/10 rounded animate-pulse" />
+      <div className="p-6 space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-24 bg-white/10 rounded-full animate-pulse" />
+        </div>
+        <div className="h-6 w-full bg-white/10 rounded animate-pulse" />
+        <div className="h-6 w-4/5 bg-white/10 rounded animate-pulse" />
+        <div className="space-y-2 pt-2">
+          <div className="h-3 w-full bg-white/5 rounded animate-pulse" />
+          <div className="h-3 w-5/6 bg-white/5 rounded animate-pulse" />
+        </div>
       </div>
     </div>
   );
 }
 
+// Add these styles to your global CSS or use a style tag
+const styles = `
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+`;

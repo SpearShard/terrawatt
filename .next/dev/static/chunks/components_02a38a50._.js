@@ -465,7 +465,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 // import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
-// import CoinAnimation from "./CoinAnimation"; // ⭐ NEW IMPORT
+// import CoinAnimation from "./CoinAnimation";
 // export default function DashboardAnimation({
 //   dashboardRef,
 //   progressRef,
@@ -479,26 +479,34 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //   const smoothScrollRef = useRef(0);
 //   const rafRef = useRef<number | null>(null);
 //   const [textures, setTextures] = useState<THREE.Texture[]>([]);
-//   const totalFrames = 1464;
+//   const totalFrames = 732;
 //   // Load dashboard frames
 //   useEffect(() => {
-//     const loader = new THREE.TextureLoader();
-//     const frames: THREE.Texture[] = [];
-//     for (let i = 1; i <= totalFrames; i++) {
-//       const fileNumber = i.toString().padStart(5, "0");
-//       const url = `https://ik.imagekit.io/m064cyjlx/percentage/frame_${fileNumber}.jpg`;
-//       const tex = loader.load(url);
-//       tex.colorSpace = THREE.SRGBColorSpace;
-//       // 🔥 MAKE EDGES SMOOTH
-//       tex.minFilter = THREE.LinearFilter;
-//       tex.magFilter = THREE.LinearFilter;
-//       tex.generateMipmaps = true;
-//       frames.push(tex);
-//     }
-//     setTextures(frames);
-//     return () => frames.forEach((t) => t.dispose());
+//     const loadTextures = async () => {
+//       const loader = new THREE.TextureLoader();
+//       const promises: Promise<THREE.Texture>[] = [];
+//       for (let i = 1; i <= totalFrames; i++) {
+//         const fileNumber = i.toString().padStart(5, "0");
+//         const url = `/dashsmaller/frame_${fileNumber}.jpg`;
+//         const promise = new Promise<THREE.Texture>((resolve) => {
+//           const tex = loader.load(url, () => resolve(tex));
+//           tex.colorSpace = THREE.SRGBColorSpace;
+//           tex.minFilter = THREE.LinearFilter;
+//           tex.magFilter = THREE.LinearFilter;
+//           tex.generateMipmaps = true;
+//         });
+//         promises.push(promise);
+//       }
+//       const frames = await Promise.all(promises);
+//       setTextures(frames);
+//     };
+//     loadTextures();
+//     return () => {
+//       // Dispose textures on unmount
+//       textures.forEach((t) => t.dispose());
+//     };
 //   }, []);
-//   // Track scroll progress
+//   // Scroll tracking (unchanged)
 //   useEffect(() => {
 //     let ticking = false;
 //     const handleScroll = () => {
@@ -524,7 +532,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //       if (rafRef.current) cancelAnimationFrame(rafRef.current);
 //     };
 //   }, []);
-//   // Attach UI group onto dashboard
+//   // Attach to dashboard
 //   useEffect(() => {
 //     const dashboardMesh = dashboardRef.current?.[0];
 //     if (!dashboardMesh) return;
@@ -535,12 +543,12 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //       dashboardMesh.remove(uiGroup.current);
 //     };
 //   }, [dashboardRef]);
-//   // Frame animation
+//   // Main animation: display frame based on scroll progress
 //   useFrame((_state, delta) => {
 //     if (!textures.length || !planeRef.current) return;
-//     const lerpFactor = Math.min(delta * 6, 1);
-//     smoothScrollRef.current +=
-//       (scrollRef.current - smoothScrollRef.current) * lerpFactor;
+//     const targetProgress = scrollRef.current;
+//     const lerpFactor = Math.min(delta * 10, 1);
+//     smoothScrollRef.current += (targetProgress - smoothScrollRef.current) * lerpFactor;
 //     const frameIndex = Math.floor(
 //       smoothScrollRef.current * (textures.length - 1)
 //     );
@@ -554,36 +562,6 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //   });
 //   return (
 //     <group ref={uiGroup}>
-//       {/* TESLA-STYLE SIMPLE TABLET */}
-//       <group position={[0, 0, 0.05]}>
-//         {/* Outer Tablet Shape */}
-//         <mesh position={[0, 0, -0.015]}>
-//           <boxGeometry args={[0.50, 0.33, 0.03]} />
-//           <meshStandardMaterial
-//             color="#111111"
-//             roughness={0.6}
-//             metalness={0.1}
-//           />
-//         </mesh>
-//         {/* Screen Area */}
-//         <mesh position={[0, 0, 0]}>
-//           <planeGeometry args={[0.47, 0.29]} />
-//           <meshBasicMaterial
-//             color="#000"
-//             transparent
-//             opacity={1}
-//           />
-//         </mesh>
-//         {/* Actual Dynamic Dashboard Frames */}
-//         <mesh ref={planeRef} position={[0, 0, 0.001]}>
-//           <planeGeometry args={[0.47, 0.29]} />
-//           <meshBasicMaterial
-//             toneMapped={false}
-//             transparent
-//             opacity={1}
-//           />
-//         </mesh>
-//       </group>
 //       {/* TESLA-STYLE SIMPLE TABLET */}
 //       <group position={[0, 0, 0.05]}>
 //         {/* Outer Tablet Shape */}
@@ -637,51 +615,76 @@ var _s = __turbopack_context__.k.signature();
 function DashboardAnimation({ dashboardRef, progressRef }) {
     _s();
     const uiGroup = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Group"]());
-    const planeRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const planeForwardRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const planeReverseRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const videoForwardRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const videoReverseRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const textureForwardRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const textureReverseRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const scrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothScrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const rafRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const [textures, setTextures] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const totalFrames = 732;
-    // Load dashboard frames
+    const isPlayingForwardRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const isPlayingReverseRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const currentDirectionRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])('forward');
+    // Create both forward and reverse videos with textures
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
-            const loadTextures = {
-                "DashboardAnimation.useEffect.loadTextures": async ()=>{
-                    const loader = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextureLoader"]();
-                    const promises = [];
-                    for(let i = 1; i <= totalFrames; i++){
-                        const fileNumber = i.toString().padStart(5, "0");
-                        const url = `/dashsmaller/frame_${fileNumber}.jpg`;
-                        const promise = new Promise({
-                            "DashboardAnimation.useEffect.loadTextures": (resolve)=>{
-                                const tex = loader.load(url, {
-                                    "DashboardAnimation.useEffect.loadTextures.tex": ()=>resolve(tex)
-                                }["DashboardAnimation.useEffect.loadTextures.tex"]);
-                                tex.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
-                                tex.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
-                                tex.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
-                                tex.generateMipmaps = true;
-                            }
-                        }["DashboardAnimation.useEffect.loadTextures"]);
-                        promises.push(promise);
-                    }
-                    const frames = await Promise.all(promises);
-                    setTextures(frames);
-                }
-            }["DashboardAnimation.useEffect.loadTextures"];
-            loadTextures();
+            // Forward video
+            const videoForward = document.createElement("video");
+            videoForward.src = "/dashboard.mp4";
+            videoForward.crossOrigin = "anonymous";
+            videoForward.loop = false;
+            videoForward.muted = true;
+            videoForward.playsInline = true;
+            videoForwardRef.current = videoForward;
+            const textureForward = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["VideoTexture"](videoForward);
+            textureForward.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            textureForward.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            textureForward.generateMipmaps = false;
+            textureForward.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
+            textureForwardRef.current = textureForward;
+            // Reverse video
+            const videoReverse = document.createElement("video");
+            videoReverse.src = "/dashboard-reverse.mp4";
+            videoReverse.crossOrigin = "anonymous";
+            videoReverse.loop = false;
+            videoReverse.muted = true;
+            videoReverse.playsInline = true;
+            videoReverseRef.current = videoReverse;
+            const textureReverse = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["VideoTexture"](videoReverse);
+            textureReverse.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            textureReverse.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            textureReverse.generateMipmaps = false;
+            textureReverse.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
+            textureReverseRef.current = textureReverse;
+            // Assign textures to planes
+            if (planeForwardRef.current) {
+                const material = planeForwardRef.current.material;
+                material.map = textureForward;
+                material.transparent = true;
+                material.needsUpdate = true;
+            }
+            if (planeReverseRef.current) {
+                const material = planeReverseRef.current.material;
+                material.map = textureReverse;
+                material.transparent = true;
+                material.opacity = 0;
+                material.needsUpdate = true;
+            }
             return ({
                 "DashboardAnimation.useEffect": ()=>{
-                    // Dispose textures on unmount
-                    textures.forEach({
-                        "DashboardAnimation.useEffect": (t)=>t.dispose()
-                    }["DashboardAnimation.useEffect"]);
+                    textureForward.dispose();
+                    textureReverse.dispose();
+                    videoForward.pause();
+                    videoForward.src = "";
+                    videoReverse.pause();
+                    videoReverse.src = "";
                 }
             })["DashboardAnimation.useEffect"];
         }
     }["DashboardAnimation.useEffect"], []);
-    // Scroll tracking (unchanged)
+    // Scroll tracking
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
             let ticking = false;
@@ -730,20 +733,80 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     }["DashboardAnimation.useEffect"], [
         dashboardRef
     ]);
-    // Main animation: display frame based on scroll progress
+    // Main animation: cross-fade between forward and reverse videos
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])({
         "DashboardAnimation.useFrame": (_state, delta)=>{
-            if (!textures.length || !planeRef.current) return;
+            const videoForward = videoForwardRef.current;
+            const videoReverse = videoReverseRef.current;
+            if (!videoForward || !videoReverse || !videoForward.duration || !videoReverse.duration) return;
             const targetProgress = scrollRef.current;
             const lerpFactor = Math.min(delta * 10, 1);
             smoothScrollRef.current += (targetProgress - smoothScrollRef.current) * lerpFactor;
-            const frameIndex = Math.floor(smoothScrollRef.current * (textures.length - 1));
             progressRef.current = smoothScrollRef.current;
-            const currentTexture = textures[frameIndex];
-            const mat = planeRef.current.material;
-            if (mat.map !== currentTexture) {
-                mat.map = currentTexture;
-                mat.needsUpdate = true;
+            const scrollVelocity = (targetProgress - smoothScrollRef.current) / delta;
+            const isScrollingBackward = scrollVelocity < -0.015;
+            const isScrollingForward = scrollVelocity > 0.015;
+            const isStationary = Math.abs(scrollVelocity) < 0.015;
+            // Determine desired direction
+            let desiredDirection = currentDirectionRef.current;
+            if (!isStationary) {
+                desiredDirection = isScrollingBackward ? 'reverse' : 'forward';
+            }
+            // Cross-fade between videos when direction changes
+            if (desiredDirection !== currentDirectionRef.current) {
+                currentDirectionRef.current = desiredDirection;
+                // Sync both videos to current position
+                const forwardTime = smoothScrollRef.current * videoForward.duration;
+                const reverseTime = (1 - smoothScrollRef.current) * videoReverse.duration;
+                videoForward.currentTime = Math.max(0, Math.min(forwardTime, videoForward.duration - 0.01));
+                videoReverse.currentTime = Math.max(0, Math.min(reverseTime, videoReverse.duration - 0.01));
+                // Pause both before switching
+                videoForward.pause();
+                videoReverse.pause();
+                isPlayingForwardRef.current = false;
+                isPlayingReverseRef.current = false;
+            }
+            // Set opacity based on direction (cross-fade)
+            const forwardOpacity = desiredDirection === 'forward' ? 1 : 0;
+            const reverseOpacity = desiredDirection === 'reverse' ? 1 : 0;
+            if (planeForwardRef.current) {
+                const mat = planeForwardRef.current.material;
+                mat.opacity = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].lerp(mat.opacity, forwardOpacity, delta * 10);
+            }
+            if (planeReverseRef.current) {
+                const mat = planeReverseRef.current.material;
+                mat.opacity = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].lerp(mat.opacity, reverseOpacity, delta * 10);
+            }
+            // Determine active video
+            const activeVideo = desiredDirection === 'reverse' ? videoReverse : videoForward;
+            const isPlayingRef = desiredDirection === 'reverse' ? isPlayingReverseRef : isPlayingForwardRef;
+            // Clamp video currentTime to prevent looping jumps
+            if (activeVideo.currentTime >= activeVideo.duration - 0.05) {
+                activeVideo.currentTime = activeVideo.duration - 0.05;
+            }
+            if (activeVideo.currentTime < 0.01) {
+                activeVideo.currentTime = 0.01;
+            }
+            const sensitivity = 15;
+            let playbackRate = Math.abs(scrollVelocity) * sensitivity;
+            playbackRate = Math.max(0.1, Math.min(10, playbackRate));
+            if (isStationary) {
+                playbackRate = 0;
+            }
+            activeVideo.playbackRate = playbackRate;
+            // Play/pause control
+            if (playbackRate === 0 || isStationary) {
+                if (isPlayingRef.current) {
+                    activeVideo.pause();
+                    isPlayingRef.current = false;
+                }
+            } else {
+                if (!isPlayingRef.current) {
+                    activeVideo.play().catch({
+                        "DashboardAnimation.useFrame": ()=>{}
+                    }["DashboardAnimation.useFrame"]);
+                    isPlayingRef.current = true;
+                }
             }
         }
     }["DashboardAnimation.useFrame"]);
@@ -772,7 +835,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 362,
+                                lineNumber: 415,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshStandardMaterial", {
@@ -781,13 +844,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 metalness: 0.1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 363,
+                                lineNumber: 416,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 361,
+                        lineNumber: 414,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -804,26 +867,24 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 372,
+                                lineNumber: 420,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                                color: "#000",
-                                transparent: true,
-                                opacity: 1
+                                color: "#000"
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 373,
+                                lineNumber: 421,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 371,
+                        lineNumber: 419,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
-                        ref: planeRef,
+                        ref: planeForwardRef,
                         position: [
                             0,
                             0,
@@ -837,28 +898,59 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 382,
+                                lineNumber: 426,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 toneMapped: false,
-                                transparent: true,
-                                opacity: 1
+                                transparent: true
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 383,
+                                lineNumber: 427,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 381,
+                        lineNumber: 425,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
+                        ref: planeReverseRef,
+                        position: [
+                            0,
+                            0,
+                            0.002
+                        ],
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("planeGeometry", {
+                                args: [
+                                    0.47,
+                                    0.29
+                                ]
+                            }, void 0, false, {
+                                fileName: "[project]/components/DashboardAnimation.tsx",
+                                lineNumber: 432,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
+                                toneMapped: false,
+                                transparent: true
+                            }, void 0, false, {
+                                fileName: "[project]/components/DashboardAnimation.tsx",
+                                lineNumber: 433,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/DashboardAnimation.tsx",
+                        lineNumber: 431,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 359,
+                lineNumber: 413,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -866,17 +958,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 dashboardRef: dashboardRef
             }, void 0, false, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 391,
+                lineNumber: 437,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/DashboardAnimation.tsx",
-        lineNumber: 357,
+        lineNumber: 412,
         columnNumber: 5
     }, this);
 }
-_s(DashboardAnimation, "FdP2DoJGv5h4xUuXub/dy65Uljk=", false, function() {
+_s(DashboardAnimation, "E9KBi7v2qmgEwGW07QtXeXBI4cQ=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"]
     ];

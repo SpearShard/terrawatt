@@ -46,7 +46,7 @@ __turbopack_context__.n(__turbopack_context__.i("[project]/app/layout.tsx [app-r
 //       <Navbar/>
 //       <div className="relative">
 //         <img
-//           src="/insightbg.jpg"
+//           src="/insights.jpeg"
 //           alt="Insights Background"
 //           className="w-full object-cover object-top"
 //           style={{ height: "480vh" }}

@@ -381,11 +381,11 @@ var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.sign
 ;
 __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].registerPlugin(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"]);
 const FRAME_SETS = {
-    investpartner: 776
+    investwebp: 516
 };
 const sections = [
     {
-        id: "investpartner",
+        id: "investwebp",
         fade: "bottom"
     }
 ];
@@ -419,7 +419,7 @@ function FrameScroller({ folder, frameCount }) {
             let loadedCount = 0;
             for(let i = 1; i <= frameCount; i++){
                 const img = new Image();
-                img.src = `https://ik.imagekit.io/yv4cjaya8/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+                img.src = `/${folder}/frame_${String(i).padStart(5, "0")}.webp`;
                 // img.src = `/frames/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
                 img.onload = ({
                     "FrameScroller.useEffect": ()=>{
@@ -515,12 +515,12 @@ function FrameScroller({ folder, frameCount }) {
             className: "w-full h-screen block sticky top-0"
         }, void 0, false, {
             fileName: "[project]/app/investors-and-partners/page.tsx",
-            lineNumber: 278,
+            lineNumber: 279,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/investors-and-partners/page.tsx",
-        lineNumber: 277,
+        lineNumber: 278,
         columnNumber: 5
     }, this);
 }
@@ -557,7 +557,7 @@ function InvestorsPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 312,
+                lineNumber: 313,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -569,17 +569,17 @@ function InvestorsPage() {
                             frameCount: FRAME_SETS[s.id]
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 317,
+                            lineNumber: 318,
                             columnNumber: 13
                         }, this)
                     }, s.id, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 316,
+                        lineNumber: 317,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 314,
+                lineNumber: 315,
                 columnNumber: 7
             }, this)
         ]

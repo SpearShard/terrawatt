@@ -147,14 +147,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type FrameFolder = "investpartner";
+type FrameFolder = "investwebp";
 
 const FRAME_SETS: Record<FrameFolder, number> = {
-  investpartner: 776,
+  investwebp: 516,
 };
 
 const sections: { id: FrameFolder; fade: "top" | "bottom" | "both" }[] = [
-  { id: "investpartner", fade: "bottom" },
+  { id: "investwebp", fade: "bottom" },
 ];
 
 function FrameScroller({
@@ -196,8 +196,9 @@ function FrameScroller({
 
     for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
-      img.src = `https://ik.imagekit.io/yv4cjaya8/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+      img.src = `/${folder}/frame_${String(i).padStart(5, "0")}.webp`;
       // img.src = `/frames/${folder}/frame_${String(i).padStart(5, "0")}.jpg`;
+      
       
 
       img.onload = () => {
