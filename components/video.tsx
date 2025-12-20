@@ -314,7 +314,8 @@ export default function Video() {
     }
     const bgUrls: string[] = [];
     for (let i = 1; i <= BG_FRAMES; i++) {
-      bgUrls.push(`https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
+      bgUrls.push(`https://ik.imagekit.io/yv4cjaya8/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
+      
     }
 
     let fgBatchIndex = 0;

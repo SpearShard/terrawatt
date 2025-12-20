@@ -1442,7 +1442,7 @@ function Video() {
         }
         const bgUrls = [];
         for(let i = 1; i <= BG_FRAMES; i++){
-            bgUrls.push(`https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
+            bgUrls.push(`https://ik.imagekit.io/yv4cjaya8/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
         }
         let fgBatchIndex = 0;
         let bgBatchIndex = 0;
@@ -1567,7 +1567,7 @@ function Video() {
                     className: "absolute inset-0 w-full h-full object-fit"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 449,
+                    lineNumber: 450,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
@@ -1575,7 +1575,7 @@ function Video() {
                     className: "relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 454,
+                    lineNumber: 455,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1595,28 +1595,28 @@ function Video() {
                             progressRef: scrollProgressRef
                         }, void 0, false, {
                             fileName: "[project]/components/video.tsx",
-                            lineNumber: 461,
+                            lineNumber: 462,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/video.tsx",
-                        lineNumber: 460,
+                        lineNumber: 461,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 459,
+                    lineNumber: 460,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/video.tsx",
-            lineNumber: 448,
+            lineNumber: 449,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/video.tsx",
-        lineNumber: 447,
+        lineNumber: 448,
         columnNumber: 5
     }, this);
 }
