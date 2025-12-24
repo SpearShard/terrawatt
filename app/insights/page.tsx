@@ -1,10 +1,13 @@
 // "use client";
+// export const dynamic = "force-dynamic";
 
 // import { useEffect, useState } from "react";
 // import Navbar from "@/components/Navbar";
+// import Link from "next/link";
 
 // interface Blog {
 //   id: string;
+//   slug: string;
 //   title: string;
 //   shortDescription: string;
 //   content?: string;
@@ -12,157 +15,291 @@
 //   images: { url: string }[];
 // }
 
+// const PAGE_SIZE = 6;
+// const TOTAL_PAGES = 2;
+
 // export default function InsightsPage() {
 //   const [blogs, setBlogs] = useState<Blog[]>([]);
 //   const [loading, setLoading] = useState(true);
-//   const [selected, setSelected] = useState<Blog | null>(null);
+//   const [page, setPage] = useState(1);
 
 //   useEffect(() => {
-//     fetch("http://65.2.124.237:8000/api/v1/users/blog/all")
-//       .then(r => r.json())
-//       .then(data => {
+//     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs`)
+//       .then((r) => r.json())
+//       .then((data) => {
 //         setBlogs(data.data?.blogs || []);
 //         setLoading(false);
 //       })
 //       .catch(() => setLoading(false));
 //   }, []);
 
-//   const items = [...blogs.slice(0, 6), ...Array(Math.max(0, 6 - blogs.length)).fill(null)];
+//   // -------- Pagination logic --------
+//   let items: (Blog | null)[] = [];
+
+//   if (page === 1) {
+//     const realBlogs = blogs.slice(0, PAGE_SIZE);
+//     items = [
+//       ...realBlogs,
+//       ...Array(Math.max(0, PAGE_SIZE - realBlogs.length)).fill(null),
+//     ];
+//   }
+
+//   if (page === 2) {
+//     items = Array(4).fill(null);
+//   }
 
 //   return (
 //     <>
-//       {/* FULL BACKGROUND — SCROLLS NATURALLY */}
-//       <Navbar/>
-//       <div className="relative">
+//       <Navbar />
+
+//       {/* FULL BACKGROUND */}
+//       <div className="relative min-h-screen" style={{ background: "#000000" }}>
 //         <img
-//           src="/insights.jpeg"
+//           src="/black.png"
 //           alt="Insights Background"
-//           className="w-full object-cover object-top"
-//           style={{ height: "480vh" }}
+//           className="w-full object-cover object-top absolute top-0 left-0"
+//           style={{ height: "100vh", width: "100vw" }}
 //         />
 
-//         {/* CONTENT — at bottom of image */}
-//         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent pt-32 pb-24 px-8">
-//           <div className="max-w-7xl mx-auto">
+//         {/* GRADIENT OVERLAY WITH BLUR */}
+//         <div 
+//           className="absolute inset-0 pointer-events-none"
+//           style={{
+//             background: "linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(10,10,10,0.8) 70%, #0A0A0A 100%)",
+//           }}
+//         />
 
-//             {/* EXACT TEXT FROM YOUR IMAGE */}
-//             <div className="text-center mb-20">
-//               <h1 className="text-6xl md:text-8xl font-black text-cyan-400 mb-4">
-//                 Stories for a Smarter<br />Electric Journey
+//         {/* CONTENT */}
+//         <div className="relative z-10 min-h-screen flex flex-col justify-end">
+//           <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 pb-20 pt-40">
+
+//             {/* TITLE WITH STAGGERED ANIMATION */}
+//             <div className="text-center mb-24 space-y-6 animate-fade-in">
+//               <div className="inline-block">
+//                 <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full px-6 py-2 border border-cyan-500/30 backdrop-blur-sm mb-6">
+//                   <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase">
+//                     EV Insights & Stories
+//                   </span>
+//                 </div>
+//               </div>
+              
+//               <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 mb-6 leading-tight">
+//                 Stories for a Smarter
+//                 <br />
+//                 <span className="text-white">Electric Journey</span>
 //               </h1>
-//               <p className="text-cyan-200/90 text-xl md:text-2xl font-light tracking-wide">
-//                 Learn, explore, and stay informed with curated EV insights<br />
-//                 from the <span className="text-white font-semibold">TeraaWatt team.</span>
+              
+//               <p className="text-cyan-100/80 text-lg sm:text-xl lg:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
+//                 Discover the latest innovations, expert insights, and inspiring stories shaping the future of electric mobility
 //               </p>
+
+//               {/* DECORATIVE LINE */}
+//               <div className="flex items-center justify-center gap-3 pt-8">
+//                 <div className="h-px w-20 bg-gradient-to-r from-transparent to-cyan-500/50"></div>
+//                 <div className="h-2 w-2 rounded-full bg-cyan-400/60"></div>
+//                 <div className="h-px w-20 bg-gradient-to-l from-transparent to-cyan-500/50"></div>
+//               </div>
 //             </div>
 
-//             {/* 4 BLOG CARDS */}
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+//             {/* BLOG GRID WITH ENHANCED CARDS */}
+//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
 //               {items.map((blog, i) =>
 //                 blog ? (
-//                   <BlogCard key={blog.id} blog={blog} onClick={() => setSelected(blog)} />
+//                   <BlogCard key={blog.id} blog={blog} index={i} />
 //                 ) : (
 //                   <ShimmerCard key={`placeholder-${i}`} />
 //                 )
 //               )}
 //             </div>
-//           </div>
-//         </div>
-//       </div>
 
-//       {/* EXPANDED BLOG */}
-//       {selected && (
-//         <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl overflow-y-auto" onClick={() => setSelected(null)}>
-//           <div className="min-h-screen flex items-center justify-center p-8" onClick={e => e.stopPropagation()}>
-//             <div className="max-w-4xl w-full bg-gray-900/95 rounded-3xl border border-cyan-500/20 shadow-2xl overflow-hidden">
-//               <button className="absolute top-8 right-8 text-white/60 hover:text-white text-5xl z-10" onClick={() => setSelected(null)}>
-//                 ×
+//             {/* MODERN PAGINATION */}
+//             <div className="flex justify-center items-center gap-4">
+//               <button
+//                 disabled={page === 1}
+//                 onClick={() => setPage((p) => Math.max(1, p - 1))}
+//                 className={`group relative px-8 py-3 rounded-full font-medium transition-all duration-300 ${
+//                   page === 1
+//                     ? "bg-neutral-900/50 text-neutral-600 cursor-not-allowed border border-neutral-800"
+//                     : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20"
+//                 }`}
+//               >
+//                 <span className="flex items-center gap-2">
+//                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+//                   </svg>
+//                   Previous
+//                 </span>
 //               </button>
 
-//               {selected.images?.[0] && (
-//                 <img src={selected.images[0].url} alt="" className="w-full h-96 object-cover" />
-//               )}
-
-//               <div className="p-12 md:p-20">
-//                 <p className="text-cyan-400 mb-6">
-//                   {new Date(selected.publishDate).toLocaleDateString("en-US", {
-//                     month: "long",
-//                     day: "numeric",
-//                     year: "numeric",
-//                   })}
-//                 </p>
-//                 <h1 className="text-5xl md:text-7xl font-black text-white mb-10">
-//                   {selected.title}
-//                 </h1>
-//                 <div
-//                   className="prose prose-invert prose-lg text-gray-300 leading-relaxed"
-//                   dangerouslySetInnerHTML={{ __html: selected.content || selected.shortDescription }}
-//                 />
+//               <div className="flex items-center gap-2 px-6">
+//                 {[...Array(TOTAL_PAGES)].map((_, i) => (
+//                   <button
+//                     key={i}
+//                     onClick={() => setPage(i + 1)}
+//                     className={`h-2 rounded-full transition-all duration-300 ${
+//                       page === i + 1
+//                         ? "w-8 bg-gradient-to-r from-cyan-400 to-blue-400"
+//                         : "w-2 bg-neutral-700 hover:bg-neutral-600"
+//                     }`}
+//                   />
+//                 ))}
 //               </div>
+
+//               <button
+//                 disabled={page === TOTAL_PAGES}
+//                 onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
+//                 className={`group relative px-8 py-3 rounded-full font-medium transition-all duration-300 ${
+//                   page === TOTAL_PAGES
+//                     ? "bg-neutral-900/50 text-neutral-600 cursor-not-allowed border border-neutral-800"
+//                     : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20"
+//                 }`}
+//               >
+//                 <span className="flex items-center gap-2">
+//                   Next
+//                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+//                   </svg>
+//                 </span>
+//               </button>
 //             </div>
 //           </div>
 //         </div>
-//       )}
+
+//         {/* AMBIENT GLOW EFFECTS */}
+//         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+//         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+//       </div>
 //     </>
 //   );
 // }
 
-// /* BLOG CARD */
-// function BlogCard({ blog, onClick }: { blog: Blog; onClick: () => void }) {
+// /* ENHANCED BLOG CARD */
+// function BlogCard({ blog, index }: { blog: Blog; index: number }) {
 //   const thumb = blog.images?.[0]?.url;
 
 //   return (
-//     <div onClick={onClick} className="group cursor-pointer">
-//       <div className="rounded-3xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition-all duration-500 shadow-2xl">
-//         <div className="h-64 overflow-hidden">
+//     <Link 
+//       href={`/insights/${blog.slug}`} 
+//       className="group block"
+//       style={{
+//         animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+//       }}
+//     >
+//       <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/10">
+        
+//         {/* IMAGE CONTAINER */}
+//         <div className="relative h-56 overflow-hidden">
 //           {thumb ? (
-//             <img src={thumb} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+//             <>
+//               <img
+//                 src={thumb}
+//                 alt=""
+//                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+//               />
+//               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+//             </>
 //           ) : (
-//             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black" />
+//             <div className="w-full h-full bg-gradient-to-br from-cyan-900/20 via-blue-900/20 to-black relative">
+//               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+//             </div>
 //           )}
+          
+//           {/* CORNER ACCENT */}
+//           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-cyan-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 //         </div>
-//         <div className="p-8 space-y-4">
-//           <p className="text-cyan-400 text-sm font-medium">
-//             {new Date(blog.publishDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-//           </p>
-//           <h3 className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-2">
+
+//         {/* CONTENT */}
+//         <div className="p-6 space-y-3">
+//           <div className="flex items-center gap-2">
+//             <div className="h-1 w-1 rounded-full bg-cyan-400"></div>
+//             <p className="text-cyan-400 text-xs font-semibold tracking-wider uppercase">
+//               {new Date(blog.publishDate).toLocaleDateString('en-US', { 
+//                 month: 'short', 
+//                 day: 'numeric', 
+//                 year: 'numeric' 
+//               })}
+//             </p>
+//           </div>
+          
+//           <h3 className="text-xl font-bold text-white line-clamp-2 group-hover:text-cyan-400 transition-colors duration-300 leading-snug">
 //             {blog.title}
 //           </h3>
-//           <p className="text-gray-300 text-base line-clamp-3">{blog.shortDescription}</p>
+          
+//           <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">
+//             {blog.shortDescription}
+//           </p>
+
+//           {/* READ MORE INDICATOR */}
+//           <div className="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+//             <span>Read More</span>
+//             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+//             </svg>
+//           </div>
+//         </div>
+//       </div>
+//     </Link>
+//   );
+// }
+
+// /* MODERN SHIMMER CARD */
+// function ShimmerCard() {
+//   return (
+//     <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 overflow-hidden">
+//       <div className="h-56 bg-gradient-to-br from-gray-900/50 to-black/50 relative overflow-hidden">
+//         <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+//              style={{ animation: 'shimmer 2s infinite' }} />
+//       </div>
+//       <div className="p-6 space-y-3">
+//         <div className="flex items-center gap-2">
+//           <div className="h-3 w-24 bg-white/10 rounded-full animate-pulse" />
+//         </div>
+//         <div className="h-6 w-full bg-white/10 rounded animate-pulse" />
+//         <div className="h-6 w-4/5 bg-white/10 rounded animate-pulse" />
+//         <div className="space-y-2 pt-2">
+//           <div className="h-3 w-full bg-white/5 rounded animate-pulse" />
+//           <div className="h-3 w-5/6 bg-white/5 rounded animate-pulse" />
 //         </div>
 //       </div>
 //     </div>
 //   );
 // }
 
-// /* SHIMMER CARD */
-// function ShimmerCard() {
-//   return (
-//     <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden">
-//       <div className="h-64 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
-//         <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
-//       </div>
-//       <div className="p-8 space-y-4">
-//         <div className="h-4 w-32 bg-white/10 rounded-full animate-pulse" />
-//         <div className="h-8 w-full bg-white/10 rounded animate-pulse" />
-//         <div className="h-4 w-5/6 bg-white/10 rounded animate-pulse" />
-//       </div>
-//     </div>
-//   );
+// // Add these styles to your global CSS or use a style tag
+// const styles = `
+// @keyframes fadeInUp {
+//   from {
+//     opacity: 0;
+//     transform: translateY(30px);
+//   }
+//   to {
+//     opacity: 1;
+//     transform: translateY(0);
+//   }
 // }
 
-// /* SHIMMER ANIMATION — INLINE */
-// <style jsx global>{`
-//   @keyframes shimmer {
-//     0% { transform: translateX(-100%); }
-//     100% { transform: translateX(100%); }
+// @keyframes shimmer {
+//   0% {
+//     transform: translateX(-100%);
 //   }
-// `}</style>
+//   100% {
+//     transform: translateX(100%);
+//   }
+// }
 
+// @keyframes fade-in {
+//   from {
+//     opacity: 0;
+//   }
+//   to {
+//     opacity: 1;
+//   }
+// }
 
-
-
-
+// .animate-fade-in {
+//   animation: fade-in 1s ease-out;
+// }
+// `;
 
 
 
@@ -196,7 +333,7 @@ export default function InsightsPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetch("/api/blogs")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs`)
       .then((r) => r.json())
       .then((data) => {
         setBlogs(data.data?.blogs || []);
@@ -205,7 +342,6 @@ export default function InsightsPage() {
       .catch(() => setLoading(false));
   }, []);
 
-  // -------- Pagination logic --------
   let items: (Blog | null)[] = [];
 
   if (page === 1) {
@@ -222,18 +358,18 @@ export default function InsightsPage() {
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: styles }} />
       <Navbar />
 
-      {/* FULL BACKGROUND */}
-      <div className="relative min-h-screen" style={{ background: "#000000" }}>
+      <div className="relative min-h-screen bg-black">
+        {/* Responsive Background Image */}
         <img
           src="/black.png"
           alt="Insights Background"
-          className="w-full object-cover object-top absolute top-0 left-0"
-          style={{ height: "100vh", width: "100vw" }}
+          className="w-full object-cover object-top absolute top-0 left-0 h-[60vh] md:h-screen"
         />
 
-        {/* GRADIENT OVERLAY WITH BLUR */}
+        {/* GRADIENT OVERLAY */}
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -243,38 +379,38 @@ export default function InsightsPage() {
 
         {/* CONTENT */}
         <div className="relative z-10 min-h-screen flex flex-col justify-end">
-          <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 pb-20 pt-40">
+          <div className="max-w-7xl mx-auto w-full px-4 sm:px-8 lg:px-12 pb-12 md:pb-20 pt-28 md:pt-40">
 
-            {/* TITLE WITH STAGGERED ANIMATION */}
-            <div className="text-center mb-24 space-y-6 animate-fade-in">
+            {/* HEADER SECTION */}
+            <div className="text-center mb-12 md:mb-24 space-y-4 md:space-y-6 animate-fade-in">
               <div className="inline-block">
-                <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full px-6 py-2 border border-cyan-500/30 backdrop-blur-sm mb-6">
-                  <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase">
+                <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full px-4 py-1 md:px-6 md:py-2 border border-cyan-500/30 backdrop-blur-sm mb-4 md:mb-6">
+                  <span className="text-cyan-400 text-[10px] md:text-sm font-semibold tracking-wider uppercase">
                     EV Insights & Stories
                   </span>
                 </div>
               </div>
               
-              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 mb-6 leading-tight">
+              <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 mb-4 md:mb-6 leading-[1.1]">
                 Stories for a Smarter
                 <br />
                 <span className="text-white">Electric Journey</span>
               </h1>
               
-              <p className="text-cyan-100/80 text-lg sm:text-xl lg:text-2xl font-light max-w-3xl mx-auto leading-relaxed">
+              <p className="text-cyan-100/80 text-base md:text-xl lg:text-2xl font-light max-w-3xl mx-auto leading-relaxed px-4">
                 Discover the latest innovations, expert insights, and inspiring stories shaping the future of electric mobility
               </p>
 
               {/* DECORATIVE LINE */}
-              <div className="flex items-center justify-center gap-3 pt-8">
-                <div className="h-px w-20 bg-gradient-to-r from-transparent to-cyan-500/50"></div>
-                <div className="h-2 w-2 rounded-full bg-cyan-400/60"></div>
-                <div className="h-px w-20 bg-gradient-to-l from-transparent to-cyan-500/50"></div>
+              <div className="flex items-center justify-center gap-3 pt-6 md:pt-8">
+                <div className="h-px w-12 md:w-20 bg-gradient-to-r from-transparent to-cyan-500/50"></div>
+                <div className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-cyan-400/60"></div>
+                <div className="h-px w-12 md:w-20 bg-gradient-to-l from-transparent to-cyan-500/50"></div>
               </div>
             </div>
 
-            {/* BLOG GRID WITH ENHANCED CARDS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            {/* BLOG GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-16 md:mb-20">
               {items.map((blog, i) =>
                 blog ? (
                   <BlogCard key={blog.id} blog={blog} index={i} />
@@ -284,18 +420,18 @@ export default function InsightsPage() {
               )}
             </div>
 
-            {/* MODERN PAGINATION */}
-            <div className="flex justify-center items-center gap-4">
+            {/* PAGINATION */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 pb-10">
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className={`group relative px-8 py-3 rounded-full font-medium transition-all duration-300 ${
+                className={`w-full sm:w-auto px-8 py-3 rounded-full font-medium transition-all duration-300 ${
                   page === 1
                     ? "bg-neutral-900/50 text-neutral-600 cursor-not-allowed border border-neutral-800"
-                    : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20"
+                    : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400"
                 }`}
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
@@ -320,13 +456,13 @@ export default function InsightsPage() {
               <button
                 disabled={page === TOTAL_PAGES}
                 onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
-                className={`group relative px-8 py-3 rounded-full font-medium transition-all duration-300 ${
+                className={`w-full sm:w-auto px-8 py-3 rounded-full font-medium transition-all duration-300 ${
                   page === TOTAL_PAGES
                     ? "bg-neutral-900/50 text-neutral-600 cursor-not-allowed border border-neutral-800"
-                    : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20"
+                    : "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/30 hover:border-cyan-400"
                 }`}
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   Next
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -337,15 +473,14 @@ export default function InsightsPage() {
           </div>
         </div>
 
-        {/* AMBIENT GLOW EFFECTS */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        {/* DECORATIVE GLOWS - Hidden on small mobile to improve performance */}
+        <div className="hidden md:block absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="hidden md:block absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
       </div>
     </>
   );
 }
 
-/* ENHANCED BLOG CARD */
 function BlogCard({ blog, index }: { blog: Blog; index: number }) {
   const thumb = blog.images?.[0]?.url;
 
@@ -353,56 +488,39 @@ function BlogCard({ blog, index }: { blog: Blog; index: number }) {
     <Link 
       href={`/insights/${blog.slug}`} 
       className="group block"
-      style={{
-        animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
-      }}
+      style={{ animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both` }}
     >
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/10">
-        
-        {/* IMAGE CONTAINER */}
-        <div className="relative h-56 overflow-hidden">
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 hover:border-cyan-400/50 transition-all duration-500 md:hover:scale-[1.02]">
+        <div className="relative h-48 md:h-56 overflow-hidden">
           {thumb ? (
             <>
-              <img
-                src={thumb}
-                alt=""
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
+              <img src={thumb} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             </>
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-cyan-900/20 via-blue-900/20 to-black relative">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;...')] opacity-30"></div>
             </div>
           )}
-          
-          {/* CORNER ACCENT */}
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-cyan-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
 
-        {/* CONTENT */}
-        <div className="p-6 space-y-3">
+        <div className="p-5 md:p-6 space-y-3">
           <div className="flex items-center gap-2">
             <div className="h-1 w-1 rounded-full bg-cyan-400"></div>
-            <p className="text-cyan-400 text-xs font-semibold tracking-wider uppercase">
-              {new Date(blog.publishDate).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })}
+            <p className="text-cyan-400 text-[10px] md:text-xs font-semibold tracking-wider uppercase">
+              {new Date(blog.publishDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
           
-          <h3 className="text-xl font-bold text-white line-clamp-2 group-hover:text-cyan-400 transition-colors duration-300 leading-snug">
+          <h3 className="text-lg md:text-xl font-bold text-white line-clamp-2 group-hover:text-cyan-400 transition-colors duration-300">
             {blog.title}
           </h3>
           
-          <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">
+          <p className="text-gray-400 text-xs md:text-sm line-clamp-3 leading-relaxed">
             {blog.shortDescription}
           </p>
 
-          {/* READ MORE INDICATOR */}
-          <div className="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
             <span>Read More</span>
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -414,61 +532,25 @@ function BlogCard({ blog, index }: { blog: Blog; index: number }) {
   );
 }
 
-/* MODERN SHIMMER CARD */
 function ShimmerCard() {
   return (
     <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 overflow-hidden">
-      <div className="h-56 bg-gradient-to-br from-gray-900/50 to-black/50 relative overflow-hidden">
-        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/5 to-transparent" 
-             style={{ animation: 'shimmer 2s infinite' }} />
+      <div className="h-48 md:h-56 bg-neutral-900 relative">
+        <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/5 to-transparent" />
       </div>
       <div className="p-6 space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-24 bg-white/10 rounded-full animate-pulse" />
-        </div>
-        <div className="h-6 w-full bg-white/10 rounded animate-pulse" />
-        <div className="h-6 w-4/5 bg-white/10 rounded animate-pulse" />
-        <div className="space-y-2 pt-2">
-          <div className="h-3 w-full bg-white/5 rounded animate-pulse" />
-          <div className="h-3 w-5/6 bg-white/5 rounded animate-pulse" />
-        </div>
+        <div className="h-3 w-24 bg-white/10 rounded-full" />
+        <div className="h-6 w-full bg-white/10 rounded" />
+        <div className="h-3 w-full bg-white/5 rounded" />
       </div>
     </div>
   );
 }
 
-// Add these styles to your global CSS or use a style tag
 const styles = `
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 1s ease-out;
-}
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: fade-in 1s ease-out; }
+.animate-shimmer { animation: shimmer 2s infinite; }
 `;

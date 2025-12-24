@@ -1,143 +1,3 @@
-// "use client";
-
-// import { useEffect, useRef } from "react";
-// import Navbar from "@/components/Navbar";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// gsap.registerPlugin(ScrollTrigger);
-
-// type FrameFolder = "investpartner";
-
-// const FRAME_SETS: Record<FrameFolder, number> = {
-//   investpartner: 776,
-// };
-
-// const sections: { id: FrameFolder; fade: "top" | "bottom" | "both" }[] = [
-//   { id: "investpartner", fade: "bottom" }
-// ];
-
-
-
-// function FrameScroller({
-//   folder,
-//   frameCount,
-//   fadeType,
-// }: {
-//   folder: FrameFolder;
-//   frameCount: number;
-//   fadeType: "top" | "bottom" | "both";
-// }) {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   const imagesRef = useRef<HTMLImageElement[]>([]);
-//   const loadedRef = useRef(false);
-//   const frameRef = useRef(0);
-
-//   // Load frames
-//   useEffect(() => {
-//     let loaded = 0;
-
-//     for (let i = 1; i <= frameCount; i++) {
-//       const img = new Image();
-//       img.src = `https://ik.imagekit.io/m064cyjlx/${folder}/frame_${String(
-//         i
-//       ).padStart(5, "0")}.jpg`;
-
-//       img.onload = () => {
-//         loaded++;
-//         if (loaded === frameCount) {
-//           loadedRef.current = true;
-//         }
-//       };
-
-//       imagesRef.current.push(img);
-//     }
-//   }, [folder, frameCount]);
-
-//   // Scroll → frame animation WITH PINNING
-//   useEffect(() => {
-//     const section = containerRef.current;
-//     const canvas = canvasRef.current;
-//     if (!section || !canvas) return;
-
-//     const ctx = canvas.getContext("2d")!;
-//     canvas.width = 1080;
-//     canvas.height = 1920;
-
-//     const render = () => {
-//       const index = Math.floor(frameRef.current);
-//       const img = imagesRef.current[index];
-
-//       if (!img) return;
-
-//       ctx.clearRect(0, 0, canvas.width, canvas.height);
-//       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-//     };
-
-//     const ST = ScrollTrigger.create({
-//       trigger: section,
-//       start: "top top",
-//       end: `+=${frameCount * 6}px`, // 👈 stay longer the more frames there are
-//       scrub: 1,
-//       pin: true,
-//       onUpdate: (self) => {
-//         if (!loadedRef.current) return;
-
-//         const progress = self.progress; // 0 → 1
-//         frameRef.current = progress * (frameCount - 1);
-
-//         render();
-//       },
-//     });
-
-//     return () => ST.kill();
-//   }, [frameCount]);
-
-//   // Fade mask
-
-//   return (
-//     <div ref={containerRef} className="w-full">
-//       <canvas
-//         ref={canvasRef}
-//         className={`w-full h-[100vh] block `}
-//       />
-//     </div>
-//   );
-// }
-
-
-// export default function SimpleVideo() {
-//   return (
-//     <>
-//       <Navbar />
-
-//       <div className="w-full  flex flex-col overflow-hidden bg-[#04111E]">
-//         {sections.map((s) => (
-//           <div key={s.id} className="w-full ">
-//             <FrameScroller
-//               folder={s.id}
-//               frameCount={FRAME_SETS[s.id]}
-//               fadeType={s.fade}
-//             />
-//           </div>
-//         ))}
-//       </div>
-//     </>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -325,3 +185,181 @@ export default function InvestorsPage() {
     </>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useRef } from "react";
+// import Navbar from "@/components/Navbar";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// type FrameFolder = "investwebp";
+
+// const FRAME_SETS: Record<FrameFolder, number> = {
+//   investwebp: 516,
+// };
+
+// const sections: { id: FrameFolder; fade: "top" | "bottom" | "both" }[] = [
+//   { id: "investwebp", fade: "bottom" },
+// ];
+
+// function FrameScroller({
+//   folder,
+//   frameCount,
+// }: {
+//   folder: FrameFolder;
+//   frameCount: number;
+// }) {
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const canvasRef = useRef<HTMLCanvasElement>(null);
+//   const imagesRef = useRef<HTMLImageElement[]>([]);
+//   const loadedRef = useRef(false);
+//   const frameRef = useRef(0);
+
+//   const render = (forcedFrame?: number) => {
+//     if (!canvasRef.current) return;
+//     const canvas = canvasRef.current;
+//     const ctx = canvas.getContext("2d")!;
+//     const index = forcedFrame ?? Math.floor(frameRef.current);
+//     const img = imagesRef.current[index];
+
+//     if (img && img.complete) {
+//       // RESPONSIVE DRAWING LOGIC (Object-fit: cover equivalent for Canvas)
+//       const canvasAspect = canvas.width / canvas.height;
+//       const imgAspect = img.width / img.height;
+//       let drawWidth, drawHeight, offsetX, offsetY;
+
+//       if (canvasAspect > imgAspect) {
+//         drawWidth = canvas.width;
+//         drawHeight = canvas.width / imgAspect;
+//         offsetX = 0;
+//         offsetY = (canvas.height - drawHeight) / 2;
+//       } else {
+//         drawWidth = canvas.height * imgAspect;
+//         drawHeight = canvas.height;
+//         offsetX = (canvas.width - drawWidth) / 2;
+//         offsetY = 0;
+//       }
+
+//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+//       ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+//     } else {
+//       ctx.fillStyle = "#04111E";
+//       ctx.fillRect(0, 0, canvas.width, canvas.height);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const images: HTMLImageElement[] = [];
+//     let loadedCount = 0;
+
+//     for (let i = 1; i <= frameCount; i++) {
+//       const img = new Image();
+//       img.src = `/${folder}/frame_${String(i).padStart(5, "0")}.webp`;
+
+//       img.onload = () => {
+//         loadedCount++;
+//         images[i - 1] = img;
+//         if (loadedCount === frameCount) {
+//           imagesRef.current = images;
+//           loadedRef.current = true;
+//           render(0);
+//         }
+//       };
+//     }
+//     render(0);
+//   }, [folder, frameCount]);
+
+//   useEffect(() => {
+//     if (!containerRef.current || !canvasRef.current) return;
+
+//     const canvas = canvasRef.current;
+    
+//     // RESPONSIVE CANVAS SIZING
+//     const handleResize = () => {
+//       // Set internal drawing resolution to match window device pixel ratio for sharpness
+//       canvas.width = window.innerWidth * window.devicePixelRatio;
+//       canvas.height = window.innerHeight * window.devicePixelRatio;
+//       render();
+//     };
+
+//     window.addEventListener("resize", handleResize);
+//     handleResize(); // Initial call
+
+//     ScrollTrigger.getAll().forEach((st) => st.kill());
+
+//     const initTimeout = setTimeout(() => {
+//       ScrollTrigger.refresh();
+
+//       const st = ScrollTrigger.create({
+//         trigger: containerRef.current,
+//         start: "top top",
+//         // Increase multiplier on mobile for a better feel
+//         end: `+=${frameCount * (window.innerWidth < 768 ? 4 : 6)}px`, 
+//         scrub: 1,
+//         pin: true,
+//         anticipatePin: 1,
+//         onUpdate: (self) => {
+//           if (!loadedRef.current) return;
+//           frameRef.current = self.progress * (frameCount - 1);
+//           render();
+//         },
+//       });
+
+//       return () => st.kill();
+//     }, 100);
+
+//     return () => {
+//       clearTimeout(initTimeout);
+//       window.removeEventListener("resize", handleResize);
+//       ScrollTrigger.getAll().forEach((st) => st.kill());
+//     };
+//   }, [frameCount]);
+
+//   return (
+//     <div ref={containerRef} className="w-full relative bg-[#04111E]">
+//       <canvas
+//         ref={canvasRef}
+//         className="w-full h-screen block sticky top-0 object-cover"
+//         style={{ width: '100vw', height: '100vh' }}
+//       />
+//     </div>
+//   );
+// }
+
+// export default function InvestorsPage() {
+//   useEffect(() => {
+//     if ("scrollRestoration" in history) {
+//       history.scrollRestoration = "manual"; 
+//     }
+//     window.scrollTo(0, 0);
+//   }, []);
+
+//   return (
+//     <>
+//       <Navbar />
+//       <div className="w-full flex flex-col overflow-hidden bg-[#04111E]">
+//         {sections.map((s) => (
+//           <div key={s.id} className="w-full">
+//             <FrameScroller
+//               folder={s.id}
+//               frameCount={FRAME_SETS[s.id]}
+//             />
+//           </div>
+//         ))}
+//       </div>
+//     </>
+//   );
+// }

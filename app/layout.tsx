@@ -1,3 +1,53 @@
+// import type { Metadata } from "next";
+// import { Geist, Geist_Mono } from "next/font/google";
+// import "./globals.css";
+// import Footer from "../components/Footer";
+// import Navbar from "@/components/Navbar";
+// import PreloadImages from "@/components/PreloadImages";
+
+
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
+
+// export const metadata: Metadata = {
+//   title: "Teraawatt - EV Charging & Mobility Solutions",
+//   description: "Revolutionary EV charging, AI-powered trip planning, and sustainable mobility solutions for the future.",
+//   viewport: "width=device-width, initial-scale=1.0",
+// };
+
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <html lang="en">
+//       <body
+//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+//         suppressHydrationWarning
+//       >
+//         <PreloadImages />
+//         {children}
+//         <Footer />
+//       </body>
+//     </html>
+//   );
+// }
+
+
+
+
+
+
+
+
 
 
 
@@ -31,11 +81,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
-      >
+  <html lang="en">
+    <head>
+      <link
+        rel="preload"
+        href="/models/lastwala.glb"
+        as="fetch"
+        type="model/gltf-binary"
+        crossOrigin="anonymous"
+      />
+    </head>
+
+    <body
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
+    >
+
         <PreloadImages />
         {children}
         <Footer />
@@ -43,60 +104,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-
-
-
-
-
-
-// "use client";
-
-// import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
-// import { useEffect } from "react";
-// import "./globals.css";
-// import Footer from "../components/Footer";
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
-// export const metadata: Metadata = {
-//   title: "Teraawatt - EV Charging & Mobility Solutions",
-//   description:
-//     "Revolutionary EV charging, AI-powered trip planning, and sustainable mobility solutions for the future.",
-//   viewport: "width=device-width, initial-scale=1.0",
-// };
-
-// export default function RootLayout({
-//   children,
-// }: {
-//   children: React.ReactNode;
-// }) {
-
-//   // 🔥 THIS IS THE FIX
-//   useEffect(() => {
-//     if ("scrollRestoration" in window.history) {
-//       window.history.scrollRestoration = "manual";
-//     }
-//   }, []);
-
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-//         suppressHydrationWarning
-//       >
-//         {children}
-//         <Footer />
-//       </body>
-//     </html>
-//   );
-// }

@@ -395,9 +395,14 @@ function CoinAnimation({ progressRef, dashboardRef }) {
                 const t = (progress - 0.9) / 0.1;
                 const eased = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
                 coin.visible = true;
+                const isMobile = window.innerWidth < 768;
                 // Move toward camera (your original motion)
                 coin.position.y = 0.7 - eased * 0.7;
                 coin.position.z = 0.165;
+                if (isMobile) {
+                    coin.position.y = 0.25 - eased * 0.7;
+                    coin.position.z = 0.235;
+                }
                 // Optional: Scale up as it approaches
                 const scale = 1 + eased * 1.5;
                 coin.scale.setScalar(scale);
@@ -461,10 +466,10 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/components/DashboardAnimation.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
 // import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
+// import { RoundedBox } from "@react-three/drei";
 // import CoinAnimation from "./CoinAnimation";
 // export default function DashboardAnimation({
 //   dashboardRef,
@@ -506,7 +511,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //       textures.forEach((t) => t.dispose());
 //     };
 //   }, []);
-//   // Scroll tracking (unchanged)
+//   // Scroll tracking
 //   useEffect(() => {
 //     let ticking = false;
 //     const handleScroll = () => {
@@ -566,12 +571,13 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //       <group position={[0, 0, 0.05]}>
 //         {/* Outer Tablet Shape */}
 //         <mesh position={[0, 0, -0.015]}>
-//           <boxGeometry args={[0.50, 0.33, 0.03]} />
-//           <meshStandardMaterial
-//             color="#111111"
-//             roughness={0.6}
-//             metalness={0.1}
-//           />
+//           <RoundedBox args={[0.50, 0.33, 0.03]} radius={0.015} smoothness={4}>
+//             <meshStandardMaterial
+//               color="#111111"
+//               roughness={0.6}
+//               metalness={0.1}
+//             />
+//           </RoundedBox>
 //         </mesh>
 //         {/* Screen Area */}
 //         <mesh position={[0, 0, 0]}>
@@ -756,17 +762,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 metalness: 0.1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 321,
+                                lineNumber: 313,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/DashboardAnimation.tsx",
-                            lineNumber: 320,
+                            lineNumber: 312,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 319,
+                        lineNumber: 311,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -783,7 +789,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 331,
+                                lineNumber: 323,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
@@ -792,13 +798,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 opacity: 1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 332,
+                                lineNumber: 324,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 330,
+                        lineNumber: 322,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -816,7 +822,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 341,
+                                lineNumber: 333,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
@@ -825,19 +831,19 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 opacity: 1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 343,
+                                lineNumber: 335,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 340,
+                        lineNumber: 332,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 317,
+                lineNumber: 309,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -845,13 +851,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 dashboardRef: dashboardRef
             }, void 0, false, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 351,
+                lineNumber: 343,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/DashboardAnimation.tsx",
-        lineNumber: 315,
+        lineNumber: 307,
         columnNumber: 5
     }, this);
 }

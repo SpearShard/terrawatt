@@ -1,8 +1,7 @@
-// "use client";
-
 // import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
+// import { RoundedBox } from "@react-three/drei";
 // import CoinAnimation from "./CoinAnimation";
 
 // export default function DashboardAnimation({
@@ -54,7 +53,7 @@
 //     };
 //   }, []);
 
-//   // Scroll tracking (unchanged)
+//   // Scroll tracking
 //   useEffect(() => {
 //     let ticking = false;
 
@@ -132,12 +131,13 @@
 //       <group position={[0, 0, 0.05]}>
 //         {/* Outer Tablet Shape */}
 //         <mesh position={[0, 0, -0.015]}>
-//           <boxGeometry args={[0.50, 0.33, 0.03]} />
-//           <meshStandardMaterial
-//             color="#111111"
-//             roughness={0.6}
-//             metalness={0.1}
-//           />
+//           <RoundedBox args={[0.50, 0.33, 0.03]} radius={0.015} smoothness={4}>
+//             <meshStandardMaterial
+//               color="#111111"
+//               roughness={0.6}
+//               metalness={0.1}
+//             />
+//           </RoundedBox>
 //         </mesh>
 
 //         {/* Screen Area */}
@@ -153,6 +153,7 @@
 //         {/* Actual Dynamic Dashboard Frames */}
 //         <mesh ref={planeRef} position={[0, 0, 0.001]}>
 //           <planeGeometry args={[0.47, 0.29]} />
+          
 //           <meshBasicMaterial
 //             toneMapped={false}
 //             transparent
@@ -165,15 +166,6 @@
 //     </group>
 //   );
 // }
-
-
-
-
-
-
-
-
-
 
 
 

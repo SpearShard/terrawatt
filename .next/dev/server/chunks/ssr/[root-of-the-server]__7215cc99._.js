@@ -36,7 +36,7 @@ module.exports = mod;
 //     if (storedActive) {
 //       setActive(storedActive);
 //       // Clear the key immediately so the state doesn't persist on refresh
-//       localStorage.removeItem(ACTIVE_NAV_KEY); 
+//       localStorage.removeItem(ACTIVE_NAV_KEY);
 //       return; // Stop here, use the stored state
 //     }
 //     // 2. Standard URL Sync (if no stored intention)
@@ -55,8 +55,8 @@ module.exports = mod;
 //   }, [pathname]); // active is no longer a dependency here for the initial load fix
 //   const navItems = [
 //     { name: "Pulse", href: "/" },
-//     { name: "TeraaCharge", href: "/teraa-charge" },
-//     { name: "TeraaMart", href: "/teraa-mart" },
+//     { name: "TeraaCharge", href: "/" },
+//     { name: "TeraaMart", href: "/" },
 //     { name: "Investors & Partners", href: "/investors-and-partners" },
 //     { name: "Insights", href: "/insights" },
 //     { name: "Connect", href: "/connect", isButton: true },
@@ -69,8 +69,8 @@ module.exports = mod;
 //       if (!isOnPulse) {
 //         // Save the intention before redirecting
 //         localStorage.setItem(ACTIVE_NAV_KEY, "TeraaCharge");
-// localStorage.setItem("TW_action", "go_charge");
-// window.location.href = "/";
+//         localStorage.setItem("TW_action", "go_charge");
+//         window.location.href = "/";
 //       } else {
 //         // Already on Pulse → trigger animation
 //         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
@@ -78,36 +78,26 @@ module.exports = mod;
 //       return true; // Navigation handled
 //     }
 //     if (itemName === "TeraaMart") {
-//       setActive("TeraaMart");
-//       if (!isOnPulse) {
-//         // Save the intention before redirecting
-//         localStorage.setItem(ACTIVE_NAV_KEY, "TeraaMart");
-// localStorage.setItem("TW_action", "go_mart");
-// window.location.href = "/";
-//       } else {
-//         // Already on Pulse → trigger animation
-//         ScrollTrigger.getAll().forEach((t) => {
-//           if (t.vars.id === "carScroll") t.disable();
-//         });
-//         const section = document.querySelector("#video-section");
-//         if (section) {
-//           section.scrollIntoView({ behavior: "smooth" });
-//           setTimeout(() => {
-//             window.dispatchEvent(new CustomEvent("scrollToPhoneFrame598"));
-//           }, 1800);
-//         }
-//       }
-//       return true; // Navigation handled
-//     }
+//   setActive("TeraaMart");
+//   if (!isOnPulse) {
+//     localStorage.setItem(ACTIVE_NAV_KEY, "TeraaMart");
+//     localStorage.setItem("TW_action", "go_mart");
+//     window.location.href = "/";
+//   } else {
+//     localStorage.setItem("TW_action", "go_mart");
+//     window.dispatchEvent(new Event("triggerVideoJump"));
+//   }
+//   // window.location.href = "/teraamart";
+//   return true;
+// }
 //     return false; // Not a custom route
 //   };
 //   return (
 //     <nav
-//       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-//         isScrolled
+//       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled
 //           ? "bg-black/90 backdrop-blur-xl border-b border-white/10 shadow-lg"
 //           : "py-6 bg-transparent"
-//       }`}
+//         }`}
 //     >
 //       <div className="justify-center w-fit mx-auto flex items-center px-10">
 //         <div className="flex items-center space-x-10">
@@ -134,18 +124,17 @@ module.exports = mod;
 //                 className="relative px-2 py-1 group"
 //               >
 //                 <span
-//                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${
-//                     active === item.name
+//                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${active === item.name
 //                       ? "text-white"
 //                       : "text-neutral-400 group-hover:text-white"
-//                   }`}
+//                     }`}
 //                   onClick={(e) => {
 //                     const handled = handleCustomNavigation(item.name);
 //                     if (handled) {
-//                         e.preventDefault();
+//                       e.preventDefault();
 //                     } else {
-//                         // Standard Navigation
-//                         setActive(item.name);
+//                       // Standard Navigation
+//                       setActive(item.name);
 //                     }
 //                   }}
 //                 >
@@ -158,11 +147,10 @@ module.exports = mod;
 //                       alt="Connect"
 //                       width={130}
 //                       height={48}
-//                       className={`transition duration-300 ${
-//                         active === "Connect"
+//                       className={`transition duration-300 ${active === "Connect"
 //                           ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
 //                           : "opacity-80 hover:opacity-100"
-//                       }`}
+//                         }`}
 //                     />
 //                   )}
 //                 </span>
@@ -172,10 +160,10 @@ module.exports = mod;
 //                     layoutId="navbar-indicator"
 //                     className="absolute inset-0 z-10 rounded-full"
 //                     style={{
-//                        // Subtle glassy background gradient
-//                        background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-//                        // Subtle cyan bottom glow for activation
-//                        boxShadow: '0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)',
+//                       // Subtle glassy background gradient
+//                       background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
+//                       // Subtle cyan bottom glow for activation
+//                       boxShadow: '0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)',
 //                     }}
 //                     transition={{
 //                       type: "spring",
@@ -185,13 +173,13 @@ module.exports = mod;
 //                     }}
 //                   />
 //                 )}
-//                  {/* Hover Glow Effect */}
-//                  {!item.isButton && (
-//                     <div 
-//                         className="absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 
-//                                    group-hover:opacity-100 group-hover:bg-white/5" 
-//                     />
-//                  )}
+//                 {/* Hover Glow Effect */}
+//                 {!item.isButton && (
+//                   <div
+//                     className="absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 
+//                                    group-hover:opacity-100 group-hover:bg-white/5"
+//                   />
+//                 )}
 //               </Link>
 //             ))}
 //           </div>
@@ -782,9 +770,6 @@ function About() {
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
 // function createRealisticCoin() {
-//   /* --- normal map --- */
-//   const normalMap = new THREE.TextureLoader().load("/bump.png");
-//   normalMap.colorSpace = THREE.SRGBColorSpace;
 //   /* --- geometry with ridges --- */
 //   const radius = 0.012;
 //   const thickness = 0.0025;
@@ -816,7 +801,7 @@ function About() {
 //   }
 //   pos.needsUpdate = true;
 //   geo.computeVertexNormals();
-//   /* --- materials --- */
+//   /* --- materials (NO normal map) --- */
 //   const matSide = new THREE.MeshStandardMaterial({
 //     color: 0xD29508,
 //     metalness: 1.0,
@@ -828,8 +813,6 @@ function About() {
 //     color: 0xD29508,
 //     metalness: 1.0,
 //     roughness: 0.18,
-//     normalMap,
-//     normalScale: new THREE.Vector2(1.3, 1.3),
 //     emissive: new THREE.Color(0xD29508),
 //     emissiveIntensity: 0.5,
 //   });
@@ -848,9 +831,9 @@ function About() {
 //     endProgress: 0.12,
 //     // Starting position & scale (when scroll = 0)
 //     start: {
-//       z: 3,       // How close to your face (higher = closer)
-//       y: -0.1,       // Vertical offset at start
-//       x: -0.04,       // Vertical offset at start
+//       z: 2.46,       // How close to your face (higher = closer)
+//       y: 0,       // Vertical offset at start
+//       x: 0,       // Vertical offset at start
 //       scale: 3.8,   // How HUGE it appears at the beginning
 //     },
 //     // Final position & scale (when coin lands on phone)
@@ -865,37 +848,46 @@ function About() {
 //     spinX: 1.8,
 //   };
 //   useFrame((_, delta) => {
-//     const mesh = meshRef.current;
-//     const p = progressRef.current;
-//     // Always spin
-//     mesh.rotation.y += delta * CONFIG.spinY;
-//     mesh.rotation.x += delta * CONFIG.spinX;
-//     // Only animate during our defined window
-//     if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
-//       const localProgress = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
-//       const t = THREE.MathUtils.clamp(localProgress, 0, 1);
-//       const ease = THREE.MathUtils.smoothstep(t, 0, 1); // buttery smooth
-//       mesh.visible = true;
-//       // Interpolate position
-//       mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
-//       mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
-//       mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
-//       // Interpolate scale
-//       const scale = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
-//       mesh.scale.set(scale, scale, scale);
+//   const mesh = meshRef.current;
+//   const p = progressRef.current;
+//   // BEFORE animation starts — hide coin
+//   if (p < CONFIG.startProgress) {
+//     mesh.visible = false;
+//     return;
+//   }
+//   // FIRST MOMENT — coin appears facing you, no spin
+//   if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
+//     mesh.visible = true;
+//     mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
+//     mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
+//     mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
+//     return;
+//   }
+//   // If inside animation range → spin + move toward phone
+//   if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
+//     const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
+//     const t = THREE.MathUtils.clamp(local, 0, 1);
+//     const ease = THREE.MathUtils.smoothstep(t, 0, 1);
+//     mesh.visible = true;
+//     // Start spinning only AFTER leaving the face
+//     if (p > CONFIG.startProgress + 0.02) {
+//       mesh.rotation.y += delta * CONFIG.spinY;
+//       mesh.rotation.x += delta * CONFIG.spinX;
 //     }
-//     // After animation ends → lock in final state (or hide)
-//     else if (p > CONFIG.endProgress) {
-//       mesh.visible = false; // change to false if coin should disappear
-//       mesh.position.z = CONFIG.end.z;
-//       mesh.position.y = CONFIG.end.y;
-//       mesh.scale.set(CONFIG.end.scale, CONFIG.end.scale, CONFIG.end.scale);
-//     }
-//     // Before animation starts → completely hidden
-//     else {
-//       mesh.visible = false;
-//     }
-//   });
+//     // Move
+//     mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
+//     mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
+//     mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+//     // Scale
+//     const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
+//     mesh.scale.set(s, s, s);
+//     return;
+//   }
+//   // AFTER animation ends → lock final position or hide
+//   if (p > CONFIG.endProgress) {
+//     mesh.visible = false;
+//   }
+// });
 //   return (
 //     <group ref={meshRef}>
 //       {/* Main golden coin */}
@@ -959,17 +951,17 @@ function createRealisticCoin() {
     pos.needsUpdate = true;
     geo.computeVertexNormals();
     /* --- materials (NO normal map) --- */ const matSide = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
-        color: 0xD29508,
+        color: 0xd29508,
         metalness: 1.0,
         roughness: 0.22,
-        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xD29508),
+        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508),
         emissiveIntensity: 0.5
     });
     const matFace = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
-        color: 0xD29508,
+        color: 0xd29508,
         metalness: 1.0,
         roughness: 0.18,
-        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xD29508),
+        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508),
         emissiveIntensity: 0.5
     });
     return new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Mesh"](geo, [
@@ -980,6 +972,7 @@ function createRealisticCoin() {
 }
 function VideoCoin({ progressRef }) {
     const meshRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const coinMaterialsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
     // Tweak these values to control the animation exactly how you want
     const CONFIG = {
         // When does the coin animation start & finish? (0–1 scroll progress)
@@ -1001,7 +994,9 @@ function VideoCoin({ progressRef }) {
         },
         // Spin speed
         spinY: 4,
-        spinX: 1.8
+        spinX: 1.8,
+        // Fade from black to gold settings
+        goldEndProgress: 0.02
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])((_, delta)=>{
         const mesh = meshRef.current;
@@ -1011,12 +1006,20 @@ function VideoCoin({ progressRef }) {
             mesh.visible = false;
             return;
         }
-        // FIRST MOMENT — coin appears facing you, no spin
+        // FIRST MOMENT — coin appears facing you, BLACK at first
         if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
             mesh.visible = true;
             mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
             mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
             mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
+            // Start with black color
+            if (coinMaterialsRef.current.length > 0) {
+                coinMaterialsRef.current.forEach((mat)=>{
+                    mat.color.setHex(0x000000);
+                    mat.emissive.setHex(0x000000);
+                    mat.emissiveIntensity = 0;
+                });
+            }
             return;
         }
         // If inside animation range → spin + move toward phone
@@ -1037,6 +1040,31 @@ function VideoCoin({ progressRef }) {
             // Scale
             const s = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
             mesh.scale.set(s, s, s);
+            // Fade FROM black TO gold at the beginning
+            if (p < CONFIG.goldEndProgress) {
+                const goldLocal = (p - CONFIG.startProgress) / (CONFIG.goldEndProgress - CONFIG.startProgress);
+                const goldProgress = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp(goldLocal, 0, 1);
+                const blackColor = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0x000000);
+                const goldColor = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508);
+                const fadedColor = blackColor.clone().lerp(goldColor, goldProgress);
+                // Update materials to fade from black to gold
+                if (coinMaterialsRef.current.length > 0) {
+                    coinMaterialsRef.current.forEach((mat)=>{
+                        mat.color.copy(fadedColor);
+                        mat.emissive.copy(fadedColor);
+                        mat.emissiveIntensity = 0.5 * goldProgress; // Increase glow as it becomes gold
+                    });
+                }
+            } else {
+                // Keep full gold color after fade completes
+                if (coinMaterialsRef.current.length > 0) {
+                    coinMaterialsRef.current.forEach((mat)=>{
+                        mat.color.setHex(0xd29508);
+                        mat.emissive.setHex(0xd29508);
+                        mat.emissiveIntensity = 0.5;
+                    });
+                }
+            }
             return;
         }
         // AFTER animation ends → lock final position or hide
@@ -1052,11 +1080,16 @@ function VideoCoin({ progressRef }) {
                     const m = createRealisticCoin();
                     m.castShadow = true;
                     m.receiveShadow = true;
+                    // Store material references for color manipulation
+                    const materials = Array.isArray(m.material) ? m.material : [
+                        m.material
+                    ];
+                    coinMaterialsRef.current = materials.filter((mat)=>mat instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]);
                     return m;
                 })()
             }, void 0, false, {
                 fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 359,
+                lineNumber: 411,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -1074,7 +1107,7 @@ function VideoCoin({ progressRef }) {
                         ]
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 369,
+                        lineNumber: 429,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
@@ -1083,13 +1116,13 @@ function VideoCoin({ progressRef }) {
                         transparent: true
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 370,
+                        lineNumber: 430,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 368,
+                lineNumber: 428,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -1107,7 +1140,7 @@ function VideoCoin({ progressRef }) {
                         ]
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 374,
+                        lineNumber: 434,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
@@ -1116,19 +1149,19 @@ function VideoCoin({ progressRef }) {
                         transparent: true
                     }, void 0, false, {
                         fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 375,
+                        lineNumber: 435,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 373,
+                lineNumber: 433,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/ScrollingCoin.tsx",
-        lineNumber: 348,
+        lineNumber: 410,
         columnNumber: 5
     }, this);
 }
@@ -1136,6 +1169,192 @@ function VideoCoin({ progressRef }) {
 "[project]/components/video.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+// "use client";
+// import { useEffect, useRef, useState } from "react";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import { Canvas } from "@react-three/fiber";
+// import ScrollingCoin from "./ScrollingCoin";
+// gsap.registerPlugin(ScrollTrigger);
+// export default function Video() {
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const fgCanvasRef = useRef<HTMLCanvasElement>(null);
+//   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
+//   const fgFrameRef = useRef(0);
+//   const bgFrameRef = useRef(0);
+//   const scrollProgressRef = useRef(0);
+//   // Critical: store the ScrollTrigger instance
+//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+//   const [loaded, setLoaded] = useState(false);
+//   const fgImagesRef = useRef<HTMLImageElement[]>([]);
+//   const bgImagesRef = useRef<HTMLImageElement[]>([]);
+//   const FG_FRAMES = 810;
+//   const BG_FRAMES = 191;
+//   const START_BG_AT = 130;
+//   const CANVAS_W = 1080;
+//   const CANVAS_H = 1920;
+//   const targetProgress = 589 / (FG_FRAMES - 1);
+//   // Load all images with batching to prevent network congestion
+//   useEffect(() => {
+//     let loadedCount = 0;
+//     const total = FG_FRAMES + BG_FRAMES;
+//     const batchSize = 50; // Load 50 images at a time
+//     const delayBetweenBatches = 100; // ms
+//     const loadImage = (url: string, arr: HTMLImageElement[]) => {
+//       const img = new Image();
+//       img.crossOrigin = "anonymous";
+//       img.src = url;
+//       img.onload = () => {
+//         (img as any).loaded = true;
+//         loadedCount++;
+//         if (loadedCount >= total) setLoaded(true);
+//       };
+//       img.onerror = () => {
+//         (img as any).loaded = false;
+//         loadedCount++;
+//         if (loadedCount >= total) setLoaded(true);
+//       };
+//       arr.push(img);
+//     };
+//     const loadBatch = (start: number, end: number, urls: string[], arr: HTMLImageElement[]) => {
+//       for (let i = start; i < Math.min(end, urls.length); i++) {
+//         loadImage(urls[i], arr);
+//       }
+//     };
+//     const fgUrls: string[] = [];
+//     for (let i = 1; i <= FG_FRAMES; i++) {
+//       fgUrls.push(`https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`);
+//     }
+//     const bgUrls: string[] = [];
+//     for (let i = 1; i <= BG_FRAMES; i++) {
+//       bgUrls.push(`https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
+//     }
+//     let fgBatchIndex = 0;
+//     let bgBatchIndex = 0;
+//     const loadNextBatch = () => {
+//       if (fgBatchIndex < fgUrls.length) {
+//         const end = Math.min(fgBatchIndex + batchSize, fgUrls.length);
+//         loadBatch(fgBatchIndex, end, fgUrls, fgImagesRef.current);
+//         fgBatchIndex = end;
+//       }
+//       if (bgBatchIndex < bgUrls.length) {
+//         const end = Math.min(bgBatchIndex + batchSize, bgUrls.length);
+//         loadBatch(bgBatchIndex, end, bgUrls, bgImagesRef.current);
+//         bgBatchIndex = end;
+//       }
+//       if (fgBatchIndex < fgUrls.length || bgBatchIndex < bgUrls.length) {
+//         setTimeout(loadNextBatch, delayBetweenBatches);
+//       }
+//     };
+//     loadNextBatch();
+//   }, []);
+//   // Main scroll-triggered animation
+//   useEffect(() => {
+//     if (!loaded || !containerRef.current || !fgCanvasRef.current || !bgCanvasRef.current) return;
+//     const fgCanvas = fgCanvasRef.current;
+//     const bgCanvas = bgCanvasRef.current;
+//     const fgCtx = fgCanvas.getContext("2d")!;
+//     const bgCtx = bgCanvas.getContext("2d")!;
+//     fgCanvas.width = bgCanvas.width = CANVAS_W;
+//     fgCanvas.height = bgCanvas.height = CANVAS_H;
+//     const render = () => {
+//       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
+//       const fgImg = fgImagesRef.current[fgIndex];
+//       if ((fgImg as any)?.loaded) {
+//         fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+//         fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
+//       }
+//       const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
+//       const bgImg = bgImagesRef.current[bgIndex];
+//       if ((bgImg as any)?.loaded) {
+//         bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+//         bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
+//       }
+//     };
+//     // Kill any old trigger
+//     if (scrollTriggerRef.current) {
+//       scrollTriggerRef.current.kill();
+//     }
+//     const st = ScrollTrigger.create({
+//       trigger: containerRef.current,
+//       start: "top top",
+//       end: "+=400%",
+//       scrub: 1,
+//       pin: true,
+//       anticipatePin: 1,
+//       onUpdate: (self) => {
+//         const progress = self.progress;
+//         fgFrameRef.current = progress * (FG_FRAMES - 1);
+//         if (fgFrameRef.current >= START_BG_AT) {
+//           const bgProgress = (fgFrameRef.current - START_BG_AT) / (FG_FRAMES - START_BG_AT);
+//           bgFrameRef.current = bgProgress * (BG_FRAMES - 1);
+//         } else {
+//           bgFrameRef.current = 0;
+//         }
+//         scrollProgressRef.current = progress;
+//         render();
+//       },
+//     });
+//     scrollTriggerRef.current = st;
+//     render();
+//     return () => {
+//       st.kill();
+//       scrollTriggerRef.current = null;
+//     };
+//   }, [loaded]);
+//   // Handle navigation from other pages
+//   useEffect(() => {
+//     const action = localStorage.getItem("TW_action");
+//     if (action === "go_mart") {
+//       localStorage.removeItem("TW_action");
+//       const waitAndJump = () => {
+//         if (scrollTriggerRef.current) {
+//           ScrollTrigger.refresh();
+//           const st = scrollTriggerRef.current;
+//           const scrollPos = st.start + targetProgress * (st.end - st.start);
+//           st.scroll(scrollPos);
+//         } else {
+//           requestAnimationFrame(waitAndJump);
+//         }
+//       };
+//       waitAndJump();
+//     }
+//   }, []);
+//     useEffect(() => {
+//     if (!loaded) return;
+//     const handleTrigger = () => {
+//       window.scrollTo(0, 0);
+//       const st = scrollTriggerRef.current;
+//       if (st) {
+//         const scrollPos = st.start + targetProgress * (st.end - st.start);
+//           window.scrollTo({ top: scrollPos });
+//       }
+//     };
+//     window.addEventListener("triggerVideoJump", handleTrigger);
+//     return () => {
+//       window.removeEventListener("triggerVideoJump", handleTrigger);
+//     };
+//   }, [loaded]);
+//   return (
+//     <div ref={containerRef} className="relative w-full bg-black">
+//       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
+//         <canvas
+//           ref={bgCanvasRef}
+//           className="absolute inset-0 w-full h-full object-fit"
+//         />
+//         <canvas
+//           ref={fgCanvasRef}
+//           className="relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
+//         />
+//         <div className="absolute inset-0 z-20 pointer-events-none">
+//           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
+//             <ScrollingCoin progressRef={scrollProgressRef} />
+//           </Canvas>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 __turbopack_context__.s([
     "default",
     ()=>Video
@@ -1161,36 +1380,72 @@ function Video() {
     const fgFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(0);
     const bgFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(0);
     const scrollProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(0);
+    // Critical: store the ScrollTrigger instance
+    const scrollTriggerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const [loaded, setLoaded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const fgImagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
     const bgImagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
-    const FG_FRAMES = 810;
+    const FG_FRAMES = 405;
     const BG_FRAMES = 191;
     const START_BG_AT = 130;
     const CANVAS_W = 1080;
     const CANVAS_H = 1920;
-    // Load all images
+    const targetProgress = 289 / (FG_FRAMES - 1);
+    // Load all images with batching to prevent network congestion
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         let loadedCount = 0;
         const total = FG_FRAMES + BG_FRAMES;
+        const batchSize = 50; // Load 50 images at a time
+        const delayBetweenBatches = 100; // ms
         const loadImage = (url, arr)=>{
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.src = url;
-            img.onload = img.onerror = ()=>{
+            img.onload = ()=>{
+                img.loaded = true;
+                loadedCount++;
+                if (loadedCount >= total) setLoaded(true);
+            };
+            img.onerror = ()=>{
+                img.loaded = false;
                 loadedCount++;
                 if (loadedCount >= total) setLoaded(true);
             };
             arr.push(img);
         };
+        const loadBatch = (start, end, urls, arr)=>{
+            for(let i = start; i < Math.min(end, urls.length); i++){
+                loadImage(urls[i], arr);
+            }
+        };
+        const fgUrls = [];
         for(let i = 1; i <= FG_FRAMES; i++){
-            loadImage(`https://ik.imagekit.io/m064cyjlx/iphone/frame_${String(i).padStart(5, "0")}.jpg`, fgImagesRef.current);
+            fgUrls.push(`/iphoneframes/frame_${String(i).padStart(5, "0")}.webp`);
         }
+        const bgUrls = [];
         for(let i = 1; i <= BG_FRAMES; i++){
-            loadImage(`https://ik.imagekit.io/m064cyjlx/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`, bgImagesRef.current);
+            bgUrls.push(`https://ik.imagekit.io/yv4cjaya8/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
         }
+        let fgBatchIndex = 0;
+        let bgBatchIndex = 0;
+        const loadNextBatch = ()=>{
+            if (fgBatchIndex < fgUrls.length) {
+                const end = Math.min(fgBatchIndex + batchSize, fgUrls.length);
+                loadBatch(fgBatchIndex, end, fgUrls, fgImagesRef.current);
+                fgBatchIndex = end;
+            }
+            if (bgBatchIndex < bgUrls.length) {
+                const end = Math.min(bgBatchIndex + batchSize, bgUrls.length);
+                loadBatch(bgBatchIndex, end, bgUrls, bgImagesRef.current);
+                bgBatchIndex = end;
+            }
+            if (fgBatchIndex < fgUrls.length || bgBatchIndex < bgUrls.length) {
+                setTimeout(loadNextBatch, delayBetweenBatches);
+            }
+        };
+        loadNextBatch();
     }, []);
-    // MAIN ANIMATION — FIXED & PERFECT
+    // Main scroll-triggered animation
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!loaded || !containerRef.current || !fgCanvasRef.current || !bgCanvasRef.current) return;
         const fgCanvas = fgCanvasRef.current;
@@ -1200,33 +1455,33 @@ function Video() {
         fgCanvas.width = bgCanvas.width = CANVAS_W;
         fgCanvas.height = bgCanvas.height = CANVAS_H;
         const render = ()=>{
-            // FOREGROUND (phone)
-            const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001)); // +0.0001 forces update
+            const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
             const fgImg = fgImagesRef.current[fgIndex];
-            if (fgImg?.complete) {
+            if (fgImg?.loaded) {
                 fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
                 fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
             }
-            // BACKGROUND (tickets)
             const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
             const bgImg = bgImagesRef.current[bgIndex];
-            if (bgImg?.complete) {
+            if (bgImg?.loaded) {
                 bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
                 bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
             }
         };
-        // THE ONLY SCROLLTRIGGER YOU NEED
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
+        // Kill any old trigger
+        if (scrollTriggerRef.current) {
+            scrollTriggerRef.current.kill();
+        }
+        const st = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
             trigger: containerRef.current,
             start: "top top",
-            end: "+=800%",
+            end: "+=400%",
             scrub: 1,
             pin: true,
             anticipatePin: 1,
             onUpdate: (self)=>{
                 const progress = self.progress;
-                // THIS LINE WAS BROKEN — NOW FIXED
-                fgFrameRef.current = progress * (FG_FRAMES - 1); // ← This was the bug!
+                fgFrameRef.current = progress * (FG_FRAMES - 1);
                 if (fgFrameRef.current >= START_BG_AT) {
                     const bgProgress = (fgFrameRef.current - START_BG_AT) / (FG_FRAMES - START_BG_AT);
                     bgFrameRef.current = bgProgress * (BG_FRAMES - 1);
@@ -1234,37 +1489,55 @@ function Video() {
                     bgFrameRef.current = 0;
                 }
                 scrollProgressRef.current = progress;
-                render(); // ← Call render every update
+                render();
             }
         });
+        scrollTriggerRef.current = st;
         render();
         return ()=>{
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollTrigger"].getAll().forEach((t)=>t.kill());
+            st.kill();
+            scrollTriggerRef.current = null;
         };
     }, [
         loaded
     ]);
+    // Handle navigation from other pages
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const jumpToFrame = (e)=>{
-            const targetFrame = 589; // 👈 your Terramart frame
-            const progress = targetFrame / (FG_FRAMES - 1);
-            const container = containerRef.current;
-            if (!container) return;
-            const st = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollTrigger"].getAll().find((t)=>t.trigger === container);
-            if (!st) return;
-            const scrollStart = st.start;
-            const scrollEnd = st.end;
-            const targetScroll = scrollStart + progress * (scrollEnd - scrollStart);
-            window.scrollTo({
-                top: targetScroll,
-                behavior: "smooth"
-            });
-        };
-        window.addEventListener("scrollToPhoneFrame598", jumpToFrame);
-        return ()=>{
-            window.removeEventListener("scrollToPhoneFrame598", jumpToFrame);
-        };
+        const action = localStorage.getItem("TW_action");
+        if (action === "go_mart") {
+            localStorage.removeItem("TW_action");
+            const waitAndJump = ()=>{
+                if (scrollTriggerRef.current) {
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+                    const st = scrollTriggerRef.current;
+                    const scrollPos = st.start + targetProgress * (st.end - st.start);
+                    st.scroll(scrollPos);
+                } else {
+                    requestAnimationFrame(waitAndJump);
+                }
+            };
+            waitAndJump();
+        }
     }, []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (!loaded) return;
+        const handleTrigger = ()=>{
+            window.scrollTo(0, 0);
+            const st = scrollTriggerRef.current;
+            if (st) {
+                const scrollPos = st.start + targetProgress * (st.end - st.start);
+                window.scrollTo({
+                    top: scrollPos
+                });
+            }
+        };
+        window.addEventListener("triggerVideoJump", handleTrigger);
+        return ()=>{
+            window.removeEventListener("triggerVideoJump", handleTrigger);
+        };
+    }, [
+        loaded
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         ref: containerRef,
         className: "relative w-full bg-black",
@@ -1276,7 +1549,7 @@ function Video() {
                     className: "absolute inset-0 w-full h-full object-fit"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 166,
+                    lineNumber: 450,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
@@ -1284,7 +1557,7 @@ function Video() {
                     className: "relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 171,
+                    lineNumber: 455,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1304,28 +1577,28 @@ function Video() {
                             progressRef: scrollProgressRef
                         }, void 0, false, {
                             fileName: "[project]/components/video.tsx",
-                            lineNumber: 181,
+                            lineNumber: 462,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/video.tsx",
-                        lineNumber: 177,
+                        lineNumber: 461,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 176,
+                    lineNumber: 460,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/video.tsx",
-            lineNumber: 164,
+            lineNumber: 449,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/video.tsx",
-        lineNumber: 163,
+        lineNumber: 448,
         columnNumber: 5
     }, this);
 }
@@ -1827,6 +2100,242 @@ function useCarLights(scene, rearLightsRef, dashboardRef) {
 "[project]/app/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+// "use client";
+// import dynamic from "next/dynamic";
+// import Navbar from "../components/Navbar";
+// import About from "../components/About";
+// import Video from "@/components/video";
+// import { applyWhiteRimShader } from "@/components/applyWhiteRimShader";
+// import { applyBlueInteriorShader } from "@/components/applyBlueInteriorShader";
+// import PhoneVideo from "@/components/video";
+// import { Canvas, useThree, useFrame } from "@react-three/fiber";
+// import { OrbitControls, useGLTF } from "@react-three/drei";
+// import * as THREE from "three";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import VideoTextureEffect from "../components/VideoTextureEffect";
+// import { useCarLights } from "../components/useCarLights";
+// import { Suspense } from "react";
+// import { useEffect, useRef, useState, useMemo } from "react";
+// const DashboardAnimation = dynamic(
+//   () => import("../components/DashboardAnimation"),
+//   { ssr: false }
+// );
+// gsap.registerPlugin(ScrollTrigger);
+// function Car({
+//   rearLightsRef,
+//   dashboardRef,
+//   scale = 1.2,
+// }: {
+//   rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
+//   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
+//   scale?: number;
+// }) {
+//   const { scene } = useGLTF("/models/lastwala.glb");
+//   const memoizedScene = useMemo(() => scene, []); // ✅ prevents re-traversal
+//   useCarLights(memoizedScene, rearLightsRef, dashboardRef);
+//   // this is the useEffect for the blue silhouette got the interiors of the car
+//   const hasAppliedBlueShader = useRef(false);
+//   useEffect(() => {
+//     if (hasAppliedBlueShader.current) return;
+//     applyBlueInteriorShader(scene)
+//     hasAppliedBlueShader.current = true;
+//   }, [scene]);
+//   // ✨ Apply silhouette + rim glow shader
+//   // ✨ Apply silhouette shader only to outer body meshes
+//   const hasAppliedWhiteShader = useRef(false);
+//   useEffect(() => {
+//     if (hasAppliedWhiteShader.current) return;
+//     applyWhiteRimShader(scene);
+//     hasAppliedWhiteShader.current = true;
+//   }, [scene]);
+//   return <primitive object={scene} scale={scale} />;
+// }
+// function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
+//   const { camera } = useThree();
+//   useEffect(() => {
+//     camera.position.set(0, 50, 480);
+//     camera.lookAt(0, 50, 0);
+//     const isMobile = window.innerWidth < 768;
+//     const tl = gsap.timeline({
+//       scrollTrigger: {
+//         trigger: "#scroll-container",
+//         start: "top top",
+//         end: isMobile ? "80% bottom" : "bottom bottom",
+//         scrub: 0.5, // Smooth scrubbing (lower = smoother, higher = more responsive)
+//       },
+//     });
+//     // Camera movement
+//     // tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
+//     tl.to(camera.position, {
+//       z: isMobile ? 15 : 1,
+//       y: isMobile ? 18 : 20,
+//       duration: 3,
+//     });
+//     // Animate all rear lights
+//     // defensive: ensure we have lights array before animating
+//     (rearLightsRef.current || []).forEach((light: THREE.Mesh) => {
+//       const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+//       if (!mat) return;
+//       tl.to(mat, { emissiveIntensity: 5, duration: 1 }, 0);
+//       // 0 means it starts with the camera animation
+//     });
+//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+//   }, [camera, rearLightsRef]);
+//   return null;
+// }
+// function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
+//   useEffect(() => {
+//     if (!rearLightsRef.current || rearLightsRef.current.length === 0) return;
+//     // Trigger flicker when scroll reaches the top of the canvas
+//     ScrollTrigger.create({
+//       trigger: "#scroll-container",
+//       start: "top top", // trigger as soon as scrolling starts
+//       end: "+=1",       // short duration
+//       once: true,       // only trigger once
+//       onEnter: () => {
+//         rearLightsRef.current?.forEach((light) => {
+//           const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+//           if (!mat) return;
+//           // Flicker timeline (two quick flashes)
+//           gsap.timeline()
+//             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
+//             .to(mat, { emissiveIntensity: 0, duration: 0.1 })
+//             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
+//             .to(mat, { emissiveIntensity: 12, duration: 0.2 }); // final steady intensity
+//         });
+//       },
+//     });
+//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+//   }, [rearLightsRef]);
+//   return null;
+// }
+// export default function Home() {
+//   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
+//   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
+//   const progressRef = useRef(0); // 👈 add this line
+//   const [carScale, setCarScale] = useState(1.2);
+//   useEffect(() => {
+//     function handleJump() {
+//       const targetProgress = 774 / 1464; // frame / total frames
+//       // Smoothly scroll the window to the correct point
+//       const scrollContainer = document.getElementById("scroll-container");
+//       if (!scrollContainer) return;
+//       const startHeight = scrollContainer.offsetHeight * 0.7;
+//       const endHeight = scrollContainer.offsetHeight - window.innerHeight;
+//       const targetScrollY = startHeight + targetProgress * (endHeight - startHeight);
+//       window.scrollTo({
+//         top: targetScrollY,
+//         behavior: "smooth",
+//       });
+//     }
+//     window.addEventListener("scrollToFrame804", handleJump);
+//     return () => window.removeEventListener("scrollToFrame804", handleJump);
+//   }, []);
+//   useEffect(() => {
+//     const action = localStorage.getItem("TW_action");
+//     if (!action) return;
+//     localStorage.removeItem("TW_action");
+//     if (action === "go_charge") {
+//       window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+//     }
+//     if (action === "go_mart") {
+//       const section = document.querySelector("#video-section");
+//       if (section) {
+//         section.scrollIntoView({ behavior: "smooth" });
+//         setTimeout(() => {
+//           window.dispatchEvent(new CustomEvent("scrollToPhoneFrame598"));
+//         }, 900);
+//       }
+//     }
+//     if (action === "go_mart") {
+//       const section = document.querySelector("#video-section");
+//       if (section) {
+//         section.scrollIntoView({ behavior: "smooth" });
+//       }
+//     }
+//   }, []);
+//   // Responsive scroll height and car scale
+//   useEffect(() => {
+//     const handleResize = () => {
+//       const width = window.innerWidth;
+//       if (width < 640) {
+//         setCarScale(0.6); // Mobile
+//       } else if (width < 1024) {
+//         setCarScale(0.9); // Tablet
+//       } else {
+//         setCarScale(1.2); // Desktop
+//       }
+//     };
+//     handleResize();
+//     window.addEventListener("resize", handleResize);
+//     return () => window.removeEventListener("resize", handleResize);
+//   }, []);
+//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "1100vh";
+//   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "120vh" : "300vh";
+//   // useCarScrollTriggers();
+//   return (
+//     <main style={{ background: "black", minHeight: scrollHeight, color: "white" }}>
+//       {/* 🧭 Navbar stays fixed at top */}
+//       <Navbar />
+//       {/* 🚗 3D Car Section */}
+//       {/* <div id="scroll-container" style={{ height: scrollHeight }}> */}
+//       {/* Wrapper for scroll animation */}
+//       <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
+//         {/* Sticky 3D Canvas */}
+//         <div
+//           style={{
+//             position: "sticky",
+//             top: 0,
+//             height: "100vh",
+//             width: "100%",
+//             overflow: "hidden",
+//             zIndex: 1,
+//             transformOrigin: "center center"
+//           }}
+//         >
+//           <Canvas
+//             camera={{ position: [0, 1.5, 25], fov: 50 }}
+//             style={{
+//               height: "100vh",
+//               width: "100vw",
+//               pointerEvents: "none",
+//               willChange: "transform",
+//             }}
+//             dpr={[1, 1.5]}
+//             performance={{ min: 0.5, max: 1 }}
+//             gl={{
+//               antialias: true,
+//               powerPreference: "high-performance",
+//               alpha: false,
+//               stencil: false,
+//               depth: true,
+//             }}
+//           >
+//             <ambientLight intensity={0.6} />
+//             <directionalLight position={[10, 10, 5]} intensity={1} />
+//             <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
+//             <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
+//             <FlickerLights rearLightsRef={rearLightsRef} />
+//             <Suspense fallback={null}>
+//               <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
+//             </Suspense>
+//             <VideoTextureEffect progressRef={progressRef} />
+//             <OrbitControls enabled={false} />
+//           </Canvas>
+//         </div>
+//       </div>
+//       {/* Normal content appears after scroll section */}
+//       <div id='video-section' className="min-h-screen">
+//         <Video />
+//       </div>
+//       <div className="min-h-screen">
+//         <About />
+//       </div>
+//     </main>
+//   );
+// }
+// useGLTF.preload("/models/lastwala.glb");
 __turbopack_context__.s([
     "default",
     ()=>Home
@@ -1875,33 +2384,26 @@ const DashboardAnimation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$n
 __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].registerPlugin(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollTrigger"]);
 function Car({ rearLightsRef, dashboardRef, scale = 1.2 }) {
     const { scene } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$Gltf$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGLTF"])("/models/lastwala.glb");
-    const memoizedScene = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>scene, []); // ✅ prevents re-traversal
+    const [ready, setReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const memoizedScene = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>scene, []);
+    // wire lights immediately (no visuals yet)
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$useCarLights$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCarLights"])(memoizedScene, rearLightsRef, dashboardRef);
-    // this is the useEffect for the blue silhouette got the interiors of the car
-    const hasAppliedBlueShader = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (hasAppliedBlueShader.current) return;
+    // 🚨 BLOCK FIRST PAINT UNTIL POLISH IS DONE
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useLayoutEffect"])(()=>{
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$applyBlueInteriorShader$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["applyBlueInteriorShader"])(scene);
-        hasAppliedBlueShader.current = true;
-    }, [
-        scene
-    ]);
-    // ✨ Apply silhouette + rim glow shader
-    // ✨ Apply silhouette shader only to outer body meshes
-    const hasAppliedWhiteShader = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (hasAppliedWhiteShader.current) return;
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$applyWhiteRimShader$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["applyWhiteRimShader"])(scene);
-        hasAppliedWhiteShader.current = true;
+        setReady(true); // allow render
     }, [
         scene
     ]);
+    // ❌ Nothing renders until shaders are ready
+    if (!ready) return null;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("primitive", {
         object: scene,
         scale: scale
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 69,
+        lineNumber: 391,
         columnNumber: 10
     }, this);
 }
@@ -2020,12 +2522,14 @@ function Home() {
                 }, 900);
             }
         }
-    // if (action === "go_mart") {
-    //   const section = document.querySelector("#video-section");
-    //   if (section) {
-    //     section.scrollIntoView({ behavior: "smooth" });
-    //   }
-    // }
+        if (action === "go_mart") {
+            const section = document.querySelector("#video-section");
+            if (section) {
+                section.scrollIntoView({
+                    behavior: "smooth"
+                });
+            }
+        }
     }, []);
     // Responsive scroll height and car scale
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
@@ -2055,7 +2559,7 @@ function Home() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 242,
+                lineNumber: 565,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2109,7 +2613,7 @@ function Home() {
                                 intensity: 0.6
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 281,
+                                lineNumber: 604,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("directionalLight", {
@@ -2121,7 +2625,7 @@ function Home() {
                                 intensity: 1
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 282,
+                                lineNumber: 605,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Car, {
@@ -2130,21 +2634,21 @@ function Home() {
                                 scale: carScale
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 283,
+                                lineNumber: 606,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ScrollCameraAnimation, {
                                 rearLightsRef: rearLightsRef
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 284,
+                                lineNumber: 607,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(FlickerLights, {
                                 rearLightsRef: rearLightsRef
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 285,
+                                lineNumber: 608,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Suspense"], {
@@ -2154,42 +2658,42 @@ function Home() {
                                     progressRef: progressRef
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 287,
+                                    lineNumber: 610,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 286,
+                                lineNumber: 609,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$VideoTextureEffect$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                 progressRef: progressRef
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 289,
+                                lineNumber: 613,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$OrbitControls$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["OrbitControls"], {
                                 enabled: false
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 290,
+                                lineNumber: 614,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 263,
+                        lineNumber: 586,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 251,
+                    lineNumber: 574,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 249,
+                lineNumber: 572,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2197,268 +2701,34 @@ function Home() {
                 className: "min-h-screen",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$video$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 298,
+                    lineNumber: 623,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 297,
+                lineNumber: 622,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "min-h-screen",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$About$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 301,
+                    lineNumber: 626,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 300,
+                lineNumber: 625,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 240,
+        lineNumber: 563,
         columnNumber: 5
     }, this);
 }
-__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$Gltf$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGLTF"].preload("/models/lastwala.glb"); // "use client";
- // import dynamic from "next/dynamic";
- // import Navbar from "../components/Navbar";
- // import About from "../components/About";
- // import Video from "@/components/video";
- // import { applyWhiteRimShader } from "@/components/applyWhiteRimShader";
- // import { applyBlueInteriorShader } from "@/components/applyBlueInteriorShader";
- // import { Canvas, useThree, useFrame } from "@react-three/fiber";
- // import { OrbitControls, useGLTF } from "@react-three/drei";
- // import * as THREE from "three";
- // import gsap from "gsap";
- // import { ScrollTrigger } from "gsap/ScrollTrigger";
- // import VideoTextureEffect from "../components/VideoTextureEffect";
- // import { useCarLights } from "../components/useCarLights";
- // import { Suspense } from "react";
- // import { useEffect, useRef, useState, useMemo } from "react";
- // const DashboardAnimation = dynamic(
- //   () => import("../components/DashboardAnimation"),
- //   { ssr: false }
- // );
- // gsap.registerPlugin(ScrollTrigger);
- // function Car({
- //   rearLightsRef,
- //   dashboardRef,
- //   scale = 1.2,
- // }: {
- //   rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
- //   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
- //   scale?: number;
- // }) {
- //   const { scene } = useGLTF("/models/lastwala.glb");
- //   const memoizedScene = useMemo(() => scene, []); // ✅ prevents re-traversal
- //   useCarLights(memoizedScene, rearLightsRef, dashboardRef);
- //   // this is the useEffect for the blue silhouette got the interiors of the car
- //   const hasAppliedBlueShader = useRef(false);
- //   useEffect(() => {
- //     if (hasAppliedBlueShader.current) return;
- //     applyBlueInteriorShader(scene)
- //     hasAppliedBlueShader.current = true;
- //   }, [scene]);
- //   // ✨ Apply silhouette + rim glow shader
- //   // ✨ Apply silhouette shader only to outer body meshes
- //   const hasAppliedWhiteShader = useRef(false);
- //   useEffect(() => {
- //     if (hasAppliedWhiteShader.current) return;
- //     applyWhiteRimShader(scene);
- //     hasAppliedWhiteShader.current = true;
- //   }, [scene]);
- //   return <primitive object={scene} scale={scale} />;
- // }
- // function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
- //   const { camera } = useThree();
- //   useEffect(() => {
- //     camera.position.set(0, 50, 480);
- //     camera.lookAt(0, 50, 0);
- //     const isMobile = window.innerWidth < 768;
- //     const tl = gsap.timeline({
- //       scrollTrigger: {
- //         trigger: "#scroll-container",
- //         start: "top top",
- //         end: isMobile ? "80% bottom" : "bottom bottom",
- //         scrub: 0.5, // Smooth scrubbing (lower = smoother, higher = more responsive)
- //       },
- //     });
- //     // Camera movement
- //     // tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
- //     tl.to(camera.position, {
- //       z: isMobile ? 15 : 1,
- //       y: isMobile ? 18 : 20,
- //       duration: 3,
- //     });
- //     // Animate all rear lights
- //     // defensive: ensure we have lights array before animating
- //     (rearLightsRef.current || []).forEach((light: THREE.Mesh) => {
- //       const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
- //       if (!mat) return;
- //       tl.to(mat, { emissiveIntensity: 5, duration: 1 }, 0);
- //       // 0 means it starts with the camera animation
- //     });
- //     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
- //   }, [camera, rearLightsRef]);
- //   return null;
- // }
- // function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
- //   useEffect(() => {
- //     if (!rearLightsRef.current || rearLightsRef.current.length === 0) return;
- //     // Trigger flicker when scroll reaches the top of the canvas
- //     ScrollTrigger.create({
- //       trigger: "#scroll-container",
- //       start: "top top", // trigger as soon as scrolling starts
- //       end: "+=1",       // short duration
- //       once: true,       // only trigger once
- //       onEnter: () => {
- //         rearLightsRef.current?.forEach((light) => {
- //           const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
- //           if (!mat) return;
- //           // Flicker timeline (two quick flashes)
- //           gsap.timeline()
- //             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
- //             .to(mat, { emissiveIntensity: 0, duration: 0.1 })
- //             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
- //             .to(mat, { emissiveIntensity: 12, duration: 0.2 }); // final steady intensity
- //         });
- //       },
- //     });
- //     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
- //   }, [rearLightsRef]);
- //   return null;
- // }
- // export default function Home() {
- //   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
- //   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
- //   const progressRef = useRef(0); // 👈 add this line
- //   const [carScale, setCarScale] = useState(1.2);
- //   useEffect(() => {
- //     function handleJump() {
- //       const targetProgress = 774 / 1464; // frame / total frames
- //       // Smoothly scroll the window to the correct point
- //       const scrollContainer = document.getElementById("scroll-container");
- //       if (!scrollContainer) return;
- //       const startHeight = scrollContainer.offsetHeight * 0.7;
- //       const endHeight = scrollContainer.offsetHeight - window.innerHeight;
- //       const targetScrollY = startHeight + targetProgress * (endHeight - startHeight);
- //       window.scrollTo({
- //         top: targetScrollY,
- //         behavior: "smooth",
- //       });
- //     }
- //     window.addEventListener("scrollToFrame804", handleJump);
- //     return () => window.removeEventListener("scrollToFrame804", handleJump);
- //   }, []);
- //   useEffect(() => {
- //     const action = localStorage.getItem("TW_action");
- //     if (!action) return;
- //     localStorage.removeItem("TW_action");
- //     if (action === "go_charge") {
- //       window.dispatchEvent(new CustomEvent("scrollToFrame804"));
- //     }
- //     // if (action === "go_mart") {
- //     //   const section = document.querySelector("#video-section");
- //     //   if (section) {
- //     //     section.scrollIntoView({ behavior: "smooth" });
- //     //     setTimeout(() => {
- //     //       window.dispatchEvent(new CustomEvent("scrollToPhoneFrame598"));
- //     //     }, 900);
- //     //   }
- //     // }
- //     if (action === "go_mart") {
- //       const section = document.querySelector("#video-section");
- //       if (section) {
- //         section.scrollIntoView({ behavior: "smooth" });
- //       }
- //     }
- //   }, []);
- //   // Responsive scroll height and car scale
- //   useEffect(() => {
- //     const handleResize = () => {
- //       const width = window.innerWidth;
- //       if (width < 640) {
- //         setCarScale(0.6); // Mobile
- //       } else if (width < 1024) {
- //         setCarScale(0.9); // Tablet
- //       } else {
- //         setCarScale(1.2); // Desktop
- //       }
- //     };
- //     handleResize();
- //     window.addEventListener("resize", handleResize);
- //     return () => window.removeEventListener("resize", handleResize);
- //   }, []);
- //   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "1100vh";
- //   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "120vh" : "300vh";
- //   // useCarScrollTriggers();
- //   return (
- //     <main style={{ background: "black", minHeight: scrollHeight, color: "white" }}>
- //       {/* 🧭 Navbar stays fixed at top */}
- //       <Navbar />
- //       {/* 🚗 3D Car Section */}
- //       {/* <div id="scroll-container" style={{ height: scrollHeight }}> */}
- //       {/* Wrapper for scroll animation */}
- //       <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
- //         {/* Sticky 3D Canvas */}
- //         <div
- //           style={{
- //             position: "sticky",
- //             top: 0,
- //             height: "100vh",
- //             width: "100%",
- //             overflow: "hidden",
- //             zIndex: 1,
- //             transformOrigin: "center center"
- //           }}
- //         >
- //           <Canvas
- //             camera={{ position: [0, 1.5, 25], fov: 50 }}
- //             style={{
- //               height: "100vh",
- //               width: "100vw",
- //               pointerEvents: "none",
- //               willChange: "transform",
- //             }}
- //             dpr={[1, 1.5]}
- //             performance={{ min: 0.5, max: 1 }}
- //             gl={{
- //               antialias: true,
- //               powerPreference: "high-performance",
- //               alpha: false,
- //               stencil: false,
- //               depth: true,
- //             }}
- //           >
- //             <ambientLight intensity={0.6} />
- //             <directionalLight position={[10, 10, 5]} intensity={1} />
- //             <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
- //             <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
- //             <FlickerLights rearLightsRef={rearLightsRef} />
- //             <Suspense fallback={null}>
- //               <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
- //             </Suspense>
- //             <VideoTextureEffect progressRef={progressRef} />
- //             <OrbitControls enabled={false} />
- //           </Canvas>
- //         </div>
- //       </div>
- //       {/* Normal content appears after scroll section */}
- //       <div id='video-section' className="min-h-screen">
- //         <Video />
- //       </div>
- //       <div className="min-h-screen">
- //         <About />
- //       </div>
- //     </main>
- //   );
- // }
- // useGLTF.preload("/models/lastwala.glb");
+__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$Gltf$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useGLTF"].preload("/models/lastwala.glb");
 }),
 ];
 

@@ -584,10 +584,16 @@ export default function CoinAnimation({
       const eased = THREE.MathUtils.smoothstep(t, 0, 1);
 
       coin.visible = true;
+      const isMobile = window.innerWidth < 768;
 
       // Move toward camera (your original motion)
       coin.position.y = 0.7 - eased * 0.7;
       coin.position.z = 0.165;
+
+      if(isMobile){
+        coin.position.y = 0.25 - eased * 0.7;
+        coin.position.z = 0.235;
+      }
 
       // Optional: Scale up as it approaches
       const scale = 1 + eased * 1.5;

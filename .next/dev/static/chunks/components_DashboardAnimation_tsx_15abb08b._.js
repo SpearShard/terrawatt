@@ -1,10 +1,10 @@
 (globalThis.TURBOPACK || (globalThis.TURBOPACK = [])).push([typeof document === "object" ? document.currentScript : undefined,
 "[project]/components/DashboardAnimation.tsx [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-// "use client";
 // import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
+// import { RoundedBox } from "@react-three/drei";
 // import CoinAnimation from "./CoinAnimation";
 // export default function DashboardAnimation({
 //   dashboardRef,
@@ -46,7 +46,7 @@
 //       textures.forEach((t) => t.dispose());
 //     };
 //   }, []);
-//   // Scroll tracking (unchanged)
+//   // Scroll tracking
 //   useEffect(() => {
 //     let ticking = false;
 //     const handleScroll = () => {
@@ -106,12 +106,13 @@
 //       <group position={[0, 0, 0.05]}>
 //         {/* Outer Tablet Shape */}
 //         <mesh position={[0, 0, -0.015]}>
-//           <boxGeometry args={[0.50, 0.33, 0.03]} />
-//           <meshStandardMaterial
-//             color="#111111"
-//             roughness={0.6}
-//             metalness={0.1}
-//           />
+//           <RoundedBox args={[0.50, 0.33, 0.03]} radius={0.015} smoothness={4}>
+//             <meshStandardMaterial
+//               color="#111111"
+//               roughness={0.6}
+//               metalness={0.1}
+//             />
+//           </RoundedBox>
 //         </mesh>
 //         {/* Screen Area */}
 //         <mesh position={[0, 0, 0]}>

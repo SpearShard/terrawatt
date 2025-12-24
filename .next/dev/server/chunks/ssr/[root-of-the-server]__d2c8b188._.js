@@ -130,6 +130,43 @@ __turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$componen
 "[project]/app/layout.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+// import type { Metadata } from "next";
+// import { Geist, Geist_Mono } from "next/font/google";
+// import "./globals.css";
+// import Footer from "../components/Footer";
+// import Navbar from "@/components/Navbar";
+// import PreloadImages from "@/components/PreloadImages";
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
+// export const metadata: Metadata = {
+//   title: "Teraawatt - EV Charging & Mobility Solutions",
+//   description: "Revolutionary EV charging, AI-powered trip planning, and sustainable mobility solutions for the future.",
+//   viewport: "width=device-width, initial-scale=1.0",
+// };
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <html lang="en">
+//       <body
+//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+//         suppressHydrationWarning
+//       >
+//         <PreloadImages />
+//         {children}
+//         <Footer />
+//       </body>
+//     </html>
+//   );
+// }
 __turbopack_context__.s([
     "default",
     ()=>RootLayout,
@@ -155,75 +192,52 @@ const metadata = {
 function RootLayout({ children }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("html", {
         lang: "en",
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
-            className: `${__TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$geist_a71539c9$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].variable} ${__TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$geist_mono_8d43a2aa$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].variable} antialiased`,
-            suppressHydrationWarning: true,
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$PreloadImages$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("head", {
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                    rel: "preload",
+                    href: "/models/lastwala.glb",
+                    as: "fetch",
+                    type: "model/gltf-binary",
+                    crossOrigin: "anonymous"
+                }, void 0, false, {
                     fileName: "[project]/app/layout.tsx",
-                    lineNumber: 39,
-                    columnNumber: 9
-                }, this),
-                children,
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                    fileName: "[project]/app/layout.tsx",
-                    lineNumber: 41,
-                    columnNumber: 9
+                    lineNumber: 86,
+                    columnNumber: 7
                 }, this)
-            ]
-        }, void 0, true, {
-            fileName: "[project]/app/layout.tsx",
-            lineNumber: 35,
-            columnNumber: 7
-        }, this)
-    }, void 0, false, {
+            }, void 0, false, {
+                fileName: "[project]/app/layout.tsx",
+                lineNumber: 85,
+                columnNumber: 5
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
+                className: `${__TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$geist_a71539c9$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].variable} ${__TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$geist_mono_8d43a2aa$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].variable} antialiased`,
+                suppressHydrationWarning: true,
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$PreloadImages$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 100,
+                        columnNumber: 9
+                    }, this),
+                    children,
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 102,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/app/layout.tsx",
+                lineNumber: 95,
+                columnNumber: 5
+            }, this)
+        ]
+    }, void 0, true, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 34,
-        columnNumber: 5
+        lineNumber: 84,
+        columnNumber: 3
     }, this);
-} // "use client";
- // import type { Metadata } from "next";
- // import { Geist, Geist_Mono } from "next/font/google";
- // import { useEffect } from "react";
- // import "./globals.css";
- // import Footer from "../components/Footer";
- // const geistSans = Geist({
- //   variable: "--font-geist-sans",
- //   subsets: ["latin"],
- // });
- // const geistMono = Geist_Mono({
- //   variable: "--font-geist-mono",
- //   subsets: ["latin"],
- // });
- // export const metadata: Metadata = {
- //   title: "Teraawatt - EV Charging & Mobility Solutions",
- //   description:
- //     "Revolutionary EV charging, AI-powered trip planning, and sustainable mobility solutions for the future.",
- //   viewport: "width=device-width, initial-scale=1.0",
- // };
- // export default function RootLayout({
- //   children,
- // }: {
- //   children: React.ReactNode;
- // }) {
- //   // 🔥 THIS IS THE FIX
- //   useEffect(() => {
- //     if ("scrollRestoration" in window.history) {
- //       window.history.scrollRestoration = "manual";
- //     }
- //   }, []);
- //   return (
- //     <html lang="en">
- //       <body
- //         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
- //         suppressHydrationWarning
- //       >
- //         {children}
- //         <Footer />
- //       </body>
- //     </html>
- //   );
- // }
+}
 }),
 "[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
 "use strict";
