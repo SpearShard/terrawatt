@@ -1295,17 +1295,17 @@ function About() {
 //   geo.computeVertexNormals();
 //   /* --- materials (NO normal map) --- */
 //   const matSide = new THREE.MeshStandardMaterial({
-//     color: 0xD29508,
+//     color: 0xd29508,
 //     metalness: 1.0,
 //     roughness: 0.22,
-//     emissive: new THREE.Color(0xD29508),
+//     emissive: new THREE.Color(0xd29508),
 //     emissiveIntensity: 0.5,
 //   });
 //   const matFace = new THREE.MeshStandardMaterial({
-//     color: 0xD29508,
+//     color: 0xd29508,
 //     metalness: 1.0,
 //     roughness: 0.18,
-//     emissive: new THREE.Color(0xD29508),
+//     emissive: new THREE.Color(0xd29508),
 //     emissiveIntensity: 0.5,
 //   });
 //   return new THREE.Mesh(geo, [matSide, matFace, matFace]);
@@ -1316,6 +1316,7 @@ function About() {
 //   progressRef: React.MutableRefObject<number>;
 // }) {
 //   const meshRef = useRef<THREE.Group>(null!);
+//   const coinMaterialsRef = useRef<THREE.MeshStandardMaterial[]>([]);
 //   // Tweak these values to control the animation exactly how you want
 //   const CONFIG = {
 //     // When does the coin animation start & finish? (0–1 scroll progress)
@@ -1323,81 +1324,113 @@ function About() {
 //     endProgress: 0.12,
 //     // Starting position & scale (when scroll = 0)
 //     start: {
-//       z: 2.46,       // How close to your face (higher = closer)
-//       y: 0,       // Vertical offset at start
-//       x: 0,       // Vertical offset at start
-//       scale: 3.8,   // How HUGE it appears at the beginning
+//       z: 2.46, // How close to your face (higher = closer)
+//       y: 0, // Vertical offset at start
+//       x: 0, // Vertical offset at start
+//       scale: 3.8, // How HUGE it appears at the beginning
 //     },
 //     // Final position & scale (when coin lands on phone)
 //     end: {
-//       z: 0.01,      // Final depth (0 = on phone screen, 0.01 = slightly in front)
+//       z: 0.01, // Final depth (0 = on phone screen, 0.01 = slightly in front)
 //       x: 0.2,
-//       y: 0.4,       // Final vertical position
-//       scale: 0.45,  // Final size on phone
+//       y: 0.4, // Final vertical position
+//       scale: 0.45, // Final size on phone
 //     },
 //     // Spin speed
 //     spinY: 4,
 //     spinX: 1.8,
+//     // Fade from black to gold settings
+//     goldEndProgress: 0.02, // When to finish fading to gold (0.02 = first 17% of animation)
 //   };
 //   useFrame((_, delta) => {
-//   const mesh = meshRef.current;
-//   const p = progressRef.current;
-//   // BEFORE animation starts — hide coin
-//   if (p < CONFIG.startProgress) {
-//     mesh.visible = false;
-//     return;
-//   }
-//   // FIRST MOMENT — coin appears facing you, no spin
-//   if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
-//     mesh.visible = true;
-//     mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
-//     mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
-//     mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
-//     return;
-//   }
-//   // If inside animation range → spin + move toward phone
-//   if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
-//     const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
-//     const t = THREE.MathUtils.clamp(local, 0, 1);
-//     const ease = THREE.MathUtils.smoothstep(t, 0, 1);
-//     mesh.visible = true;
-//     // Start spinning only AFTER leaving the face
-//     if (p > CONFIG.startProgress + 0.02) {
-//       mesh.rotation.y += delta * CONFIG.spinY;
-//       mesh.rotation.x += delta * CONFIG.spinX;
+//     const mesh = meshRef.current;
+//     const p = progressRef.current;
+//     // BEFORE animation starts — hide coin
+//     if (p < CONFIG.startProgress) {
+//       mesh.visible = false;
+//       return;
 //     }
-//     // Move
-//     mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
-//     mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
-//     mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
-//     // Scale
-//     const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
-//     mesh.scale.set(s, s, s);
-//     return;
-//   }
-//   // AFTER animation ends → lock final position or hide
-//   if (p > CONFIG.endProgress) {
-//     mesh.visible = false;
-//   }
-// });
+//     // FIRST MOMENT — coin appears facing you, BLACK at first
+//     if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
+//       mesh.visible = true;
+//       mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
+//       mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
+//       mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
+//       // Start with black color
+//       if (coinMaterialsRef.current.length > 0) {
+//         coinMaterialsRef.current.forEach((mat) => {
+//           mat.color.setHex(0x000000);
+//           mat.emissive.setHex(0x000000);
+//           mat.emissiveIntensity = 0;
+//         });
+//       }
+//       return;
+//     }
+//     // If inside animation range → spin + move toward phone
+//     if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
+//       const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
+//       const t = THREE.MathUtils.clamp(local, 0, 1);
+//       const ease = THREE.MathUtils.smoothstep(t, 0, 1);
+//       mesh.visible = true;
+//       // Start spinning only AFTER leaving the face
+//       if (p > CONFIG.startProgress + 0.02) {
+//         mesh.rotation.y += delta * CONFIG.spinY;
+//         mesh.rotation.x += delta * CONFIG.spinX;
+//       }
+//       // Move
+//       mesh.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
+//       mesh.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
+//       mesh.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
+//       // Scale
+//       const s = THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
+//       mesh.scale.set(s, s, s);
+//       // Fade FROM black TO gold at the beginning
+//       if (p < CONFIG.goldEndProgress) {
+//         const goldLocal = (p - CONFIG.startProgress) / (CONFIG.goldEndProgress - CONFIG.startProgress);
+//         const goldProgress = THREE.MathUtils.clamp(goldLocal, 0, 1);
+//         const blackColor = new THREE.Color(0x000000);
+//         const goldColor = new THREE.Color(0xd29508);
+//         const fadedColor = blackColor.clone().lerp(goldColor, goldProgress);
+//         // Update materials to fade from black to gold
+//         if (coinMaterialsRef.current.length > 0) {
+//           coinMaterialsRef.current.forEach((mat) => {
+//             mat.color.copy(fadedColor);
+//             mat.emissive.copy(fadedColor);
+//             mat.emissiveIntensity = 0.5 * goldProgress; // Increase glow as it becomes gold
+//           });
+//         }
+//       } else {
+//         // Keep full gold color after fade completes
+//         if (coinMaterialsRef.current.length > 0) {
+//           coinMaterialsRef.current.forEach((mat) => {
+//             mat.color.setHex(0xd29508);
+//             mat.emissive.setHex(0xd29508);
+//             mat.emissiveIntensity = 0.5;
+//           });
+//         }
+//       }
+//       return;
+//     }
+//     // AFTER animation ends → lock final position or hide
+//     if (p > CONFIG.endProgress) {
+//       mesh.visible = false;
+//     }
+//   });
 //   return (
 //     <group ref={meshRef}>
-//       {/* Main golden coin */}
-//       {/* <mesh castShadow receiveShadow>
-//         <cylinderGeometry args={[0.12, 0.12, 0.022, 72]} />
-//         <meshStandardMaterial
-//           color="#ffdd33"
-//           metalness={1}
-//           roughness={0.08}
-//           envMapIntensity={3}
-//         />
-//       </mesh> */}
-//       <primitive object={(() => {
-//         const m = createRealisticCoin();
-//         m.castShadow = true;
-//         m.receiveShadow = true;
-//         return m;
-//       })()} />
+//       <primitive
+//         object={(() => {
+//           const m = createRealisticCoin();
+//           m.castShadow = true;
+//           m.receiveShadow = true;
+//           // Store material references for color manipulation
+//           const materials = Array.isArray(m.material) ? m.material : [m.material];
+//           coinMaterialsRef.current = materials.filter(
+//             (mat): mat is THREE.MeshStandardMaterial => mat instanceof THREE.MeshStandardMaterial
+//           );
+//           return m;
+//         })()}
+//       />
 //       {/* Optional glowing ring (uncomment opacity to see) */}
 //       <mesh rotation={[Math.PI / 2, 0, 0]}>
 //         <ringGeometry args={[0.125, 0.15, 48]} />
@@ -1423,237 +1456,169 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$t
 ;
 ;
 ;
-function createRealisticCoin() {
-    /* --- geometry with ridges --- */ const radius = 0.012;
+/* --------------------------------------------------
+   COIN CREATION
+-------------------------------------------------- */ function createTexturedCoin(materialsOut, baseColorsOut, baseEmissiveOut) {
+    const loader = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TextureLoader"]();
+    const frontMap = loader.load("/croppedfront.png");
+    const backMap = loader.load("/croppedback.png");
+    frontMap.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
+    backMap.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
+    frontMap.flipY = false;
+    backMap.flipY = false;
+    frontMap.center.set(0.5, 0.5);
+    frontMap.rotation = -Math.PI / 2;
+    backMap.center.set(0.5, 0.5);
+    backMap.rotation = -Math.PI / 2;
+    /* 🔑 FIX: compensate for CylinderGeometry cap UV mirroring */ frontMap.wrapS = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["RepeatWrapping"];
+    frontMap.repeat.x = -1;
+    backMap.wrapS = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["RepeatWrapping"];
+    backMap.repeat.x = -1;
+    const radius = 0.012;
     const thickness = 0.0025;
-    const radialSegments = 96;
-    const geo = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CylinderGeometry"](radius, radius, thickness, radialSegments, 1, false);
-    const pos = geo.attributes.position;
+    const segments = 96;
+    const geo = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CylinderGeometry"](radius, radius, thickness, segments, 1, false);
+    /* ---- ridged edge ---- */ const pos = geo.attributes.position;
     for(let i = 0; i < pos.count; i++){
         const y = pos.getY(i);
-        const isSide = Math.abs(y) < thickness * 0.49;
-        if (isSide) {
+        if (Math.abs(y) < thickness * 0.49) {
             const x = pos.getX(i);
             const z = pos.getZ(i);
-            const angle = Math.atan2(z, x);
-            const ridge = Math.sin(angle * 120) * 0.0003;
+            const a = Math.atan2(z, x);
+            const ridge = Math.sin(a * 120) * 0.0003;
             pos.setXYZ(i, x + ridge * (x / radius), y, z + ridge * (z / radius));
         }
     }
     pos.needsUpdate = true;
     geo.computeVertexNormals();
-    /* --- materials (NO normal map) --- */ const matSide = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
-        color: 0xd29508,
-        metalness: 1.0,
+    const gold = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508);
+    const matGold = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
+        color: gold.clone(),
+        metalness: 1,
         roughness: 0.22,
-        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508),
+        emissive: gold.clone(),
         emissiveIntensity: 0.5
     });
-    const matFace = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]({
-        color: 0xd29508,
-        metalness: 1.0,
-        roughness: 0.18,
-        emissive: new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508),
-        emissiveIntensity: 0.5
+    const matFront = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshBasicMaterial"]({
+        map: frontMap,
+        transparent: true,
+        alphaTest: 0.01,
+        color: 0xffffff
     });
-    return new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Mesh"](geo, [
-        matSide,
-        matFace,
-        matFace
+    const matBack = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshBasicMaterial"]({
+        map: backMap,
+        transparent: true,
+        alphaTest: 0.01,
+        color: 0xffffff
+    });
+    const coin = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Mesh"](geo, [
+        matGold,
+        matFront,
+        matBack
     ]);
+    // coin faces camera initially
+    coin.rotation.x = Math.PI / 2;
+    materialsOut.current = [
+        matGold,
+        matFront,
+        matBack
+    ];
+    baseColorsOut.current = [
+        gold.clone(),
+        new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xffffff),
+        new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xffffff)
+    ];
+    baseEmissiveOut.current = [
+        0.5,
+        0,
+        0
+    ];
+    return coin;
 }
 function VideoCoin({ progressRef }) {
-    const meshRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const coinMaterialsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
-    // Tweak these values to control the animation exactly how you want
+    const groupRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const materialsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
+    const baseColorsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
+    const baseEmissiveRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
     const CONFIG = {
-        // When does the coin animation start & finish? (0–1 scroll progress)
-        startProgress: 0.0,
-        endProgress: 0.12,
-        // Starting position & scale (when scroll = 0)
+        appearAt: 0.0,
+        disappearAt: 0.12,
+        faceCameraStart: 0.004,
+        darkenEnd: 0.03,
         start: {
             z: 2.46,
-            y: 0,
             x: 0,
+            y: 0,
             scale: 3.8
         },
-        // Final position & scale (when coin lands on phone)
         end: {
             z: 0.01,
             x: 0.2,
             y: 0.4,
             scale: 0.45
         },
-        // Spin speed
         spinY: 4,
-        spinX: 1.8,
-        // Fade from black to gold settings
-        goldEndProgress: 0.02
+        spinX: 1.8
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])((_, delta)=>{
-        const mesh = meshRef.current;
+        const g = groupRef.current;
         const p = progressRef.current;
-        // BEFORE animation starts — hide coin
-        if (p < CONFIG.startProgress) {
-            mesh.visible = false;
+        if (!g || materialsRef.current.length === 0) return;
+        if (p < CONFIG.appearAt) {
+            g.visible = false;
             return;
         }
-        // FIRST MOMENT — coin appears facing you, BLACK at first
-        if (p >= CONFIG.startProgress && p < CONFIG.startProgress + 0.02) {
-            mesh.visible = true;
-            mesh.rotation.set(Math.PI / 2, 0, 0); // rotate 90° so the face points forward
-            mesh.position.set(CONFIG.start.x, CONFIG.start.y, CONFIG.start.z);
-            mesh.scale.set(CONFIG.start.scale, CONFIG.start.scale, CONFIG.start.scale);
-            // Start with black color
-            if (coinMaterialsRef.current.length > 0) {
-                coinMaterialsRef.current.forEach((mat)=>{
-                    mat.color.setHex(0x000000);
-                    mat.emissive.setHex(0x000000);
-                    mat.emissiveIntensity = 0;
-                });
-            }
-            return;
+        g.visible = true;
+        const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp((p - CONFIG.appearAt) / (CONFIG.disappearAt - CONFIG.appearAt), 0, 1);
+        const ease = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
+        /* ---------- POSITION & SCALE ---------- */ g.position.z = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.z, CONFIG.end.z, ease);
+        g.position.x = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.x, CONFIG.end.x, ease);
+        g.position.y = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.y, CONFIG.end.y, ease);
+        g.scale.setScalar(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.scale, CONFIG.end.scale, ease));
+        /* ---------- ROTATION ---------- */ if (p > CONFIG.faceCameraStart) {
+            g.rotation.y += delta * CONFIG.spinY;
+            g.rotation.x += delta * CONFIG.spinX;
+        } else {
+            const r = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp((CONFIG.faceCameraStart - p) / 0.03, 0, 1);
+            g.rotation.x = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(g.rotation.x, 0, 1 - r);
+            g.rotation.y = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(g.rotation.y, 0, 1 - r);
         }
-        // If inside animation range → spin + move toward phone
-        if (p >= CONFIG.startProgress && p <= CONFIG.endProgress) {
-            const local = (p - CONFIG.startProgress) / (CONFIG.endProgress - CONFIG.startProgress);
-            const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp(local, 0, 1);
-            const ease = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
-            mesh.visible = true;
-            // Start spinning only AFTER leaving the face
-            if (p > CONFIG.startProgress + 0.02) {
-                mesh.rotation.y += delta * CONFIG.spinY;
-                mesh.rotation.x += delta * CONFIG.spinX;
-            }
-            // Move
-            mesh.position.z = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.z, CONFIG.end.z, ease);
-            mesh.position.y = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.y, CONFIG.end.y, ease);
-            mesh.position.x = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.x, CONFIG.end.x, ease);
-            // Scale
-            const s = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].lerp(CONFIG.start.scale, CONFIG.end.scale, ease);
-            mesh.scale.set(s, s, s);
-            // Fade FROM black TO gold at the beginning
-            if (p < CONFIG.goldEndProgress) {
-                const goldLocal = (p - CONFIG.startProgress) / (CONFIG.goldEndProgress - CONFIG.startProgress);
-                const goldProgress = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp(goldLocal, 0, 1);
-                const blackColor = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0x000000);
-                const goldColor = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Color"](0xd29508);
-                const fadedColor = blackColor.clone().lerp(goldColor, goldProgress);
-                // Update materials to fade from black to gold
-                if (coinMaterialsRef.current.length > 0) {
-                    coinMaterialsRef.current.forEach((mat)=>{
-                        mat.color.copy(fadedColor);
-                        mat.emissive.copy(fadedColor);
-                        mat.emissiveIntensity = 0.5 * goldProgress; // Increase glow as it becomes gold
-                    });
+        /* ---------- DARKEN → BRIGHTEN ---------- */ if (p < CONFIG.darkenEnd) {
+            const d = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MathUtils"].clamp(p / CONFIG.darkenEnd, 0, 1);
+            materialsRef.current.forEach((m, i)=>{
+                if (m instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshBasicMaterial"]) {
+                    m.color.copy(baseColorsRef.current[i]).multiplyScalar(d);
+                } else if (m instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]) {
+                    m.color.copy(baseColorsRef.current[i]).multiplyScalar(d);
+                    m.emissiveIntensity = baseEmissiveRef.current[i] * d;
                 }
-            } else {
-                // Keep full gold color after fade completes
-                if (coinMaterialsRef.current.length > 0) {
-                    coinMaterialsRef.current.forEach((mat)=>{
-                        mat.color.setHex(0xd29508);
-                        mat.emissive.setHex(0xd29508);
-                        mat.emissiveIntensity = 0.5;
-                    });
+            });
+        } else {
+            materialsRef.current.forEach((m, i)=>{
+                if (m instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshBasicMaterial"]) {
+                    m.color.copy(baseColorsRef.current[i]);
+                } else if (m instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]) {
+                    m.color.copy(baseColorsRef.current[i]);
+                    m.emissiveIntensity = baseEmissiveRef.current[i];
                 }
-            }
-            return;
+            });
         }
-        // AFTER animation ends → lock final position or hide
-        if (p > CONFIG.endProgress) {
-            mesh.visible = false;
+        if (p > CONFIG.disappearAt) {
+            g.visible = false;
         }
     });
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("group", {
-        ref: meshRef,
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("primitive", {
-                object: (()=>{
-                    const m = createRealisticCoin();
-                    m.castShadow = true;
-                    m.receiveShadow = true;
-                    // Store material references for color manipulation
-                    const materials = Array.isArray(m.material) ? m.material : [
-                        m.material
-                    ];
-                    coinMaterialsRef.current = materials.filter((mat)=>mat instanceof __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["MeshStandardMaterial"]);
-                    return m;
-                })()
-            }, void 0, false, {
-                fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 411,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
-                rotation: [
-                    Math.PI / 2,
-                    0,
-                    0
-                ],
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ringGeometry", {
-                        args: [
-                            0.125,
-                            0.15,
-                            48
-                        ]
-                    }, void 0, false, {
-                        fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 429,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                        color: "#05DF72",
-                        opacity: 0,
-                        transparent: true
-                    }, void 0, false, {
-                        fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 430,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 428,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
-                rotation: [
-                    Math.PI / 2,
-                    0,
-                    0
-                ],
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ringGeometry", {
-                        args: [
-                            0.118,
-                            0.122,
-                            64
-                        ]
-                    }, void 0, false, {
-                        fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 434,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
-                        color: "#ffffff",
-                        opacity: 0,
-                        transparent: true
-                    }, void 0, false, {
-                        fileName: "[project]/components/ScrollingCoin.tsx",
-                        lineNumber: 435,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/ScrollingCoin.tsx",
-                lineNumber: 433,
-                columnNumber: 7
-            }, this)
-        ]
-    }, void 0, true, {
+        ref: groupRef,
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("primitive", {
+            object: createTexturedCoin(materialsRef, baseColorsRef, baseEmissiveRef)
+        }, void 0, false, {
+            fileName: "[project]/components/ScrollingCoin.tsx",
+            lineNumber: 453,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
         fileName: "[project]/components/ScrollingCoin.tsx",
-        lineNumber: 410,
+        lineNumber: 452,
         columnNumber: 5
     }, this);
 }

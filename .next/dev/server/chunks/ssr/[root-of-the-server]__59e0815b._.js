@@ -20,297 +20,6 @@ module.exports = mod;
 "[project]/components/Navbar.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { useState, useEffect } from "react";
-// import { usePathname } from "next/navigation";
-// import { motion, AnimatePresence } from "framer-motion";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// if (typeof window !== "undefined") {
-//   gsap.registerPlugin(ScrollTrigger);
-// }
-// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
-// export default function Navbar() {
-//   const [active, setActive] = useState("Pulse");
-//   const [isScrolled, setIsScrolled] = useState(false);
-//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State for Mobile
-//   const pathname = usePathname();
-//   // --- NEW: Prevent Body Scroll when Menu is Open ---
-//   useEffect(() => {
-//     if (isMobileMenuOpen) {
-//       document.body.style.overflow = "hidden";
-//     } else {
-//       document.body.style.overflow = "auto";
-//     }
-//     return () => { document.body.style.overflow = "auto"; };
-//   }, [isMobileMenuOpen]);
-//   // --- Scroll Detection ---
-//   useEffect(() => {
-//     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-//     window.addEventListener("scroll", handleScroll);
-//     return () => window.removeEventListener("scroll", handleScroll);
-//   }, []);
-//   // --- State Initialization & URL Sync ---
-// useEffect(() => {
-//   const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
-//   if (storedActive) {
-//     setActive(storedActive);
-//     localStorage.removeItem(ACTIVE_NAV_KEY);
-//     return;
-//   }
-//   // Only set default "Pulse" on homepage if no specific tab was requested
-//   if (pathname === "/") {
-//     // Check if we arrived with a specific action (TeraaCharge or TeraaMart)
-//     const action = localStorage.getItem("TW_action");
-//     if (action === "go_charge") {
-//       setActive("TeraaCharge");
-//     } else if (action === "go_mart") {
-//       setActive("TeraaMart");
-//     } else {
-//       setActive("Pulse");
-//     }
-//   } else if (pathname.includes("investors")) {
-//     setActive("Investors & Partners");
-//   } else if (pathname.includes("insights")) {
-//     setActive("Insights");
-//   } else if (pathname.includes("connect")) {
-//     setActive("Connect");
-//   }
-// }, [pathname]);
-//   const navItems = [
-//     { name: "Pulse", href: "/" },
-//     { name: "TeraaCharge", href: "/" },
-//     { name: "TeraaMart", href: "/" },
-//     { name: "Investors & Partners", href: "/investors-and-partners" },
-//     { name: "Insights", href: "/insights" },
-//     { name: "Connect", href: "/connect", isButton: true },
-//   ];
-//   // Function to handle custom routing and setting state
-// const handleCustomNavigation = (itemName: string) => {
-//   const isOnPulse = window.location.pathname === "/";
-//   // Close mobile menu immediately if open
-//   setIsMobileMenuOpen(false);
-//   if (itemName === "TeraaCharge") {
-//     setActive("TeraaCharge");
-//     if (isOnPulse) {
-//       // Already on homepage → immediately jump to TeraaCharge frame
-//       window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-//     } else {
-//       // Coming from any other page (Investors, Insights, Connect, etc.)
-//       // Set flag and redirect to homepage
-//       localStorage.setItem("TW_action", "go_charge");
-//       window.location.href = "/";
-//     }
-//     return true;
-//   }
-//   if (itemName === "TeraaMart") {
-//     setActive("TeraaMart");
-//     if (isOnPulse) {
-//       // Already on homepage → trigger mart jump
-//       window.dispatchEvent(new Event("triggerVideoJump"));
-//     } else {
-//       // Coming from other page
-//       localStorage.setItem("TW_action", "go_mart");
-//       window.location.href = "/";
-//     }
-//     return true;
-//   }
-//   return false;
-// };
-//   return (
-//     <nav
-//       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
-//         ? "bg-black/90 backdrop-blur-xl border-b border-white/10 shadow-lg"
-//         : "py-6 bg-transparent"
-//         }`}
-//     >
-//       {/* Responsive Container Logic:
-//         Mobile: w-full, justify-between, px-6 (Spreads logo and hamburger)
-//         Desktop (md): w-fit, mx-auto, justify-center, px-10 (Restores your original centered layout)
-//       */}
-//       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
-//         {/* Logo and Nav Items Container */}
-//         <div className="flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start">
-//           {/* Logo */}
-//           <Link
-//             href="/"
-//             className="flex items-center relative z-50"
-//             onClick={() => {
-//               setActive("Pulse");
-//               setIsMobileMenuOpen(false);
-//             }}
-//           >
-//             <Image
-//               src="/teraawatt.svg"
-//               alt="TeraaWatt Logo"
-//               width={125}
-//               height={45}
-//               className="object-contain"
-//             />
-//           </Link>
-//           {/* --- Mobile Hamburger Button (Visible on mobile only) --- */}
-//           <button
-//             className="md:hidden relative z-50 text-white p-2 focus:outline-none"
-//             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-//           >
-//             <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
-//               <span
-//                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
-//                   }`}
-//               />
-//               <span
-//                 className={`block w-full h-0.5 bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""
-//                   }`}
-//               />
-//               <span
-//                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
-//                   }`}
-//               />
-//             </div>
-//           </button>
-//           {/* --- Desktop Nav Items (Hidden on Mobile) --- */}
-//           <div className="hidden md:flex items-center space-x-8 text-white font-normal relative">
-//             {navItems.map((item) => (
-//               <Link
-//                 key={item.name}
-//                 href={item.href}
-//                 className="relative px-2 py-1 group"
-//                 onClick={(e) => {
-//                   if (item.name === "Investors & Partners") {
-//                     e.preventDefault();
-//                     window.location.href = "/investors-and-partners";
-//                     return;
-//                   }
-//                   const handled = handleCustomNavigation(item.name);
-//                   if (handled) {
-//                     e.preventDefault();
-//                   } else {
-//                     setActive(item.name);
-//                   }
-//                 }}
-//               >
-//                 <span
-//                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${active === item.name
-//                     ? "text-white"
-//                     : "text-neutral-400 group-hover:text-white"
-//                     }`}
-//                   onClick={(e) => {
-//                     const handled = handleCustomNavigation(item.name);
-//                     if (handled) {
-//                       e.preventDefault();
-//                     } else {
-//                       setActive(item.name);
-//                     }
-//                   }}
-//                 >
-//                   {!item.isButton ? (
-//                     item.name
-//                   ) : (
-//                     <Image
-//                       src="/Contact_page/connect.svg"
-//                       alt="Connect"
-//                       width={130}
-//                       height={48}
-//                       className={`transition duration-300 ${active === "Connect"
-//                         ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
-//                         : "opacity-80 hover:opacity-100"
-//                         }`}
-//                     />
-//                   )}
-//                 </span>
-//                 {/* Desktop Indicator */}
-//                 {!item.isButton && active === item.name && (
-//                   <motion.div
-//                     layoutId="navbar-indicator"
-//                     className="absolute inset-0 z-10 rounded-full"
-//                     style={{
-//                       background:
-//                         "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)",
-//                       boxShadow:
-//                         "0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)",
-//                     }}
-//                     transition={{
-//                       type: "spring",
-//                       bounce: 0.2,
-//                       stiffness: 100,
-//                       damping: 10,
-//                     }}
-//                   />
-//                 )}
-//                 {/* Desktop Hover Glow */}
-//                 {!item.isButton && (
-//                   <div className="absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:bg-white/5" />
-//                 )}
-//               </Link>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//       {/* --- Mobile Menu Overlay --- */}
-//       <AnimatePresence>
-//         {isMobileMenuOpen && (
-//           <motion.div
-//             initial={{ opacity: 0, y: -20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             exit={{ opacity: 0, y: -20 }}
-//             transition={{ duration: 0.3 }}
-//             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-xl z-40 md:hidden flex flex-col items-center pt-10 h-screen"
-//           >
-//             <div className="flex flex-col space-y-6 text-center">
-//               {navItems.map((item) => (
-//                 <Link
-//                   key={item.name}
-//                   href={item.href}
-//                   className="relative px-4 py-2"
-//                   onClick={(e) => {
-//                     if (item.name === "Investors & Partners") {
-//                       e.preventDefault();
-//                       window.location.href = "/investors-and-partners";
-//                       setIsMobileMenuOpen(false);
-//                       return;
-//                     }
-//                     const handled = handleCustomNavigation(item.name);
-//                     if (handled) {
-//                       e.preventDefault();
-//                     } else {
-//                       setActive(item.name);
-//                       setIsMobileMenuOpen(false);
-//                     }
-//                   }}
-//                 >
-//                   <span
-//                     className={`text-xl font-medium tracking-wide ${active === item.name
-//                       ? "text-white"
-//                       : "text-neutral-400"
-//                       }`}
-//                   >
-//                     {!item.isButton ? (
-//                       item.name
-//                     ) : (
-//                       // Simplified Connect button for Mobile
-//                       <span className={`${active === "Connect" ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : ""}`}>
-//                         Connect
-//                       </span>
-//                     )}
-//                   </span>
-//                   {/* Mobile Active Indicator (Simple Underline) */}
-//                   {!item.isButton && active === item.name && (
-//                     <motion.div
-//                       layoutId="mobile-indicator"
-//                       className="absolute bottom-0 left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
-//                     />
-//                   )}
-//                 </Link>
-//               ))}
-//             </div>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-//     </nav>
-//   );
-// }
 __turbopack_context__.s([
     "default",
     ()=>Navbar
@@ -360,14 +69,23 @@ function Navbar() {
     }, []);
     // --- State Initialization & URL Sync ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const url = new URL(window.location.href);
-        const tab = url.searchParams.get("tab");
-        if (tab === "charge") {
-            setActive("TeraaCharge");
-        } else if (tab === "mart") {
-            setActive("TeraaMart");
-        } else if (pathname === "/") {
-            setActive("Pulse");
+        const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
+        if (storedActive) {
+            setActive(storedActive);
+            localStorage.removeItem(ACTIVE_NAV_KEY);
+            return;
+        }
+        // Only set default "Pulse" on homepage if no specific tab was requested
+        if (pathname === "/") {
+            // Check if we arrived with a specific action (TeraaCharge or TeraaMart)
+            const action = localStorage.getItem("TW_action");
+            if (action === "go_charge") {
+                setActive("TeraaCharge");
+            } else if (action === "go_mart") {
+                setActive("TeraaMart");
+            } else {
+                setActive("Pulse");
+            }
         } else if (pathname.includes("investors")) {
             setActive("Investors & Partners");
         } else if (pathname.includes("insights")) {
@@ -405,25 +123,33 @@ function Navbar() {
             isButton: true
         }
     ];
+    // Function to handle custom routing and setting state
     const handleCustomNavigation = (itemName)=>{
-        const isOnHome = window.location.pathname === "/";
+        const isOnPulse = window.location.pathname === "/";
+        // Close mobile menu immediately if open
         setIsMobileMenuOpen(false);
         if (itemName === "TeraaCharge") {
             setActive("TeraaCharge");
-            if (isOnHome) {
+            if (isOnPulse) {
+                // Already on homepage → immediately jump to TeraaCharge frame
                 window.dispatchEvent(new CustomEvent("scrollToFrame804"));
             } else {
-                // Client-side navigation with search param
-                window.location.href = "/?tab=charge";
+                // Coming from any other page (Investors, Insights, Connect, etc.)
+                // Set flag and redirect to homepage
+                localStorage.setItem("TW_action", "go_charge");
+                window.location.href = "/";
             }
             return true;
         }
         if (itemName === "TeraaMart") {
             setActive("TeraaMart");
-            if (isOnHome) {
+            if (isOnPulse) {
+                // Already on homepage → trigger mart jump
                 window.dispatchEvent(new Event("triggerVideoJump"));
             } else {
-                window.location.href = "/?tab=mart";
+                // Coming from other page
+                localStorage.setItem("TW_action", "go_mart");
+                window.location.href = "/";
             }
             return true;
         }
@@ -452,12 +178,12 @@ function Navbar() {
                                 className: "object-contain"
                             }, void 0, false, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 464,
+                                lineNumber: 142,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 456,
+                            lineNumber: 134,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -470,32 +196,32 @@ function Navbar() {
                                         className: `block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 479,
+                                        lineNumber: 157,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: `block w-full h-0.5 bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 483,
+                                        lineNumber: 161,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: `block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 487,
+                                        lineNumber: 165,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 478,
+                                lineNumber: 156,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 474,
+                            lineNumber: 152,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -535,12 +261,12 @@ function Navbar() {
                                                 className: `transition duration-300 ${active === "Connect" ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : "opacity-80 hover:opacity-100"}`
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Navbar.tsx",
-                                                lineNumber: 533,
+                                                lineNumber: 211,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 516,
+                                            lineNumber: 194,
                                             columnNumber: 17
                                         }, this),
                                         !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -558,36 +284,36 @@ function Navbar() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 548,
+                                            lineNumber: 226,
                                             columnNumber: 19
                                         }, this),
                                         !item.isButton && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:bg-white/5"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 567,
+                                            lineNumber: 245,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, item.name, true, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 497,
+                                    lineNumber: 175,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 495,
+                            lineNumber: 173,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 453,
+                    lineNumber: 131,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 450,
+                lineNumber: 128,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -637,12 +363,12 @@ function Navbar() {
                                             children: "Connect"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 618,
+                                            lineNumber: 296,
                                             columnNumber: 23
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 608,
+                                        lineNumber: 286,
                                         columnNumber: 19
                                     }, this),
                                     !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -650,37 +376,310 @@ function Navbar() {
                                         className: "absolute bottom-0 left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 626,
+                                        lineNumber: 304,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, item.name, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 587,
+                                lineNumber: 265,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 585,
+                        lineNumber: 263,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 578,
+                    lineNumber: 256,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 576,
+                lineNumber: 254,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 440,
+        lineNumber: 118,
         columnNumber: 5
     }, this);
-}
+} // "use client";
+ // import Image from "next/image";
+ // import Link from "next/link";
+ // import { useState, useEffect } from "react";
+ // import { usePathname } from "next/navigation";
+ // import { motion, AnimatePresence } from "framer-motion";
+ // import gsap from "gsap";
+ // import { ScrollTrigger } from "gsap/ScrollTrigger";
+ // if (typeof window !== "undefined") {
+ //   gsap.registerPlugin(ScrollTrigger);
+ // }
+ // const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
+ // export default function Navbar() {
+ //   const [active, setActive] = useState("Pulse");
+ //   const [isScrolled, setIsScrolled] = useState(false);
+ //   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State for Mobile
+ //   const pathname = usePathname();
+ //   // --- NEW: Prevent Body Scroll when Menu is Open ---
+ //   useEffect(() => {
+ //     if (isMobileMenuOpen) {
+ //       document.body.style.overflow = "hidden";
+ //     } else {
+ //       document.body.style.overflow = "auto";
+ //     }
+ //     return () => { document.body.style.overflow = "auto"; };
+ //   }, [isMobileMenuOpen]);
+ //   // --- Scroll Detection ---
+ //   useEffect(() => {
+ //     const handleScroll = () => setIsScrolled(window.scrollY > 20);
+ //     window.addEventListener("scroll", handleScroll);
+ //     return () => window.removeEventListener("scroll", handleScroll);
+ //   }, []);
+ //   // --- State Initialization & URL Sync ---
+ // useEffect(() => {
+ //   const url = new URL(window.location.href);
+ //   const tab = url.searchParams.get("tab");
+ //   if (tab === "charge") {
+ //     setActive("TeraaCharge");
+ //   } else if (tab === "mart") {
+ //     setActive("TeraaMart");
+ //   } else if (pathname === "/") {
+ //     setActive("Pulse");
+ //   } else if (pathname.includes("investors")) {
+ //     setActive("Investors & Partners");
+ //   } else if (pathname.includes("insights")) {
+ //     setActive("Insights");
+ //   } else if (pathname.includes("connect")) {
+ //     setActive("Connect");
+ //   }
+ // }, [pathname]);
+ //   const navItems = [
+ //     { name: "Pulse", href: "/" },
+ //     { name: "TeraaCharge", href: "/" },
+ //     { name: "TeraaMart", href: "/" },
+ //     { name: "Investors & Partners", href: "/investors-and-partners" },
+ //     { name: "Insights", href: "/insights" },
+ //     { name: "Connect", href: "/connect", isButton: true },
+ //   ];
+ // const handleCustomNavigation = (itemName: string) => {
+ //   const isOnHome = window.location.pathname === "/";
+ //   setIsMobileMenuOpen(false);
+ //   if (itemName === "TeraaCharge") {
+ //     setActive("TeraaCharge");
+ //     if (isOnHome) {
+ //       window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+ //     } else {
+ //       // Client-side navigation with search param
+ //       window.location.href = "/?tab=charge";
+ //     }
+ //     return true;
+ //   }
+ //   if (itemName === "TeraaMart") {
+ //     setActive("TeraaMart");
+ //     if (isOnHome) {
+ //       window.dispatchEvent(new Event("triggerVideoJump"));
+ //     } else {
+ //       window.location.href = "/?tab=mart";
+ //     }
+ //     return true;
+ //   }
+ //   return false;
+ // };
+ //   return (
+ //     <nav
+ //       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
+ //         ? "bg-black/90 backdrop-blur-xl border-b border-white/10 shadow-lg"
+ //         : "py-6 bg-transparent"
+ //         }`}
+ //     >
+ //       {/* Responsive Container Logic:
+ //         Mobile: w-full, justify-between, px-6 (Spreads logo and hamburger)
+ //         Desktop (md): w-fit, mx-auto, justify-center, px-10 (Restores your original centered layout)
+ //       */}
+ //       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
+ //         {/* Logo and Nav Items Container */}
+ //         <div className="flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start">
+ //           {/* Logo */}
+ //           <Link
+ //             href="/"
+ //             className="flex items-center relative z-50"
+ //             onClick={() => {
+ //               setActive("Pulse");
+ //               setIsMobileMenuOpen(false);
+ //             }}
+ //           >
+ //             <Image
+ //               src="/teraawatt.svg"
+ //               alt="TeraaWatt Logo"
+ //               width={125}
+ //               height={45}
+ //               className="object-contain"
+ //             />
+ //           </Link>
+ //           {/* --- Mobile Hamburger Button (Visible on mobile only) --- */}
+ //           <button
+ //             className="md:hidden relative z-50 text-white p-2 focus:outline-none"
+ //             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+ //           >
+ //             <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
+ //               <span
+ //                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+ //                   }`}
+ //               />
+ //               <span
+ //                 className={`block w-full h-0.5 bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""
+ //                   }`}
+ //               />
+ //               <span
+ //                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+ //                   }`}
+ //               />
+ //             </div>
+ //           </button>
+ //           {/* --- Desktop Nav Items (Hidden on Mobile) --- */}
+ //           <div className="hidden md:flex items-center space-x-8 text-white font-normal relative">
+ //             {navItems.map((item) => (
+ //               <Link
+ //                 key={item.name}
+ //                 href={item.href}
+ //                 className="relative px-2 py-1 group"
+ //                 onClick={(e) => {
+ //                   if (item.name === "Investors & Partners") {
+ //                     e.preventDefault();
+ //                     window.location.href = "/investors-and-partners";
+ //                     return;
+ //                   }
+ //                   const handled = handleCustomNavigation(item.name);
+ //                   if (handled) {
+ //                     e.preventDefault();
+ //                   } else {
+ //                     setActive(item.name);
+ //                   }
+ //                 }}
+ //               >
+ //                 <span
+ //                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${active === item.name
+ //                     ? "text-white"
+ //                     : "text-neutral-400 group-hover:text-white"
+ //                     }`}
+ //                   onClick={(e) => {
+ //                     const handled = handleCustomNavigation(item.name);
+ //                     if (handled) {
+ //                       e.preventDefault();
+ //                     } else {
+ //                       setActive(item.name);
+ //                     }
+ //                   }}
+ //                 >
+ //                   {!item.isButton ? (
+ //                     item.name
+ //                   ) : (
+ //                     <Image
+ //                       src="/Contact_page/connect.svg"
+ //                       alt="Connect"
+ //                       width={130}
+ //                       height={48}
+ //                       className={`transition duration-300 ${active === "Connect"
+ //                         ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
+ //                         : "opacity-80 hover:opacity-100"
+ //                         }`}
+ //                     />
+ //                   )}
+ //                 </span>
+ //                 {/* Desktop Indicator */}
+ //                 {!item.isButton && active === item.name && (
+ //                   <motion.div
+ //                     layoutId="navbar-indicator"
+ //                     className="absolute inset-0 z-10 rounded-full"
+ //                     style={{
+ //                       background:
+ //                         "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)",
+ //                       boxShadow:
+ //                         "0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)",
+ //                     }}
+ //                     transition={{
+ //                       type: "spring",
+ //                       bounce: 0.2,
+ //                       stiffness: 100,
+ //                       damping: 10,
+ //                     }}
+ //                   />
+ //                 )}
+ //                 {/* Desktop Hover Glow */}
+ //                 {!item.isButton && (
+ //                   <div className="absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:bg-white/5" />
+ //                 )}
+ //               </Link>
+ //             ))}
+ //           </div>
+ //         </div>
+ //       </div>
+ //       {/* --- Mobile Menu Overlay --- */}
+ //       <AnimatePresence>
+ //         {isMobileMenuOpen && (
+ //           <motion.div
+ //             initial={{ opacity: 0, y: -20 }}
+ //             animate={{ opacity: 1, y: 0 }}
+ //             exit={{ opacity: 0, y: -20 }}
+ //             transition={{ duration: 0.3 }}
+ //             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-xl z-40 md:hidden flex flex-col items-center pt-10 h-screen"
+ //           >
+ //             <div className="flex flex-col space-y-6 text-center">
+ //               {navItems.map((item) => (
+ //                 <Link
+ //                   key={item.name}
+ //                   href={item.href}
+ //                   className="relative px-4 py-2"
+ //                   onClick={(e) => {
+ //                     if (item.name === "Investors & Partners") {
+ //                       e.preventDefault();
+ //                       window.location.href = "/investors-and-partners";
+ //                       setIsMobileMenuOpen(false);
+ //                       return;
+ //                     }
+ //                     const handled = handleCustomNavigation(item.name);
+ //                     if (handled) {
+ //                       e.preventDefault();
+ //                     } else {
+ //                       setActive(item.name);
+ //                       setIsMobileMenuOpen(false);
+ //                     }
+ //                   }}
+ //                 >
+ //                   <span
+ //                     className={`text-xl font-medium tracking-wide ${active === item.name
+ //                       ? "text-white"
+ //                       : "text-neutral-400"
+ //                       }`}
+ //                   >
+ //                     {!item.isButton ? (
+ //                       item.name
+ //                     ) : (
+ //                       // Simplified Connect button for Mobile
+ //                       <span className={`${active === "Connect" ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : ""}`}>
+ //                         Connect
+ //                       </span>
+ //                     )}
+ //                   </span>
+ //                   {/* Mobile Active Indicator (Simple Underline) */}
+ //                   {!item.isButton && active === item.name && (
+ //                     <motion.div
+ //                       layoutId="mobile-indicator"
+ //                       className="absolute bottom-0 left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
+ //                     />
+ //                   )}
+ //                 </Link>
+ //               ))}
+ //             </div>
+ //           </motion.div>
+ //         )}
+ //       </AnimatePresence>
+ //     </nav>
+ //   );
+ // }
 }),
 "[project]/app/insights/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
