@@ -92,7 +92,7 @@ export default function Connect() {
       <Navbar />
 
       
-      <div className="relative h-[250vh] overflow-hidden">
+      <div className="relative max-sm:h-[100vh] h-[250vh] overflow-hidden">
 
         {/* 🔥 Smooth Looping Video Background */}
         <video

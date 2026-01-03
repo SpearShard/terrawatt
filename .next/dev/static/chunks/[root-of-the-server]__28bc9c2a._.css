@@ -2656,6 +2656,12 @@
     }
   }
 
+  @media not (min-width: 40rem) {
+    .max-sm\:h-\[100vh\] {
+      height: 100vh;
+    }
+  }
+
   @media (min-width: 40rem) {
     .sm\:mx-6 {
       margin-inline: calc(var(--spacing) * 6);
