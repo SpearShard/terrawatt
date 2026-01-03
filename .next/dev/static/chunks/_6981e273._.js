@@ -322,8 +322,8 @@ function CoinAnimation({ progressRef, dashboardRef }) {
                 const e = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
                 coin.visible = true;
                 const isMobile = window.innerWidth < 768;
-                coin.position.y = isMobile ? 0.25 - e * 0.7 : 0.7 - e * 0.7;
-                coin.position.z = isMobile ? 0.235 : 0.165;
+                coin.position.y = isMobile ? 0.40 - e * 0.7 : 0.7 - e * 0.7;
+                coin.position.z = isMobile ? 0.170 : 0.165;
                 coin.scale.setScalar(1 + e * 1.5);
                 if (progress > 0.96) {
                     const faceT = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.96) / 0.04, 0, 1);

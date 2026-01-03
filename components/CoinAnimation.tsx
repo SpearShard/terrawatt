@@ -377,8 +377,8 @@ export default function CoinAnimation({
       coin.visible = true;
       const isMobile = window.innerWidth < 768;
 
-      coin.position.y = isMobile ? 0.25 - e * 0.7 : 0.7 - e * 0.7;
-      coin.position.z = isMobile ? 0.235 : 0.165;
+      coin.position.y = isMobile ? 0.40 - e * 0.7 : 0.7 - e * 0.7;
+      coin.position.z = isMobile ? 0.170 : 0.165;
       coin.scale.setScalar(1 + e * 1.5);
 
       if (progress > 0.96) {

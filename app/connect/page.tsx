@@ -92,7 +92,7 @@ export default function Connect() {
       <Navbar />
 
       
-      <div className="relative h-screen md:min-h-[300vh] overflow-hidden">
+      <div className="relative h-[250vh] overflow-hidden">
 
         {/* 🔥 Smooth Looping Video Background */}
         <video
@@ -103,7 +103,7 @@ export default function Connect() {
           loop
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute  w-full h-fit object-cover"
         />
 
         {/* Subtle dark overlay for readability */}
@@ -113,7 +113,7 @@ export default function Connect() {
         <div
           className={`
             absolute w-full text-center px-6 z-10
-            bottom-24  max-sm:top-[75vw] max-sm:bottom-0 md:bottom-[20vw]
+              max-sm:top-[75vw] max-sm:bottom-0 md:bottom-[10vw] 
             ${urbanist.className}
           `}
         >

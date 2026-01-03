@@ -70,8 +70,8 @@ function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.Mutable
     const isMobile = window.innerWidth < 768;
 
     if(isMobile){
-      camera.position.set(0, 15, 570);
-      camera.lookAt(0, 50, 0);
+      camera.position.set(0, 45, 580);
+      camera.lookAt(0, 35, 0);
     }
 
     const tl = gsap.timeline({
@@ -230,7 +230,7 @@ export default function Home() {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width < 640) {
-        setCarScale(0.75); // Mobile
+        setCarScale(1); // Mobile
       } else if (width < 1024) {
         setCarScale(0.9); // Tablet
       } else {
@@ -695,6 +695,37 @@ useGLTF.preload("/models/lastwala.glb");
 
 
 // useGLTF.preload("/models/lastwala.glb");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

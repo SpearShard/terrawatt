@@ -2911,8 +2911,8 @@ function ScrollCameraAnimation({ rearLightsRef }) {
             camera.lookAt(0, 50, 0);
             const isMobile = window.innerWidth < 768;
             if (isMobile) {
-                camera.position.set(0, 15, 570);
-                camera.lookAt(0, 50, 0);
+                camera.position.set(0, 45, 580);
+                camera.lookAt(0, 35, 0);
             }
             const tl = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].timeline({
                 scrollTrigger: {
@@ -3092,7 +3092,7 @@ function Home() {
                 "Home.useEffect.handleResize": ()=>{
                     const width = window.innerWidth;
                     if (width < 640) {
-                        setCarScale(0.75); // Mobile
+                        setCarScale(1); // Mobile
                     } else if (width < 1024) {
                         setCarScale(0.9); // Tablet
                     } else {
