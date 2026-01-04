@@ -280,7 +280,7 @@ export default function InvestorsPage() {
     <>
       <Navbar />
 
-      <div className="relative w-full min-h-screen bg-black overflow-hidden">
+      <div className="relative  w-full min-h-screen bg-black overflow-hidden">
         {/* 🔹 BLURRED BACKGROUND (MOBILE ONLY) */}
         <div className="absolute inset-0 z-0 sm:hidden">
           <video
@@ -289,7 +289,7 @@ export default function InvestorsPage() {
             muted
             loop
             playsInline
-            className="w-full h-full object-cover scale-110 blur-2xl opacity-70"
+            className="w-full h-fit object-cover scale-110 blur-2xl opacity-70"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>

@@ -57,14 +57,18 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";  // ← Add this import
+import Link from "next/link";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 export default function Footer() {
+  const [isComplianceOpen, setIsComplianceOpen] = useState(false);
+
   return (
     <footer className="bg-[#E5E7EB] p-4 sm:p-6 md:p-[5vw] text-gray-800">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6 sm:gap-8">
         {/* Left side logo */}
-        <div className="relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center gap-4">
+        <div className="relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center">
           <Image
             src="/tblack.svg"
             alt="Teraawatt Logo"
@@ -74,16 +78,71 @@ export default function Footer() {
         </div>
 
         {/* Middle links */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 justify-center md:justify-start text-base sm:text-lg font-medium mt-4 md:mt-0">
-          <Link href="/pulse" className="hover:text-green-600 transition">
+        <div className="flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0">
+          {/* <Link href="/" className="hover:text-green-600 transition">
             Pulse
-          </Link>
+          </Link> */}
           <Link href="/privacy-policy" className="hover:text-green-600 transition">
             Privacy Policy
           </Link>
           <Link href="/terms" className="hover:text-green-600 transition">
             Terms & Conditions
           </Link>
+
+          {/* Compliance Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setIsComplianceOpen(true)}
+            onMouseLeave={() => setIsComplianceOpen(false)}
+          >
+            <button
+              className="flex items-center gap-1 hover:text-green-600 transition focus:outline-none whitespace-nowrap"
+              onClick={() => setIsComplianceOpen(!isComplianceOpen)}
+              aria-expanded={isComplianceOpen}
+              aria-haspopup="true"
+            >
+              Compliance
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isComplianceOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Dropdown Menu - aligned to the right */}
+            {isComplianceOpen && (
+              <div className="absolute right-0 mt-3 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-3 z-50">
+                <Link
+                  href="/dcs"
+                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+                  onClick={() => setIsComplianceOpen(false)}
+                >
+                  Data and Security Compliance
+                </Link>
+                <Link
+                  href="/isc"
+                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+                  onClick={() => setIsComplianceOpen(false)}
+                >
+                  Industry-Specific Compliance
+                </Link>
+                <Link
+                  href="/pgc"
+                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+                  onClick={() => setIsComplianceOpen(false)}
+                >
+                  Payment Gateway Compliance
+                </Link>
+                <Link
+                  href="/cgln"
+                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+                  onClick={() => setIsComplianceOpen(false)}
+                >
+                  Corporate Governance and Legal Notice
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
