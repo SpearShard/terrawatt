@@ -333,7 +333,7 @@ export default function InsightsPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users/blog/all`)
       .then((r) => r.json())
       .then((data) => {
         setBlogs(data.data?.blogs || []);
