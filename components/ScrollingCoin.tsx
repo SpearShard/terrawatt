@@ -254,7 +254,7 @@ function createTexturedCoin(
 ) {
   const loader = new THREE.TextureLoader();
 
-  const frontMap = loader.load("/croppedfront.png");
+  const frontMap = loader.load("/coins.png");
   const backMap  = loader.load("/croppedback.png");
 
   frontMap.colorSpace = THREE.SRGBColorSpace;
@@ -262,19 +262,15 @@ function createTexturedCoin(
   frontMap.flipY = false;
   backMap.flipY  = false;
 
-  
   frontMap.center.set(0.5, 0.5);
   frontMap.rotation = -Math.PI / 2;
-
   backMap.center.set(0.5, 0.5);
-  backMap.rotation = -Math.PI / 2;
+  backMap.rotation  = -Math.PI / 2;
 
-  /* 🔑 FIX: compensate for CylinderGeometry cap UV mirroring */
   frontMap.wrapS = THREE.RepeatWrapping;
   frontMap.repeat.x = -1;
-
   backMap.wrapS = THREE.RepeatWrapping;
-  backMap.repeat.x = -1;
+  backMap.repeat.x  = -1;
 
   const radius = 0.012;
   const thickness = 0.0025;
@@ -335,7 +331,7 @@ function createTexturedCoin(
 
   const coin = new THREE.Mesh(geo, [matGold, matFront, matBack]);
 
-  // coin faces camera initially
+  // deterministic initial orientation
   coin.rotation.x = Math.PI / 2;
 
   materialsOut.current = [matGold, matFront, matBack];
@@ -364,18 +360,50 @@ export default function VideoCoin({
   const baseEmissiveRef = useRef<number[]>([]);
 
   const CONFIG = {
-    appearAt: 0.0,
-    disappearAt: 0.12,
+    appearAt: 0,
+    disappearAt: 0.18,
 
-    faceCameraStart: 0.004,
     darkenEnd: 0.03,
 
-    start: { z: 2.46, x: 0, y: 0, scale: 3.8 },
-    end:   { z: 0.01, x: 0.2, y: 0.4, scale: 0.45 },
+    start: { z: 2.47, x: 0, y: -0.02, scale: 3.8 },
+    end:   { z: 0.01, x: 0.13, y: 0.47, scale: 6 },
+
+    /* ---- rotation phases ---- */
+    freeSpinStart: 0.03,
+    freeSpinEnd: 0.14,
+
+    startRotation: {
+      x: Math.PI / 20,
+      y: 0,
+      z: 0,
+    },
+
+    finalRotation: {
+      x: -Math.PI / 5,
+      y: -Math.PI / 45,
+      z: 0,
+    },
 
     spinY: 4,
     spinX: 1.8,
   };
+
+  /* ---- precompute quaternions (critical) ---- */
+  const startQuat = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(
+      CONFIG.startRotation.x,
+      CONFIG.startRotation.y,
+      CONFIG.startRotation.z
+    )
+  );
+
+  const endQuat = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(
+      CONFIG.finalRotation.x,
+      CONFIG.finalRotation.y,
+      CONFIG.finalRotation.z
+    )
+  );
 
   useFrame((_, delta) => {
     const g = groupRef.current;
@@ -406,24 +434,38 @@ export default function VideoCoin({
       THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease)
     );
 
-    /* ---------- ROTATION ---------- */
-    if (p > CONFIG.faceCameraStart) {
-      g.rotation.y += delta * CONFIG.spinY;
-      g.rotation.x += delta * CONFIG.spinX;
-    } else {
-      const r = THREE.MathUtils.clamp(
-        (CONFIG.faceCameraStart - p) / 0.03,
+    /* ---------- ROTATION (SINGLE CONTROLLER) ---------- */
+    if (p < CONFIG.freeSpinStart) {
+      // 🔒 LOCKED START
+      const lt = THREE.MathUtils.clamp(
+        (p - CONFIG.appearAt) /
+          (CONFIG.freeSpinStart - CONFIG.appearAt),
         0,
         1
       );
-      g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, 0, 1 - r);
-      g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, 0, 1 - r);
+      const le = THREE.MathUtils.smoothstep(lt, 0, 1);
+      g.quaternion.slerp(startQuat, 1 - le);
+
+    } else if (p < CONFIG.freeSpinEnd) {
+      // 🌀 FREE SPIN
+      g.rotation.y += delta * CONFIG.spinY;
+      g.rotation.x += delta * CONFIG.spinX;
+
+    } else {
+      // 🔒 LOCKED END
+      const lt = THREE.MathUtils.clamp(
+        (p - CONFIG.freeSpinEnd) /
+          (CONFIG.disappearAt - CONFIG.freeSpinEnd),
+        0,
+        1
+      );
+      const le = THREE.MathUtils.smoothstep(lt, 0, 1);
+      g.quaternion.slerp(endQuat, le);
     }
 
     /* ---------- DARKEN → BRIGHTEN ---------- */
     if (p < CONFIG.darkenEnd) {
       const d = THREE.MathUtils.clamp(p / CONFIG.darkenEnd, 0, 1);
-
       materialsRef.current.forEach((m, i) => {
         if (m instanceof THREE.MeshBasicMaterial) {
           m.color.copy(baseColorsRef.current[i]).multiplyScalar(d);
@@ -460,6 +502,7 @@ export default function VideoCoin({
     </group>
   );
 }
+
 
 
 

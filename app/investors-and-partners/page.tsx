@@ -165,6 +165,7 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Footer from "@/components/Footer";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -282,17 +283,24 @@ export default function InvestorsPage() {
 
       <div className="relative  w-full min-h-screen bg-black overflow-hidden">
         {/* 🔹 BLURRED BACKGROUND (MOBILE ONLY) */}
-        <div className="absolute inset-0 z-0 sm:hidden">
-          <video
-            ref={bgVideoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-fit object-cover scale-110 blur-2xl opacity-70"
-          />
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
+<div className="fixed inset-0 z-0 sm:hidden ">
+  <video
+    ref={bgVideoRef}
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="
+      w-screen h-screen
+      object-cover
+      
+      blur-2xl
+      opacity-70
+    "
+  />
+  <div className=" inset-0 bg-black/40" />
+</div>
+
 
         {/* 🔹 FOREGROUND VIDEO */}
         <div
@@ -313,7 +321,9 @@ export default function InvestorsPage() {
           <div style={{ height: `${scrollDistanceRef.current}px` }} />
         </div>
       </div>
+      <div className="relative ">
+        <Footer/>
+      </div>
     </>
   );
 }
-

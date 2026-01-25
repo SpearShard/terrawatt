@@ -132,20 +132,22 @@
 
 
 "use client";
+
 import React, { useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   motion,
   useScroll,
   useTransform,
-  useMotionValue,
-  useSpring,
 } from "framer-motion";
 
-// --- Types ---
+/* =======================
+   Types
+======================= */
 interface ProductData {
   id: string;
-  title: string;
+  titleImage: string;
   subtitle: string;
   description: string;
   image: string;
@@ -153,257 +155,214 @@ interface ProductData {
   features: string[];
 }
 
-// --- Data ---
+/* =======================
+   Data (ORDER MATTERS)
+======================= */
 const products: ProductData[] = [
   {
-        id: "charge",
-        title: "TeraaCharge",
-        subtitle: "The Charging Network",
-        description:
-          "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform. Powering your electric journey, effortlessly.",
-        image: "./Terracharge.png", // Assuming you have an image for TeraaCharge
-        accentColor: "#22D3EE", // Cyan/Light Blue for Charging
-        features: [
-          "Real-time station availability",
-          "Fast & Ultra-fast charging options",
-          "Seamless app integration",
-          "24/7 customer support",
-        ],
-      },
+    id: "charge",
+    titleImage: "/teraaCharge.png",
+    subtitle: "The Charging Network",
+    description:
+      "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform.",
+    image: "/About/teraacharge.jpg",
+    accentColor: "#22D3EE",
+    features: [
+      "Real-time station availability",
+      "Fast & Ultra-fast charging",
+      "Seamless app integration",
+      "24/7 support",
+    ],
+  },
   {
     id: "coins",
-    title: "TeraaCoins",
+    titleImage: "/teraacoins.png",
     subtitle: "Digital Currency",
     description:
-      "Our digital currency system that rewards sustainable driving behavior. Earn coins for using our charging network, reducing your carbon footprint, and participating in the green mobility ecosystem.",
-    image: "./Teracoins.png",
+      "A reward system for sustainable driving. Earn coins for charging, eco-driving, and participating in the green mobility ecosystem.",
+    image: "/About/teraacoins.png",
     accentColor: "#FFD700",
     features: [
       "Earn while you drive",
-      "Redeem for charging credits",
-      "Exclusive marketplace access",
-      "Blockchain-backed security",
+      "Redeem for charging",
+      "Marketplace access",
+      "Secure & digital",
     ],
   },
   {
     id: "vouchers",
-    title: "TeraaVouchers",
+    titleImage: "/teraavouchers.png",
     subtitle: "Flexible Payment",
     description:
-      "Flexible payment solutions for EV charging and services. Prepaid vouchers make EV ownership accessible and provide discounts for frequent users of our charging network.",
-    image: "./TeraVouchers.png",
+      "Prepaid vouchers that make EV ownership more accessible with discounts and corporate-friendly options.",
+    image: "/About/teraavoucher.png",
     accentColor: "#05DF72",
     features: [
       "Prepaid flexibility",
-      "Corporate gifting options",
-      "Discounts on bulk purchase",
-      "Instant digital delivery",
+      "Corporate gifting",
+      "Bulk discounts",
+      "Instant delivery",
     ],
   },
   {
     id: "mart",
-    title: "TeraaMart",
+    titleImage: "/teraamartlogo.png",
     subtitle: "EV Marketplace",
     description:
-      "Your one-stop marketplace for EV accessories, charging equipment, and sustainable mobility products. Quality products curated specifically for electric vehicle owners.",
-    image: "TeraaMart.png",
+      "A curated marketplace for EV accessories, charging equipment, and sustainable mobility products.",
+    image: "/About/teraamart.png",
     accentColor: "#00BFFF",
     features: [
-      "Curated EV accessories",
-      "Home charging stations",
-      "Sustainable merchandise",
-      "Verified quality assurance",
+      "EV accessories",
+      "Home chargers",
+      "Verified quality",
+      "Eco products",
     ],
   },
 ];
 
-// --- Components ---
-
-
-
-const ProductSection: React.FC<{ data: ProductData; index: number }> = ({
-  data,
-  index,
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+/* =======================
+   Product Section
+======================= */
+const ProductSection = ({ data, index }: { data: ProductData; index: number }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: ref,
     offset: ["start end", "end start"],
   });
 
-  const isEven = index % 2 === 0;
-
   const yImg = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const scaleImg = useTransform(scrollYProgress, [0.2, 0.8], [0.9, 1.1]);
-  const opacityContent = useTransform(
-    scrollYProgress,
-    [0.1, 0.3, 0.8, 0.9],
-    [0, 1, 1, 0]
-  );
+  const scaleImg = useTransform(scrollYProgress, [0.2, 0.8], [0.9, 1.05]);
+  const opacity = useTransform(scrollYProgress, [0.1, 0.3, 0.8], [0, 1, 1]);
+
+  const reverse = index % 2 !== 0;
 
   return (
     <section
+      ref={ref}
       id={data.id}
-      ref={containerRef}
-      className="relative min-h-screen w-full flex items-center py-20 overflow-hidden"
+      className="min-h-screen flex items-center px-6 "
     >
-      <div className="container mx-auto px-6 relative z-10">
-        <div
-          className={`flex flex-col md:flex-row items-center gap-12 md:gap-24 ${
-            isEven ? "" : "md:flex-row-reverse"
-          }`}
-        >
-          <motion.div
-            style={{ opacity: opacityContent }}
-            className="flex-1 space-y-8"
-          >
-            <div className="overflow-hidden">
-              <motion.span
-                initial={{ y: "100%" }}
-                whileInView={{ y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
-                className="block text-[#05DF72] font-mono text-sm tracking-widest uppercase mb-2"
+      <div
+        className={`container mx-auto flex flex-col md:flex-row items-center gap-16 ${
+          reverse ? "md:flex-row-reverse" : ""
+        }`}
+      >
+        {/* Text */}
+        <motion.div style={{ opacity }} className="flex-1 space-y-8">
+          <span className="text-[#05DF72] font-mono text-sm tracking-widest">
+            0{index + 1} — {data.subtitle}
+          </span>
+
+          <Image
+    src={data.titleImage}
+    alt="image"
+    width={420}
+    height={120}
+    className="mb-2"
+    priority={index === 0}
+  />
+
+          <p className="text-gray-400 text-lg max-w-lg">
+            {data.description}
+          </p>
+
+          <ul className="space-y-4 pt-4">
+            {data.features.map((f, i) => (
+              <li
+                key={i}
+                className="flex items-center gap-3 border-b border-white/10 pb-3"
               >
-                0{index + 1} — {data.subtitle}
-              </motion.span>
-            </div>
+                <span className="w-2 h-2 bg-[#05DF72] rounded-full" />
+                {f}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
 
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-tight">
-              {data.title.split("").map((char, i) => (
-                <span
-                  key={i}
-                  className="inline-block hover:text-[#05DF72] transition-colors duration-300 cursor-default"
-                >
-                  {char}
-                </span>
-              ))}
-            </h2>
-
-            <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-lg">
-              {data.description}
-            </p>
-
-            <ul className="space-y-4 pt-4">
-              {data.features.map((feature, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-                  className="flex items-center gap-4 text-sm md:text-base border-b border-white/10 pb-4"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#05DF72]" />
-                  {feature}
-                </motion.li>
-              ))}
-            </ul>
-
-            <div className="pt-8">
-              <button className="group relative px-6 py-3 bg-transparent border border-white/20 rounded-full overflow-hidden">
-                <span className="relative z-10 font-bold uppercase text-xs tracking-wider group-hover:text-black transition-colors duration-300">
-                  Discover {data.title}
-                </span>
-                <div className="absolute inset-0 bg-[#05DF72] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
-              </button>
-            </div>
-          </motion.div>
-
-          <div className="flex-1 w-full h-[50vh] md:h-[70vh] relative">
-            <motion.div
-              style={{ y: yImg, scale: scaleImg }}
-              className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/5 group"
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-
-              <img
-                src={data.image}
-                alt={data.title}
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out"
-              />
-
-              <div className="absolute top-6 right-6 z-20 w-12 h-12 rounded-full border border-white/20 flex items-center justify-center animate-spin-slow">
-                <div className="w-2 h-2 bg-[#05DF72] rounded-full" />
-              </div>
-              <div className="absolute bottom-6 left-6 z-20 text-xs font-mono text-[#05DF72]">
-                SYSTEM_STATUS: ONLINE
-                <br />
-                MODULE: {data.id.toUpperCase()}
-              </div>
-            </motion.div>
-          </div>
-        </div>
+        {/* Image */}
+        <motion.div
+          style={{ y: yImg, scale: scaleImg }}
+          className="flex-1 h-[60vh] rounded-2xl overflow-hidden border border-white/10 bg-neutral-900"
+        >
+          <img
+            src={data.image}
+            alt="image"
+            className="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700"
+          />
+        </motion.div>
       </div>
     </section>
   );
 };
 
-// --- Main Page Component ---
+/* =======================
+   MAIN ABOUT PAGE
+======================= */
 export default function About() {
   return (
-    <div className="bg-[#050505] text-white selection:bg-[#05DF72] selection:text-black min-h-screen font-sans">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    <div className="bg-black text-white min-h-screen">
 
-        body {
-          background-color: #050505;
-          color: #ffffff;
-        }
+      {/* =======================
+          TERA AWATT HERO
+      ======================= */}
+      <section className="h-auto  py-[12vw] max-sm:py-[10vw] flex flex-col items-center justify-center text-center ">
+        <Image
+          src="/teraawatt.svg"
+          alt="Teraawatt"
+          width={420}
+          height={120}
+          priority
+          className=" max-sm:h-[12vw]"
+        />
+
+        <div className="max-sm:my-[5vw] max-sm:h-[1vw] max-sm:w-[50%] w-36 h-[6px] bg-red-500 rounded-full my-8" />
+
+        <p className="max-w-3xl text-white/90 text-lg leading-relaxed max-sm:py-[5vw]">
+          Driving electric is just the start.
+          <br />
+          We&apos;re building the connected system that powers every part of your EV journey.
+        </p>
+
         
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Space Grotesk', sans-serif;
-        }
-        body, p, button, input {
-          font-family: 'Inter', sans-serif;
-        }
+      </section>
 
-        ::-webkit-scrollbar {
-          width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-          background: #0a0a0a;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: #333;
-          border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: #05DF72;
-        }
-      `}</style>
-      
-      <div 
-        className="fixed inset-0 pointer-events-none z-[9999] opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-        }}
-      />
+      {/* =======================
+          PRODUCTS
+      ======================= */}
+      {products.map((product, index) => (
+        <ProductSection key={product.id} data={product} index={index} />
+      ))}
 
-      <main>
-        
-
-        <div className="h-24 w-full bg-gradient-to-b from-[#050505] to-transparent" />
-
-        {products.map((product, index) => (
-          <ProductSection key={product.id} data={product} index={index} />
-        ))}
-
-        <section className="py-32 px-6 flex flex-col items-center justify-center text-center bg-neutral-900/50 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 relative z-10">
-            Join the Revolution
-          </h2>
-          <p className="max-w-2xl text-gray-400 mb-10 text-lg relative z-10">
-            The future of mobility is electric, connected, and rewarding. Don't
-            just drive—drive smart.
-          </p>
-          <Link href={"/connect"}>
-          <button className="relative z-10 px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-[#05DF72] transition-colors duration-300 transform hover:scale-105">
-            Get Started Now
-          </button>
-          </Link>
-        </section>
-      </main>
+      {/* =======================
+          CTA
+      ======================= */}
+      <section className="py-32 max-sm:p-[5vw] text-center bg-neutral-900 max-sm:m-[5vw] max-sm:rounded-[10vw] max-sm:py-[5vw]">
+        <h2 className="text-5xl max-sm:text-[8vw] font-bold mb-8  max-sm:mb-[5vw]">
+          Join the Revolution
+        </h2>
+        <p className="max-w-2xl mx-auto text-gray-400 mb-10 max-sm:text-[4.5vw]  max-sm:mb-[5vw] ">
+          The future of mobility is electric, connected, and rewarding.
+        </p>
+        <Link href="/connect">
+          <button
+  className="
+    px-10 py-4 max-sm:px-[10vw] max-sm:py-[1vh] max-sm:text-[5vw]
+    bg-white/10 backdrop-blur-xl
+    text-white font-semibold text-lg
+    border border-white/20
+    rounded-full
+    hover:bg-white/20
+    hover:border-white/30
+    hover:shadow-[0_8px_32px_rgba(5,223,114,0.2)]
+    active:scale-95
+    transition-all duration-300
+  "
+>
+  Get Started
+</button>
+        </Link>
+      </section>
     </div>
   );
 }

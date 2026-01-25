@@ -78,6 +78,7 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { Urbanist } from "next/font/google";
 import { useRef } from "react";
+import Footer from "@/components/Footer";
 
 const urbanist = Urbanist({
   subsets: ["latin"],
@@ -154,6 +155,7 @@ export default function Connect() {
           </Link>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

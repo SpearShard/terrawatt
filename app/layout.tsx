@@ -28,11 +28,22 @@
 //   children: React.ReactNode;
 // }>) {
 //   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-//         suppressHydrationWarning
-//       >
+//   <html lang="en">
+//     <head>
+//       <link
+//         rel="preload"
+//         href="/models/lastwala.glb"
+//         as="fetch"
+//         type="model/gltf-binary"
+//         crossOrigin="anonymous"
+//       />
+//     </head>
+
+//     <body
+//       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+//       suppressHydrationWarning
+//     >
+
 //         <PreloadImages />
 //         {children}
 //         <Footer />
@@ -40,6 +51,8 @@
 //     </html>
 //   );
 // }
+
+
 
 
 
@@ -93,14 +106,27 @@ export default function RootLayout({
     </head>
 
     <body
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      suppressHydrationWarning
-    >
+  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+  suppressHydrationWarning
+>
+  
+  <script
+  dangerouslySetInnerHTML={{
+    __html: `
+      window.addEventListener("beforeunload", () => {
+        sessionStorage.setItem("PAGE_WAS_RELOADED", "true");
+      });
+    `,
+  }}
+/>
 
-        <PreloadImages />
-        {children}
-        <Footer />
-      </body>
+
+  
+  {children}
+  
+  
+</body>
+
     </html>
   );
 }

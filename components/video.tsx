@@ -1,247 +1,3 @@
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import { Canvas } from "@react-three/fiber";
-// import ScrollingCoin from "./ScrollingCoin";
-
-// gsap.registerPlugin(ScrollTrigger);
-
-// export default function Video() {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const fgCanvasRef = useRef<HTMLCanvasElement>(null);
-//   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
-
-//   const fgFrameRef = useRef(0);
-//   const bgFrameRef = useRef(0);
-//   const scrollProgressRef = useRef(0);
-
-//   // Critical: store the ScrollTrigger instance
-//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-
-//   const [loaded, setLoaded] = useState(false);
-
-//   const fgImagesRef = useRef<HTMLImageElement[]>([]);
-//   const bgImagesRef = useRef<HTMLImageElement[]>([]);
-
-//   const FG_FRAMES = 405;
-//   const BG_FRAMES = 191;
-//   const START_BG_AT = 130;
-//   const CANVAS_W = 1080;
-//   const CANVAS_H = 1920;
-
-//   const targetProgress = 289 / (FG_FRAMES - 1);
-
-//   // Load all images with batching to prevent network congestion
-//   useEffect(() => {
-//     let loadedCount = 0;
-//     const total = FG_FRAMES + BG_FRAMES;
-//     const batchSize = 50; // Load 50 images at a time
-//     const delayBetweenBatches = 100; // ms
-
-//     const loadImage = (url: string, arr: HTMLImageElement[]) => {
-//       const img = new Image();
-//       img.crossOrigin = "anonymous";
-//       img.src = url;
-//       img.onload = () => {
-//         (img as any).loaded = true;
-//         loadedCount++;
-//         if (loadedCount >= total) setLoaded(true);
-//       };
-//       img.onerror = () => {
-//         (img as any).loaded = false;
-//         loadedCount++;
-//         if (loadedCount >= total) setLoaded(true);
-//       };
-//       arr.push(img);
-//     };
-
-//     const loadBatch = (start: number, end: number, urls: string[], arr: HTMLImageElement[]) => {
-//       for (let i = start; i < Math.min(end, urls.length); i++) {
-//         loadImage(urls[i], arr);
-//       }
-//     };
-
-//     const fgUrls: string[] = [];
-//     for (let i = 1; i <= FG_FRAMES; i++) {
-//       fgUrls.push(`/iphoneframes/frame_${String(i).padStart(5, "0")}.webp`);
-//     }
-//     const bgUrls: string[] = [];
-//     for (let i = 1; i <= BG_FRAMES; i++) {
-//       bgUrls.push(`https://ik.imagekit.io/yv4cjaya8/phonebgtickets/frame_${String(i).padStart(5, "0")}.png`);
-      
-//     }
-
-//     let fgBatchIndex = 0;
-//     let bgBatchIndex = 0;
-
-//     const loadNextBatch = () => {
-//       if (fgBatchIndex < fgUrls.length) {
-//         const end = Math.min(fgBatchIndex + batchSize, fgUrls.length);
-//         loadBatch(fgBatchIndex, end, fgUrls, fgImagesRef.current);
-//         fgBatchIndex = end;
-//       }
-//       if (bgBatchIndex < bgUrls.length) {
-//         const end = Math.min(bgBatchIndex + batchSize, bgUrls.length);
-//         loadBatch(bgBatchIndex, end, bgUrls, bgImagesRef.current);
-//         bgBatchIndex = end;
-//       }
-//       if (fgBatchIndex < fgUrls.length || bgBatchIndex < bgUrls.length) {
-//         setTimeout(loadNextBatch, delayBetweenBatches);
-//       }
-//     };
-
-//     loadNextBatch();
-//   }, []);
-
-//   // Main scroll-triggered animation
-//   useEffect(() => {
-//     if (!loaded || !containerRef.current || !fgCanvasRef.current || !bgCanvasRef.current) return;
-
-//     const fgCanvas = fgCanvasRef.current;
-//     const bgCanvas = bgCanvasRef.current;
-//     const fgCtx = fgCanvas.getContext("2d")!;
-//     const bgCtx = bgCanvas.getContext("2d")!;
-
-//     fgCanvas.width = bgCanvas.width = CANVAS_W;
-//     fgCanvas.height = bgCanvas.height = CANVAS_H;
-
-//     const render = () => {
-//       const fgIndex = Math.min(FG_FRAMES - 1, Math.floor(fgFrameRef.current + 0.0001));
-//       const fgImg = fgImagesRef.current[fgIndex];
-//       if ((fgImg as any)?.loaded) {
-//         fgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-//         fgCtx.drawImage(fgImg, 0, 0, CANVAS_W, CANVAS_H);
-//       }
-
-//       const bgIndex = Math.min(BG_FRAMES - 1, Math.floor(bgFrameRef.current));
-//       const bgImg = bgImagesRef.current[bgIndex];
-//       if ((bgImg as any)?.loaded) {
-//         bgCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-//         bgCtx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H);
-//       }
-//     };
-
-//     // Kill any old trigger
-//     if (scrollTriggerRef.current) {
-//       scrollTriggerRef.current.kill();
-//     }
-
-//     const st = ScrollTrigger.create({
-//       trigger: containerRef.current,
-//       start: "top top",
-//       end: "+=400%",
-//       scrub: 1,
-//       pin: true,
-//       anticipatePin: 1,
-//       onUpdate: (self) => {
-//         const progress = self.progress;
-
-//         fgFrameRef.current = progress * (FG_FRAMES - 1);
-
-//         if (fgFrameRef.current >= START_BG_AT) {
-//           const bgProgress = (fgFrameRef.current - START_BG_AT) / (FG_FRAMES - START_BG_AT);
-//           bgFrameRef.current = bgProgress * (BG_FRAMES - 1);
-//         } else {
-//           bgFrameRef.current = 0;
-//         }
-
-//         scrollProgressRef.current = progress;
-//         render();
-//       },
-//     });
-
-//     scrollTriggerRef.current = st;
-//     render();
-
-//     return () => {
-//       st.kill();
-//       scrollTriggerRef.current = null;
-//     };
-//   }, [loaded]);
-
-//   // Handle navigation from other pages
-//   useEffect(() => {
-//     const action = localStorage.getItem("TW_action");
-//     if (action === "go_mart") {
-//       localStorage.removeItem("TW_action");
-//       const waitAndJump = () => {
-//         if (scrollTriggerRef.current) {
-//           ScrollTrigger.refresh();
-//           const st = scrollTriggerRef.current;
-//           const scrollPos = st.start + targetProgress * (st.end - st.start);
-//           st.scroll(scrollPos);
-//         } else {
-//           requestAnimationFrame(waitAndJump);
-//         }
-//       };
-//       waitAndJump();
-//     }
-//   }, []);
-
-//     useEffect(() => {
-//     if (!loaded) return;
-
-//     const handleTrigger = () => {
-//       window.scrollTo(0, 0);
-//       const st = scrollTriggerRef.current;
-//       if (st) {
-//         const scrollPos = st.start + targetProgress * (st.end - st.start);
-//           window.scrollTo({ top: scrollPos });
-//       }
-//     };
-
-//     window.addEventListener("triggerVideoJump", handleTrigger);
-
-//     return () => {
-//       window.removeEventListener("triggerVideoJump", handleTrigger);
-//     };
-//   }, [loaded]);
-
-//   return (
-//     <div ref={containerRef} className="relative w-full bg-black">
-//       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-//         <canvas
-//           ref={bgCanvasRef}
-//           className="absolute inset-0 w-full h-full object-fit"
-//         />
-
-//         <canvas
-//           ref={fgCanvasRef}
-//           className="relative z-10 max-w-full h-auto max-h-screen pointer-events-none"
-//         />
-
-//         <div className="absolute inset-0 z-20 pointer-events-none">
-//           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
-//             <ScrollingCoin progressRef={scrollProgressRef} />
-//           </Canvas>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -289,7 +45,7 @@ export default function Video() {
       setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
     }
     if (fgVideoRef.current) {
-      setupVideo(fgVideoRef.current, "/iphoneframes/phonescrub.mp4");
+      setupVideo(fgVideoRef.current, "/iphoneframes/iphonescrub.mp4");
     }
   }, []);
 
@@ -371,27 +127,27 @@ export default function Video() {
   }, []);
 
   /* ---------------- NAVIGATION JUMPS ---------------- */
-  useEffect(() => {
-    const action = localStorage.getItem("TW_action");
-    if (action === "go_mart") {
-      localStorage.removeItem("TW_action");
-      const jump = () => {
-        if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
-          ScrollTrigger.refresh();
-          const st = scrollTriggerRef.current;
-          const pos = st.start + targetProgress * (st.end - st.start);
-          st.scroll(pos);
+  // useEffect(() => {
+  //   const action = localStorage.getItem("TW_action");
+  //   if (action === "go_mart") {
+  //     localStorage.removeItem("TW_action");
+  //     const jump = () => {
+  //       if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
+  //         ScrollTrigger.refresh();
+  //         const st = scrollTriggerRef.current;
+  //         const pos = st.start + targetProgress * (st.end - st.start);
+  //         st.scroll(pos);
 
-          rawProgressRef.current = targetProgress;
-          smoothProgressRef.current = targetProgress;
-          fgVideoRef.current.currentTime = targetProgress * fgVideoRef.current.duration;
-        } else {
-          requestAnimationFrame(jump);
-        }
-      };
-      jump();
-    }
-  }, []);
+  //         rawProgressRef.current = targetProgress;
+  //         smoothProgressRef.current = targetProgress;
+  //         fgVideoRef.current.currentTime = targetProgress * fgVideoRef.current.duration;
+  //       } else {
+  //         requestAnimationFrame(jump);
+  //       }
+  //     };
+  //     jump();
+  //   }
+  // }, []);
 
   useEffect(() => {
     const handleTrigger = () => {
@@ -413,11 +169,11 @@ export default function Video() {
   /* ---------------- JSX (UNCHANGED LAYOUT) ---------------- */
   return (
     <div ref={containerRef} className="relative w-full bg-black">
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
+      <div className="sticky   top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
         {/* BACKGROUND VIDEO */}
         <video
           ref={bgVideoRef}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute  inset-0 w-full h-full object-cover"
           style={{ pointerEvents: "none" }}
           playsInline
           muted
@@ -426,7 +182,7 @@ export default function Video() {
         {/* FOREGROUND VIDEO */}
         <video
           ref={fgVideoRef}
-          className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
+          className="relative max-sm:top-[3%] z-10 max-w-full max-h-screen object-contain pointer-events-none"
           style={{ imageRendering: "crisp-edges" }}
           playsInline
           muted
@@ -442,3 +198,234 @@ export default function Video() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useRef } from "react";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import { Canvas } from "@react-three/fiber";
+// import ScrollingCoin from "./ScrollingCoin";
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// export default function Video() {
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const bgVideoRef = useRef<HTMLVideoElement>(null);
+//   const fgVideoRef = useRef<HTMLVideoElement>(null);
+
+//   const scrollProgressRef = useRef(0);
+
+//   const FG_TOTAL_FRAMES = 405;
+//   const START_BG_AT_FRAME = 130;
+//   const bgStartProgress = START_BG_AT_FRAME / (FG_TOTAL_FRAMES - 1);
+//   const targetProgress = 289 / (FG_TOTAL_FRAMES - 1);
+
+//   /* ---------------- VIDEO SETUP ---------------- */
+//   useEffect(() => {
+//     const unlockVideo = async (video: HTMLVideoElement) => {
+//       try {
+//         await video.play();
+//         video.pause();
+//       } catch {}
+//     };
+
+//     const setupVideo = (video: HTMLVideoElement, src: string) => {
+//       video.src = src;
+//       video.muted = true;
+//       video.playsInline = true;
+//       video.preload = "auto";
+//       video.crossOrigin = "anonymous";
+//       video.disablePictureInPicture = true;
+//       video.disableRemotePlayback = true;
+//       video.load();
+
+//       video.addEventListener("loadeddata", () => unlockVideo(video), { once: true });
+//     };
+
+//     if (bgVideoRef.current) setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub1.mp4");
+//     if (fgVideoRef.current) setupVideo(fgVideoRef.current, "/iphoneframes/newiphonescrub_small.mp4");
+//   }, []);
+
+//   /* ---------------- GSAP SCRUB TIMELINES ---------------- */
+//   useEffect(() => {
+//     if (!containerRef.current || !fgVideoRef.current || !bgVideoRef.current) return;
+
+//     const fgVideo = fgVideoRef.current;
+//     const bgVideo = bgVideoRef.current;
+
+//     const setupTimelines = () => {
+//       if (!fgVideo.duration || !bgVideo.duration) return false;
+
+//       ScrollTrigger.refresh(); // ensure accurate measurements
+
+//       // Foreground: full scrub over the pinned area
+//       const fgTl = gsap.timeline({
+//         scrollTrigger: {
+//           trigger: containerRef.current,
+//           start: "top top",
+//           end: "+=400%", // ← increase to +=500% or +=600% if still too fast
+//           pin: true,
+//           anticipatePin: 1,
+//           scrub: 1, // ← higher = slower/smoother feel (try 1.5 or true for even more lag/smoothness)
+//           invalidateOnRefresh: true,
+//           onUpdate: (self) => {
+//             scrollProgressRef.current = self.progress;
+//           },
+//         },
+//       });
+
+//       fgTl.to(fgVideo, {
+//         currentTime: fgVideo.duration,
+//         ease: "none",
+//       });
+
+//       // Background: separate timeline, starts at bgStartProgress
+//       const bgTl = gsap.timeline({
+//         scrollTrigger: {
+//           trigger: containerRef.current,
+//           start: "top top",
+//           end: "+=400%",
+//           scrub: 1, // same as FG for sync
+//           invalidateOnRefresh: true,
+//         },
+//       });
+
+//       // Force reset to 0 at beginning
+//       bgTl.set(bgVideo, { currentTime: 0 });
+
+//       // Scrub BG only after start progress
+//       bgTl.to(bgVideo, {
+//         currentTime: bgVideo.duration,
+//         ease: "none",
+//       }, bgStartProgress); // ← position = fraction where BG starts (0–1 scale)
+
+//       return true;
+//     };
+
+//     // Poll until durations are available
+//     let rafId: number;
+//     const check = () => {
+//       if (setupTimelines()) {
+//         // Success
+//       } else {
+//         rafId = requestAnimationFrame(check);
+//       }
+//     };
+//     check();
+
+//     return () => {
+//       cancelAnimationFrame(rafId);
+//       ScrollTrigger.getAll().forEach((t) => t?.kill());
+//     };
+//   }, []);
+
+//   /* ---------------- NAVIGATION JUMPS ---------------- */
+//   useEffect(() => {
+//     const action = localStorage.getItem("TW_action");
+//     if (action !== "go_mart") return;
+
+//     localStorage.removeItem("TW_action");
+
+//     const jump = () => {
+//       if (!fgVideoRef.current?.duration) {
+//         requestAnimationFrame(jump);
+//         return;
+//       }
+
+//       ScrollTrigger.refresh();
+
+//       const progress = targetProgress;
+//       // Approximate scroll position (4 = 400%)
+//       const scrollPos = window.innerHeight * 4 * progress;
+
+//       window.scrollTo({ top: scrollPos, behavior: "instant" });
+
+//       fgVideoRef.current.currentTime = progress * fgVideoRef.current.duration;
+//       if (bgVideoRef.current) {
+//         const bgProg = Math.max(0, (progress - bgStartProgress) / (1 - bgStartProgress));
+//         bgVideoRef.current.currentTime = bgProg * bgVideoRef.current.duration;
+//       }
+//       scrollProgressRef.current = progress;
+//     };
+
+//     jump();
+//   }, []);
+
+//   useEffect(() => {
+//     const handleTrigger = () => {
+//       if (!fgVideoRef.current?.duration) return;
+
+//       const progress = targetProgress;
+//       const scrollPos = window.innerHeight * 4 * progress;
+
+//       window.scrollTo({ top: scrollPos, behavior: "instant" });
+
+//       fgVideoRef.current.currentTime = progress * fgVideoRef.current.duration;
+//       if (bgVideoRef.current) {
+//         const bgProg = Math.max(0, (progress - bgStartProgress) / (1 - bgStartProgress));
+//         bgVideoRef.current.currentTime = bgProg * bgVideoRef.current.duration;
+//       }
+//       scrollProgressRef.current = progress;
+//     };
+
+//     window.addEventListener("triggerVideoJump", handleTrigger);
+//     return () => window.removeEventListener("triggerVideoJump", handleTrigger);
+//   }, []);
+
+//   /* ---------------- JSX ---------------- */
+//   return (
+//     <div ref={containerRef} className="relative w-full bg-black">
+//       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
+//         {/* BACKGROUND VIDEO */}
+//         <video
+//           ref={bgVideoRef}
+//           className="absolute inset-0 w-full h-full object-cover"
+//           playsInline
+//           muted
+//           preload="auto"
+//           disablePictureInPicture
+//           disableRemotePlayback
+//         />
+
+//         {/* FOREGROUND VIDEO */}
+//         <video
+//           ref={fgVideoRef}
+//           className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
+//           playsInline
+//           muted
+//           preload="auto"
+//           disablePictureInPicture
+//           disableRemotePlayback
+//         />
+
+//         {/* 3D COIN */}
+//         <div className="absolute inset-0 z-20 pointer-events-none">
+//           <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
+//             <ScrollingCoin progressRef={scrollProgressRef} />
+//           </Canvas>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

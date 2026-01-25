@@ -260,7 +260,7 @@ export default function CoinAnimation({
     const loader = new THREE.TextureLoader();
 
     const frontMap = loader.load("/croppedback.png");
-    const backMap = loader.load("/croppedfront.png");
+    const backMap = loader.load("/coins.png");
 
     frontMap.colorSpace = THREE.SRGBColorSpace;
     backMap.colorSpace = THREE.SRGBColorSpace;
@@ -393,14 +393,15 @@ export default function CoinAnimation({
 
     /* 🚀 Approach camera */
     if (progress > 0.9) {
+      
       const t = THREE.MathUtils.clamp((progress - 0.9) / 0.1, 0, 1);
       const e = THREE.MathUtils.smoothstep(t, 0, 1);
 
       coin.visible = true;
       const isMobile = window.innerWidth < 768;
 
-      coin.position.y = isMobile ? 0.40 - e * 0.7 : 0.7 - e * 0.7;
-      coin.position.z = isMobile ? 0.170 : 0.165;
+      coin.position.y = isMobile ? 0.63 - e * 0.7 : 0.58 - e * 0.7;
+      coin.position.z = isMobile ? 0.196 : 0.165;
       coin.scale.setScalar(1 + e * 1.5);
 
       if (progress > 0.96) {
