@@ -322,8 +322,8 @@ function CoinAnimation({ progressRef, dashboardRef }) {
                 coin.rotation.y += delta * 5;
                 coin.rotation.x += delta * 2;
             }
-            /* 🚀 Approach camera */ if (progress > 0.9) {
-                const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.9) / 0.1, 0, 1);
+            /* 🚀 Approach camera */ if (progress > 0.95) {
+                const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.95) / 0.05, 0, 1);
                 const e = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
                 coin.visible = true;
                 const isMobile = window.innerWidth < 768;

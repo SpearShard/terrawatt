@@ -392,9 +392,9 @@ export default function CoinAnimation({
     }
 
     /* 🚀 Approach camera */
-    if (progress > 0.9) {
+    if (progress > 0.95) {
       
-      const t = THREE.MathUtils.clamp((progress - 0.9) / 0.1, 0, 1);
+      const t = THREE.MathUtils.clamp((progress - 0.95) / 0.05, 0, 1);
       const e = THREE.MathUtils.smoothstep(t, 0, 1);
 
       coin.visible = true;
