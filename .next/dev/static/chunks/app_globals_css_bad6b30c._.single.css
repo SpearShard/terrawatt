@@ -720,10 +720,6 @@
     display: inline-flex;
   }
 
-  .aspect-\[16\/9\] {
-    aspect-ratio: 16 / 9;
-  }
-
   .aspect-video {
     aspect-ratio: var(--aspect-video);
   }
@@ -810,10 +806,6 @@
 
   .h-\[60vh\] {
     height: 60vh;
-  }
-
-  .h-\[100vh\] {
-    height: 100vh;
   }
 
   .h-\[250vh\] {
@@ -3266,26 +3258,8 @@
   }
 
   @media (min-width: 64rem) {
-    .lg\:h-\[90vh\] {
-      height: 90vh;
-    }
-  }
-
-  @media (min-width: 64rem) {
     .lg\:h-auto {
       height: auto;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .lg\:h-fit {
-      height: fit-content;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .lg\:h-screen {
-      height: 100vh;
     }
   }
 

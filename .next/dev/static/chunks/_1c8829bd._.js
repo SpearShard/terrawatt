@@ -1130,7 +1130,7 @@ function BlogPost({ params }) {
             async function loadBlog() {
                 try {
                     // 1️⃣ Fetch all to match slug
-                    const res = await fetch("http://devapi.teraawatt.com/api/v1/users/blog/all");
+                    const res = await fetch("https://devapi.teraawatt.com/api/v1/users/blog/all");
                     const json = await res.json();
                     const blogs = json?.data?.blogs || [];
                     const match = blogs.find({
@@ -1141,7 +1141,7 @@ function BlogPost({ params }) {
                         return;
                     }
                     // 2️⃣ Fetch details
-                    const res2 = await fetch(`http://devapi.teraawatt.com/api/v1/users/blog/${match.id}`);
+                    const res2 = await fetch(`https://devapi.teraawatt.com/api/v1/users/blog/${match.id}`);
                     const fullBlog = await res2.json();
                     setBlog(fullBlog?.data || match);
                 } catch (e) {
