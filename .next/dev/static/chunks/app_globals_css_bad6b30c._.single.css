@@ -812,6 +812,10 @@
     height: 60vh;
   }
 
+  .h-\[100vh\] {
+    height: 100vh;
+  }
+
   .h-\[250vh\] {
     height: 250vh;
   }
@@ -2530,12 +2534,6 @@
   }
 
   @media not (min-width: 40rem) {
-    .max-sm\:top-\[3\%\] {
-      top: 3%;
-    }
-  }
-
-  @media not (min-width: 40rem) {
     .max-sm\:top-\[75vw\] {
       top: 75vw;
     }
@@ -2598,6 +2596,12 @@
   @media not (min-width: 40rem) {
     .max-sm\:rounded-\[10vw\] {
       border-radius: 10vw;
+    }
+  }
+
+  @media not (min-width: 40rem) {
+    .max-sm\:object-fill {
+      object-fit: fill;
     }
   }
 
@@ -3262,8 +3266,26 @@
   }
 
   @media (min-width: 64rem) {
+    .lg\:h-\[90vh\] {
+      height: 90vh;
+    }
+  }
+
+  @media (min-width: 64rem) {
     .lg\:h-auto {
       height: auto;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .lg\:h-fit {
+      height: fit-content;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .lg\:h-screen {
+      height: 100vh;
     }
   }
 

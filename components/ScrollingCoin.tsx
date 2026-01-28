@@ -366,7 +366,7 @@ export default function VideoCoin({
     darkenEnd: 0.03,
 
     start: { z: 2.47, x: 0, y: -0.02, scale: 3.8 },
-    end:   { z: 0.01, x: 0.13, y: 0.47, scale: 6 },
+    end:   { z: 0.01, x: 0.125, y: 0.45, scale: 5.5 },
 
     /* ---- rotation phases ---- */
     freeSpinStart: 0.03,
@@ -379,8 +379,8 @@ export default function VideoCoin({
     },
 
     finalRotation: {
-      x: -Math.PI / 5,
-      y: -Math.PI / 45,
+      x: -Math.PI / 4,
+      y: Math.PI / 12490,
       z: 0,
     },
 

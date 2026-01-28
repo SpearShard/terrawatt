@@ -1264,14 +1264,14 @@ function InvestorsPage() {
             if (!videoRef.current || !bgVideoRef.current) return;
             // Foreground (main) video
             const fg = videoRef.current;
-            fg.src = "/investwebp/new/invest.webm";
+            fg.src = "/investwebp/invest.mp4";
             fg.muted = true;
             fg.playsInline = true;
             fg.preload = "auto";
             fg.load();
             // Background video (same source, blurred)
             const bg = bgVideoRef.current;
-            bg.src = "/investwebp/new/invest.webm";
+            bg.src = "/investwebp/invest.mp4";
             bg.muted = true;
             bg.playsInline = true;
             bg.loop = true;
@@ -1376,10 +1376,10 @@ function InvestorsPage() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "sticky top-0 h-screen flex items-center justify-center",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "w-full h-full max-h-screen aspect-[16/9] flex items-center justify-center",
+                                    className: "w-full h-full max-h-screen   flex items-center justify-center",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
                                         ref: videoRef,
-                                        className: "w-full h-full object-contain sm:object-cover",
+                                        className: "w-full h-full  object-contain sm:object-cover",
                                         muted: true,
                                         playsInline: true
                                     }, void 0, false, {

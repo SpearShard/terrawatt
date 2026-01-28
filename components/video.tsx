@@ -45,7 +45,7 @@ export default function Video() {
       setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
     }
     if (fgVideoRef.current) {
-      setupVideo(fgVideoRef.current, "/iphoneframes/iphonescrub.mp4");
+      setupVideo(fgVideoRef.current, "/iphoneframes/iphone.webm");
     }
   }, []);
 
@@ -182,7 +182,7 @@ export default function Video() {
         {/* FOREGROUND VIDEO */}
         <video
           ref={fgVideoRef}
-          className="relative max-sm:top-[3%] z-10 max-w-full max-h-screen object-contain pointer-events-none"
+          className="relative  z-10 max-w-full max-h-screen object-contain pointer-events-none"
           style={{ imageRendering: "crisp-edges" }}
           playsInline
           muted

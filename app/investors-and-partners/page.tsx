@@ -208,7 +208,7 @@ export default function InvestorsPage() {
 
     // Foreground (main) video
     const fg = videoRef.current;
-    fg.src = "/investwebp/new/invest.webm";
+    fg.src = "/investwebp/invest.mp4";
     fg.muted = true;
     fg.playsInline = true;
     fg.preload = "auto";
@@ -216,7 +216,7 @@ export default function InvestorsPage() {
 
     // Background video (same source, blurred)
     const bg = bgVideoRef.current;
-    bg.src = "/investwebp/new/invest.webm";
+    bg.src = "/investwebp/invest.mp4";
     bg.muted = true;
     bg.playsInline = true;
     bg.loop = true;
@@ -308,10 +308,10 @@ export default function InvestorsPage() {
           className="relative z-10 w-full overflow-hidden"
         >
           <div className="sticky top-0 h-screen flex items-center justify-center">
-            <div className="w-full h-full max-h-screen aspect-[16/9] flex items-center justify-center">
+            <div className="w-full h-full max-h-screen   flex items-center justify-center">
               <video
                 ref={videoRef}
-                className="w-full h-full object-contain sm:object-cover"
+                className="w-full h-full  object-contain sm:object-cover"
                 muted
                 playsInline
               />

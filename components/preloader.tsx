@@ -26,7 +26,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         autoPlay
         muted
         playsInline
-        className="w-full h-full object-cover"
+        className="w-full max-sm:object-fill h-full object-cover"
       />
     </div>
   );

@@ -1528,9 +1528,9 @@ function VideoCoin({ progressRef }) {
         },
         end: {
             z: 0.01,
-            x: 0.13,
-            y: 0.47,
-            scale: 6
+            x: 0.125,
+            y: 0.45,
+            scale: 5.5
         },
         /* ---- rotation phases ---- */ freeSpinStart: 0.03,
         freeSpinEnd: 0.14,
@@ -1540,8 +1540,8 @@ function VideoCoin({ progressRef }) {
             z: 0
         },
         finalRotation: {
-            x: -Math.PI / 5,
-            y: -Math.PI / 45,
+            x: -Math.PI / 4,
+            y: Math.PI / 12490,
             z: 0
         },
         spinY: 4,
@@ -1669,7 +1669,7 @@ function Video() {
             setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
         }
         if (fgVideoRef.current) {
-            setupVideo(fgVideoRef.current, "/iphoneframes/iphonescrub.mp4");
+            setupVideo(fgVideoRef.current, "/iphoneframes/iphone.webm");
         }
     }, []);
     /* ---------------- ULTRA-PRECISE SCRUBBING LOOP (Optimized for high-keyframe video) ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
@@ -1791,7 +1791,7 @@ function Video() {
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
                     ref: fgVideoRef,
-                    className: "relative max-sm:top-[3%] z-10 max-w-full max-h-screen object-contain pointer-events-none",
+                    className: "relative  z-10 max-w-full max-h-screen object-contain pointer-events-none",
                     style: {
                         imageRendering: "crisp-edges"
                     },
@@ -2195,7 +2195,7 @@ function Preloader({ onDone }) {
             autoPlay: true,
             muted: true,
             playsInline: true,
-            className: "w-full h-full object-cover"
+            className: "w-full max-sm:object-fill h-full object-cover"
         }, void 0, false, {
             fileName: "[project]/components/preloader.tsx",
             lineNumber: 23,
