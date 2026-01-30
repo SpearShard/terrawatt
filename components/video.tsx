@@ -1,3 +1,202 @@
+// "use client";
+
+// import { useEffect, useRef, useState } from "react";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import { Canvas } from "@react-three/fiber";
+// import ScrollingCoin from "./ScrollingCoin";
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// export default function Video() {
+//   const containerRef = useRef<HTMLDivElement>(null);
+
+//   const bgVideoRef = useRef<HTMLVideoElement>(null);
+//   const fgVideoRef = useRef<HTMLVideoElement>(null);
+
+//   const scrollProgressRef = useRef(0);
+//   const rawProgressRef = useRef(0);
+//   const smoothProgressRef = useRef(0);
+
+//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+
+//   const [isDesktop, setIsDesktop] = useState(false);
+
+//   const FG_TOTAL_FRAMES = 405;
+//   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
+//   const START_BG_AT_FRAME = 130;
+//   const targetProgress = 289 / FG_FRAME_MAX;
+
+//   /* ---------------- DESKTOP DETECT ---------------- */
+//   useEffect(() => {
+//     const check = () => setIsDesktop(window.innerWidth >= 1024);
+//     check();
+//     window.addEventListener("resize", check);
+//     return () => window.removeEventListener("resize", check);
+//   }, []);
+
+//   /* ---------------- VIDEO SETUP ---------------- */
+//   useEffect(() => {
+//     const setupVideo = (video: HTMLVideoElement, src: string) => {
+//       video.src = src;
+//       video.muted = true;
+//       video.playsInline = true;
+//       video.preload = "auto";
+//       video.crossOrigin = "anonymous";
+//       video.load();
+
+//       video.currentTime = 0.01;
+//       setTimeout(() => (video.currentTime = 0), 300);
+//     };
+
+//     if (bgVideoRef.current)
+//       setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
+//     if (fgVideoRef.current)
+//       setupVideo(fgVideoRef.current, "/iphoneframes/remember.mp4");
+//   }, []);
+
+//   /* ---------------- RAF LOOP ---------------- */
+//   useEffect(() => {
+//     const bgVideo = bgVideoRef.current;
+//     const fgVideo = fgVideoRef.current;
+//     if (!bgVideo || !fgVideo) return;
+
+//     let raf = 0;
+//     let lastTime = performance.now();
+
+//     let fgDuration = 0;
+//     let bgDuration = 0;
+
+//     const animate = (time: number) => {
+//       const delta = Math.min((time - lastTime) / 1000, 0.1);
+//       lastTime = time;
+
+//       if (!fgDuration && fgVideo.duration) {
+//         fgDuration = fgVideo.duration;
+//         bgDuration = bgVideo.duration || 0;
+//       }
+
+//       if (!fgDuration) {
+//         raf = requestAnimationFrame(animate);
+//         return;
+//       }
+
+//       const damping = 1 - Math.exp(-delta * 18);
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current - smoothProgressRef.current) * damping;
+
+//       const smooth = smoothProgressRef.current;
+
+//       const fgTarget = smooth * fgDuration;
+//       if (Math.abs(fgVideo.currentTime - fgTarget) > 0.03) {
+//         fgVideo.currentTime = fgTarget;
+//       }
+
+//       const currentFrame = smooth * FG_FRAME_MAX;
+
+//       if (currentFrame >= START_BG_AT_FRAME && bgDuration) {
+//         const bgProgress =
+//           (currentFrame - START_BG_AT_FRAME) /
+//           (FG_FRAME_MAX - START_BG_AT_FRAME);
+
+//         const bgTarget = bgProgress * bgDuration;
+//         if (Math.abs(bgVideo.currentTime - bgTarget) > 0.03) {
+//           bgVideo.currentTime = bgTarget;
+//         }
+//       } else if (bgVideo.currentTime > 0.03) {
+//         bgVideo.currentTime = 0;
+//       }
+
+//       scrollProgressRef.current = smooth;
+//       raf = requestAnimationFrame(animate);
+//     };
+
+//     raf = requestAnimationFrame(animate);
+//     return () => cancelAnimationFrame(raf);
+//   }, []);
+
+//   /* ---------------- SCROLLTRIGGER ---------------- */
+//   useEffect(() => {
+//     if (!containerRef.current) return;
+
+//     if (scrollTriggerRef.current) scrollTriggerRef.current.kill();
+
+//     const st = ScrollTrigger.create({
+//       trigger: containerRef.current,
+//       start: "top top",
+//       end: "+=400%",
+//       pin: true,
+//       anticipatePin: 1,
+//       onUpdate: (self) => (rawProgressRef.current = self.progress),
+//     });
+
+//     scrollTriggerRef.current = st;
+//     return () => st.kill();
+//   }, []);
+
+//   /* ---------------- JSX ---------------- */
+//   return (
+//     <div ref={containerRef} className="relative w-full bg-black">
+//       <div
+//         className="sticky min-h-screen flex items-center justify-center bg-black"
+//         style={{
+//           padding: isDesktop ? "8vw" : "0px",
+//           boxSizing: "border-box",
+//         }}
+//       >
+//         <div className="relative w-full h-full overflow-hidden bg-black">
+//           {/* BACKGROUND */}
+//           <video
+//             ref={bgVideoRef}
+//             className="absolute inset-0 w-full h-full object-cover"
+//             muted
+//             playsInline
+//           />
+
+//           {/* FOREGROUND */}
+//           <div className="relative z-10 w-full h-full flex items-center justify-center">
+//             <video
+//               ref={fgVideoRef}
+//               className="max-w-full max-h-full object-contain pointer-events-none"
+//               playsInline
+//               muted
+//             />
+//           </div>
+
+//           {/* COIN */}
+//           <div className="absolute inset-0 z-20 pointer-events-none">
+//             <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
+//               <ScrollingCoin progressRef={scrollProgressRef} />
+//             </Canvas>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -21,10 +220,11 @@ export default function Video() {
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const FG_TOTAL_FRAMES = 405;
+  const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
   const START_BG_AT_FRAME = 130;
-  const targetProgress = 289 / (FG_TOTAL_FRAMES - 1);
+  const targetProgress = 289 / FG_FRAME_MAX;
 
-  /* ---------------- VIDEO SETUP (Minimal wake-up — your encoding is perfect now) ---------------- */
+  /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
     const setupVideo = (video: HTMLVideoElement, src: string) => {
       video.src = src;
@@ -34,71 +234,92 @@ export default function Video() {
       video.crossOrigin = "anonymous";
       video.load();
 
-      // Very light wake-up — just enough to start decoding
+      // tiny wake-up for Safari
       video.currentTime = 0.01;
       setTimeout(() => {
         video.currentTime = 0;
       }, 300);
     };
 
-    if (bgVideoRef.current) {
-      setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
-    }
-    if (fgVideoRef.current) {
-      setupVideo(fgVideoRef.current, "/iphoneframes/iphone.webm");
-    }
+    if (bgVideoRef.current) setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
+    if (fgVideoRef.current) setupVideo(fgVideoRef.current, "/iphoneframes/remember.mp4");
   }, []);
 
-  /* ---------------- ULTRA-PRECISE SCRUBBING LOOP (Optimized for high-keyframe video) ---------------- */
+  /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */
   useEffect(() => {
     const bgVideo = bgVideoRef.current;
     const fgVideo = fgVideoRef.current;
     if (!bgVideo || !fgVideo) return;
 
-    let raf: number;
+    let raf = 0;
     let lastTime = performance.now();
+    let lastRender = 0;
+
+    // cache durations once
+    let fgDuration = 0;
+    let bgDuration = 0;
 
     const animate = (time: number) => {
+      // hard cap ~60fps
+      if (time - lastRender < 16) {
+        raf = requestAnimationFrame(animate);
+        return;
+      }
+      lastRender = time;
+
       const delta = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
 
-      if (!fgVideo.duration || isNaN(fgVideo.duration)) {
+      if (!fgDuration && fgVideo.duration) {
+        fgDuration = fgVideo.duration;
+        bgDuration = bgVideo.duration || 0;
+      }
+
+      if (!fgDuration) {
         raf = requestAnimationFrame(animate);
         return;
       }
 
-      // Very strong lerp — instant response with silky smoothing
-      // Your high-keyframe video can handle this perfectly
-      const lerpFactor = Math.min(delta * 25, 1); // 25 = ultra-snappy (feels immediate)
-      smoothProgressRef.current += (rawProgressRef.current - smoothProgressRef.current) * lerpFactor;
+      // physically-smooth damping (better than lerp)
+      const damping = 1 - Math.exp(-delta * 18);
+      smoothProgressRef.current +=
+        (rawProgressRef.current - smoothProgressRef.current) * damping;
 
-      // Foreground — ultra-precise seeking
-      const fgTargetTime = smoothProgressRef.current * fgVideo.duration;
+      const smooth = smoothProgressRef.current;
+
+      /* ---------- FOREGROUND ---------- */
+      const fgTargetTime = smooth * fgDuration;
       const fgDiff = Math.abs(fgVideo.currentTime - fgTargetTime);
-      if (fgDiff > 0.008) { // ~half frame at 60fps — extremely tight
+
+      // only seek if meaningful (~1 frame @30fps)
+      if (fgDiff > 0.03) {
         fgVideo.currentTime = fgTargetTime;
       }
 
-      // Background — same precision
-      const currentFgFrame = smoothProgressRef.current * (FG_TOTAL_FRAMES - 1);
-      if (currentFgFrame >= START_BG_AT_FRAME) {
-        const bgProgress = (currentFgFrame - START_BG_AT_FRAME) / (FG_TOTAL_FRAMES - START_BG_AT_FRAME);
-        const bgTargetTime = bgProgress * bgVideo.duration;
+      /* ---------- BACKGROUND ---------- */
+      const currentFgFrame = smooth * FG_FRAME_MAX;
+
+      if (currentFgFrame >= START_BG_AT_FRAME && bgDuration) {
+        const bgProgress =
+          (currentFgFrame - START_BG_AT_FRAME) /
+          (FG_FRAME_MAX - START_BG_AT_FRAME);
+
+        const bgTargetTime = bgProgress * bgDuration;
         const bgDiff = Math.abs(bgVideo.currentTime - bgTargetTime);
-        if (bgDiff > 0.008) {
+
+        if (bgDiff > 0.03) {
           bgVideo.currentTime = bgTargetTime;
         }
-      } else if (bgVideo.currentTime > 0.008) {
+      } else if (bgVideo.currentTime > 0.03) {
         bgVideo.currentTime = 0;
       }
 
-      scrollProgressRef.current = smoothProgressRef.current;
+      scrollProgressRef.current = smooth;
 
       raf = requestAnimationFrame(animate);
     };
 
     raf = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(raf);
   }, []);
 
@@ -126,29 +347,7 @@ export default function Video() {
     return () => st.kill();
   }, []);
 
-  /* ---------------- NAVIGATION JUMPS ---------------- */
-  // useEffect(() => {
-  //   const action = localStorage.getItem("TW_action");
-  //   if (action === "go_mart") {
-  //     localStorage.removeItem("TW_action");
-  //     const jump = () => {
-  //       if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
-  //         ScrollTrigger.refresh();
-  //         const st = scrollTriggerRef.current;
-  //         const pos = st.start + targetProgress * (st.end - st.start);
-  //         st.scroll(pos);
-
-  //         rawProgressRef.current = targetProgress;
-  //         smoothProgressRef.current = targetProgress;
-  //         fgVideoRef.current.currentTime = targetProgress * fgVideoRef.current.duration;
-  //       } else {
-  //         requestAnimationFrame(jump);
-  //       }
-  //     };
-  //     jump();
-  //   }
-  // }, []);
-
+  /* ---------------- EXTERNAL JUMP ---------------- */
   useEffect(() => {
     const handleTrigger = () => {
       if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
@@ -159,36 +358,38 @@ export default function Video() {
 
         rawProgressRef.current = targetProgress;
         smoothProgressRef.current = targetProgress;
-        fgVideoRef.current.currentTime = targetProgress * fgVideoRef.current.duration;
+        fgVideoRef.current.currentTime =
+          targetProgress * fgVideoRef.current.duration;
       }
     };
+
     window.addEventListener("triggerVideoJump", handleTrigger);
     return () => window.removeEventListener("triggerVideoJump", handleTrigger);
   }, []);
 
-  /* ---------------- JSX (UNCHANGED LAYOUT) ---------------- */
+  /* ---------------- JSX ---------------- */
   return (
     <div ref={containerRef} className="relative w-full bg-black">
-      <div className="sticky   top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-        {/* BACKGROUND VIDEO */}
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
+        {/* BACKGROUND */}
         <video
           ref={bgVideoRef}
-          className="absolute  inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           style={{ pointerEvents: "none" }}
           playsInline
           muted
         />
 
-        {/* FOREGROUND VIDEO */}
+        {/* FOREGROUND */}
         <video
           ref={fgVideoRef}
-          className="relative  z-10 max-w-full max-h-screen object-contain pointer-events-none"
+          className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
           style={{ imageRendering: "crisp-edges" }}
           playsInline
           muted
         />
 
-        {/* 3D COIN OVERLAY */}
+        {/* 3D COIN */}
         <div className="absolute inset-0 z-20 pointer-events-none">
           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
             <ScrollingCoin progressRef={scrollProgressRef} />
@@ -198,234 +399,3 @@ export default function Video() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client";
-
-// import { useEffect, useRef } from "react";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import { Canvas } from "@react-three/fiber";
-// import ScrollingCoin from "./ScrollingCoin";
-
-// gsap.registerPlugin(ScrollTrigger);
-
-// export default function Video() {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const bgVideoRef = useRef<HTMLVideoElement>(null);
-//   const fgVideoRef = useRef<HTMLVideoElement>(null);
-
-//   const scrollProgressRef = useRef(0);
-
-//   const FG_TOTAL_FRAMES = 405;
-//   const START_BG_AT_FRAME = 130;
-//   const bgStartProgress = START_BG_AT_FRAME / (FG_TOTAL_FRAMES - 1);
-//   const targetProgress = 289 / (FG_TOTAL_FRAMES - 1);
-
-//   /* ---------------- VIDEO SETUP ---------------- */
-//   useEffect(() => {
-//     const unlockVideo = async (video: HTMLVideoElement) => {
-//       try {
-//         await video.play();
-//         video.pause();
-//       } catch {}
-//     };
-
-//     const setupVideo = (video: HTMLVideoElement, src: string) => {
-//       video.src = src;
-//       video.muted = true;
-//       video.playsInline = true;
-//       video.preload = "auto";
-//       video.crossOrigin = "anonymous";
-//       video.disablePictureInPicture = true;
-//       video.disableRemotePlayback = true;
-//       video.load();
-
-//       video.addEventListener("loadeddata", () => unlockVideo(video), { once: true });
-//     };
-
-//     if (bgVideoRef.current) setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub1.mp4");
-//     if (fgVideoRef.current) setupVideo(fgVideoRef.current, "/iphoneframes/newiphonescrub_small.mp4");
-//   }, []);
-
-//   /* ---------------- GSAP SCRUB TIMELINES ---------------- */
-//   useEffect(() => {
-//     if (!containerRef.current || !fgVideoRef.current || !bgVideoRef.current) return;
-
-//     const fgVideo = fgVideoRef.current;
-//     const bgVideo = bgVideoRef.current;
-
-//     const setupTimelines = () => {
-//       if (!fgVideo.duration || !bgVideo.duration) return false;
-
-//       ScrollTrigger.refresh(); // ensure accurate measurements
-
-//       // Foreground: full scrub over the pinned area
-//       const fgTl = gsap.timeline({
-//         scrollTrigger: {
-//           trigger: containerRef.current,
-//           start: "top top",
-//           end: "+=400%", // ← increase to +=500% or +=600% if still too fast
-//           pin: true,
-//           anticipatePin: 1,
-//           scrub: 1, // ← higher = slower/smoother feel (try 1.5 or true for even more lag/smoothness)
-//           invalidateOnRefresh: true,
-//           onUpdate: (self) => {
-//             scrollProgressRef.current = self.progress;
-//           },
-//         },
-//       });
-
-//       fgTl.to(fgVideo, {
-//         currentTime: fgVideo.duration,
-//         ease: "none",
-//       });
-
-//       // Background: separate timeline, starts at bgStartProgress
-//       const bgTl = gsap.timeline({
-//         scrollTrigger: {
-//           trigger: containerRef.current,
-//           start: "top top",
-//           end: "+=400%",
-//           scrub: 1, // same as FG for sync
-//           invalidateOnRefresh: true,
-//         },
-//       });
-
-//       // Force reset to 0 at beginning
-//       bgTl.set(bgVideo, { currentTime: 0 });
-
-//       // Scrub BG only after start progress
-//       bgTl.to(bgVideo, {
-//         currentTime: bgVideo.duration,
-//         ease: "none",
-//       }, bgStartProgress); // ← position = fraction where BG starts (0–1 scale)
-
-//       return true;
-//     };
-
-//     // Poll until durations are available
-//     let rafId: number;
-//     const check = () => {
-//       if (setupTimelines()) {
-//         // Success
-//       } else {
-//         rafId = requestAnimationFrame(check);
-//       }
-//     };
-//     check();
-
-//     return () => {
-//       cancelAnimationFrame(rafId);
-//       ScrollTrigger.getAll().forEach((t) => t?.kill());
-//     };
-//   }, []);
-
-//   /* ---------------- NAVIGATION JUMPS ---------------- */
-//   useEffect(() => {
-//     const action = localStorage.getItem("TW_action");
-//     if (action !== "go_mart") return;
-
-//     localStorage.removeItem("TW_action");
-
-//     const jump = () => {
-//       if (!fgVideoRef.current?.duration) {
-//         requestAnimationFrame(jump);
-//         return;
-//       }
-
-//       ScrollTrigger.refresh();
-
-//       const progress = targetProgress;
-//       // Approximate scroll position (4 = 400%)
-//       const scrollPos = window.innerHeight * 4 * progress;
-
-//       window.scrollTo({ top: scrollPos, behavior: "instant" });
-
-//       fgVideoRef.current.currentTime = progress * fgVideoRef.current.duration;
-//       if (bgVideoRef.current) {
-//         const bgProg = Math.max(0, (progress - bgStartProgress) / (1 - bgStartProgress));
-//         bgVideoRef.current.currentTime = bgProg * bgVideoRef.current.duration;
-//       }
-//       scrollProgressRef.current = progress;
-//     };
-
-//     jump();
-//   }, []);
-
-//   useEffect(() => {
-//     const handleTrigger = () => {
-//       if (!fgVideoRef.current?.duration) return;
-
-//       const progress = targetProgress;
-//       const scrollPos = window.innerHeight * 4 * progress;
-
-//       window.scrollTo({ top: scrollPos, behavior: "instant" });
-
-//       fgVideoRef.current.currentTime = progress * fgVideoRef.current.duration;
-//       if (bgVideoRef.current) {
-//         const bgProg = Math.max(0, (progress - bgStartProgress) / (1 - bgStartProgress));
-//         bgVideoRef.current.currentTime = bgProg * bgVideoRef.current.duration;
-//       }
-//       scrollProgressRef.current = progress;
-//     };
-
-//     window.addEventListener("triggerVideoJump", handleTrigger);
-//     return () => window.removeEventListener("triggerVideoJump", handleTrigger);
-//   }, []);
-
-//   /* ---------------- JSX ---------------- */
-//   return (
-//     <div ref={containerRef} className="relative w-full bg-black">
-//       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-//         {/* BACKGROUND VIDEO */}
-//         <video
-//           ref={bgVideoRef}
-//           className="absolute inset-0 w-full h-full object-cover"
-//           playsInline
-//           muted
-//           preload="auto"
-//           disablePictureInPicture
-//           disableRemotePlayback
-//         />
-
-//         {/* FOREGROUND VIDEO */}
-//         <video
-//           ref={fgVideoRef}
-//           className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
-//           playsInline
-//           muted
-//           preload="auto"
-//           disablePictureInPicture
-//           disableRemotePlayback
-//         />
-
-//         {/* 3D COIN */}
-//         <div className="absolute inset-0 z-20 pointer-events-none">
-//           <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
-//             <ScrollingCoin progressRef={scrollProgressRef} />
-//           </Canvas>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

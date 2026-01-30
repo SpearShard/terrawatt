@@ -16,7 +16,7 @@ export default function PaymentGatewayCompliancePage() {
               Payment Gateway Compliance
             </h1>
             <p className="text-sm text-gray-400">
-              Last Updated: <span className="italic">[Insert Date]</span>
+              Last Updated: <span className="italic">28-01-2026</span>
             </p>
           </header>
 

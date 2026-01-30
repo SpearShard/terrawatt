@@ -66,20 +66,29 @@ module.exports = mod;
 //       setActive("Connect");
 //     }
 //   }, [pathname]);
+//   // --- Sync Active Tab From Scroll (page.tsx) ---
+// useEffect(() => {
+//   const syncFromScroll = () => {
+//     const v = localStorage.getItem("TW_ACTIVE_NAV");
+//     if (v) setActive(v);
+//   };
+//   window.addEventListener("storage", syncFromScroll);
+//   return () => window.removeEventListener("storage", syncFromScroll);
+// }, []);
 //   const navItems = [
 //   { name: "Pulse", href: "/" },
 //   {
 //     name: "TeraaCharge",
 //     href: "/",
 //     image: "/teraacharge.png",
-//     width: 110,
+//     width: 90,
 //     height: 28,
 //   },
 //   {
 //     name: "TeraaMart",
 //     href: "/",
 //     image: "/teraamartlogo.png",
-//     width: 100,
+//     width: 80,
 //     height: 26,
 //   },
 //   { name: "Investors & Partners", href: "/investors-and-partners" },
@@ -126,7 +135,7 @@ module.exports = mod;
 //         : "py-6 bg-transparent"
 //         }`}
 //     >
-//       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
+//       <div className="flex  lg:p-[0.2vw] items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
 //         {/* Logo and Nav Items Container */}
 //         <div className="flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start">
 //           {/* Logo */}
@@ -177,6 +186,7 @@ module.exports = mod;
 //                 onClick={(e) => {
 //                   if (item.name === "Investors & Partners") {
 //                     e.preventDefault();
+//                     setActive("Investors & Partners");
 //                     window.location.href = "/investors-and-partners";
 //                     return;
 //                   }
@@ -218,9 +228,9 @@ module.exports = mod;
 //   item.name
 // ) : (
 //   <Image
-//     src="/Contact_page/connect.svg"
+//     src="/Contact_page/connect1.svg"
 //     alt="Connect"
-//     width={130}
+//     width={70}
 //     height={48}
 //     className={`transition duration-300 ${
 //       active === "Connect"
@@ -233,25 +243,14 @@ module.exports = mod;
 //                 {/* Desktop Indicator */}
 //                 {!item.isButton && active === item.name && (
 //                   <motion.div
-//                     layoutId="navbar-indicator"
-//                     className="absolute inset-0 z-10 rounded-full"
-//                     style={{
-//                       background:
-//                         "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)",
-//                       boxShadow:
-//                         "0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)",
-//                     }}
-//                     transition={{
-//                       type: "spring",
-//                       bounce: 0.2,
-//                       stiffness: 100,
-//                       damping: 10,
-//                     }}
-//                   />
-//                 )}
-//                 {/* Desktop Hover Glow */}
-//                 {!item.isButton && (
-//                   <div className="absolute inset-0 z-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:bg-white/5" />
+//     layoutId="navbar-indicator"
+//     className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+//     transition={{
+//       type: "spring",
+//       stiffness: 300,
+//       damping: 30,
+//     }}
+//   />
 //                 )}
 //               </Link>
 //             ))}
@@ -259,65 +258,72 @@ module.exports = mod;
 //         </div>
 //       </div>
 //       {/* --- Mobile Menu Overlay --- */}
-//       <AnimatePresence>
-//         {isMobileMenuOpen && (
-//           <motion.div
-//             initial={{ opacity: 0, y: -20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             exit={{ opacity: 0, y: -20 }}
-//             transition={{ duration: 0.3 }}
-//             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-xl z-40 md:hidden flex flex-col items-center pt-10 h-screen"
+// <AnimatePresence>
+//   {isMobileMenuOpen && (
+//     <motion.div
+//       initial={{ opacity: 0 }}
+//       animate={{ opacity: 1 }}
+//       exit={{ opacity: 0 }}
+//       transition={{ duration: 0.25 }}
+//       className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
+//     >
+//       <motion.div
+//         initial={{ y: 20, opacity: 0 }}
+//         animate={{ y: 0, opacity: 1 }}
+//         exit={{ y: 20, opacity: 0 }}
+//         transition={{ type: "spring", stiffness: 120, damping: 18 }}
+//         className="w-full px-6 space-y-3"
+//       >
+//         {navItems.map((item) => (
+//           <Link
+//             key={item.name}
+//             href={item.href}
+//             className="relative block"
+//             onClick={(e) => {
+//               if (item.name === "Investors & Partners") {
+//                 e.preventDefault();
+//                 setActive("Investors & Partners");
+//                 window.location.href = "/investors-and-partners";
+//                 setIsMobileMenuOpen(false);
+//                 return;
+//               }
+//               const handled = handleCustomNavigation(item.name);
+//               if (handled) {
+//                 e.preventDefault();
+//               } else {
+//                 setActive(item.name);
+//                 setIsMobileMenuOpen(false);
+//               }
+//             }}
 //           >
-//             <div className="flex flex-col space-y-6 text-center">
-//               {navItems.map((item) => (
-//                 <Link
-//                   key={item.name}
-//                   href={item.href}
-//                   className="relative px-4 py-2"
-//                   onClick={(e) => {
-//                     if (item.name === "Investors & Partners") {
-//                       e.preventDefault();
-//                       window.location.href = "/investors-and-partners";
-//                       setIsMobileMenuOpen(false);
-//                       return;
-//                     }
-//                     const handled = handleCustomNavigation(item.name);
-//                     if (handled) {
-//                       e.preventDefault();
-//                     } else {
-//                       setActive(item.name);
-//                       setIsMobileMenuOpen(false);
-//                     }
-//                   }}
-//                 >
-//                   <span
-//                     className={`text-xl font-medium tracking-wide ${active === item.name
-//                       ? "text-white"
-//                       : "text-neutral-400"
-//                       }`}
-//                   >
-//                     {!item.isButton ? (
-//                       item.name
-//                     ) : (
-//                       // Simplified Connect button for Mobile
-//                       <span className={`${active === "Connect" ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : ""}`}>
-//                         Connect
-//                       </span>
-//                     )}
-//                   </span>
-//                   {/* Mobile Active Indicator (Simple Underline) */}
-//                   {!item.isButton && active === item.name && (
-//                     <motion.div
-//                       layoutId="mobile-indicator"
-//                       className="absolute bottom-0 left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
-//                     />
-//                   )}
-//                 </Link>
-//               ))}
+//             <div
+//               className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
+//                 active === item.name
+//                   ? "bg-white/5"
+//                   : "bg-white/0 hover:bg-white/5"
+//               }`}
+//             >
+//               <span
+//                 className={`text-lg font-medium tracking-wide ${
+//                   active === item.name ? "text-white" : "text-neutral-400"
+//                 }`}
+//               >
+//                 {!item.isButton ? item.name : "Connect"}
+//               </span>
+//               {/* Active red underline */}
+//               {!item.isButton && active === item.name && (
+//                 <motion.div
+//                   layoutId="mobile-indicator"
+//                   className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
+//                 />
+//               )}
 //             </div>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
+//           </Link>
+//         ))}
+//       </motion.div>
+//     </motion.div>
+//   )}
+// </AnimatePresence>
 //     </nav>
 //   );
 // }
@@ -754,7 +760,7 @@ function Footer() {
         setIsComplianceOpen(false);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
-        className: "bg-[#E5E7EB] p-4 sm:p-6 md:p-[5vw] text-gray-800",
+        className: "bg-[#E5E7EB] p-4 sm:p-6 md:p-[5vw] text-gray-800 ",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6 sm:gap-8",

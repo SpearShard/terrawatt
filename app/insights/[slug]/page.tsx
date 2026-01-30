@@ -55,6 +55,28 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
     loadBlog();
   }, [slug]);
 
+  const handleShare = async () => {
+  if (!blog) return;
+
+  const shareData = {
+    title: blog.title,
+    text: blog.shortDescription,
+    url: window.location.href,
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
+    }
+  } catch (err) {
+    console.error("Share failed:", err);
+  }
+};
+
+
   // --- Loading State ---
   if (loading) {
     return (
@@ -144,7 +166,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
                 <span>5 min read</span>
               </div>
               <div className="flex-grow" />
-              <button className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+              <button onClick={handleShare} className="flex items-center gap-2 hover:text-cyan-400 cursor-pointer transition-colors">
                 <Share2 size={16} />
                 <span className="hidden sm:inline">Share</span>
               </button>

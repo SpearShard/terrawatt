@@ -14,7 +14,7 @@ export default function DataSecurityCompliancePage() {
           <header className="space-y-3">
             <h1 className="text-4xl font-bold">Data & Security Compliance</h1>
             <p className="text-sm text-gray-400">
-              Last Updated: <span className="italic">[Insert Date]</span>
+              Last Updated: <span className="italic">28-01-2026</span>
             </p>
           </header>
 
@@ -23,7 +23,7 @@ export default function DataSecurityCompliancePage() {
             At <strong>Teraawatt PowerLabs Private Limited</strong>, we are committed
             to safeguarding your personal information and ensuring the highest
             standards of data protection and security. Our practices comply with
-            India’s <strong>Digital Personal Data Protection (DPDP) Act, 2023</strong>{" "}
+            India&apos;s <strong>Digital Personal Data Protection (DPDP) Act, 2023</strong>{" "}
             and the <strong>Information Technology Act, 2000</strong>, along with
             applicable rules on reasonable security practices.
           </p>

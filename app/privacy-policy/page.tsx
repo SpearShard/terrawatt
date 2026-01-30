@@ -13,8 +13,8 @@ export default function PrivacyPolicyPage() {
           <header className="space-y-3">
             <h1 className="text-4xl font-bold">Privacy Policy</h1>
             <p className="text-sm text-gray-400">
-              Effective Date: <span className="italic">[Insert Date]</span><br />
-              Last Updated: <span className="italic">[Insert Date]</span>
+              Effective Date: <span className="italic">28-01-2026</span><br />
+              Last Updated: <span className="italic">28-01-2026</span>
             </p>
           </header>
 

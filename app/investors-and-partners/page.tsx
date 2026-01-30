@@ -1,95 +1,105 @@
 // "use client";
 
-// import { useEffect, useRef } from "react";
-// import { usePathname } from "next/navigation";
+// import { useEffect, useRef, useState } from "react";
 // import Navbar from "@/components/Navbar";
 // import gsap from "gsap";
 // import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import Footer from "@/components/Footer";
 
 // gsap.registerPlugin(ScrollTrigger);
 
 // export default function InvestorsPage() {
 //   const containerRef = useRef<HTMLDivElement>(null);
 //   const videoRef = useRef<HTMLVideoElement>(null);
+//   const bgVideoRef = useRef<HTMLVideoElement>(null);
 
 //   const rawProgressRef = useRef(0);
 //   const smoothProgressRef = useRef(0);
+//   const scrollDistanceRef = useRef(0);
 
-//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-//   const pathname = usePathname();
+//   const [isMobile, setIsMobile] = useState(false);
 
 //   const TOTAL_FRAMES = 516;
-//   const SCROLL_DISTANCE = TOTAL_FRAMES * 6;
 
-//   /* ---------------- FORCE HARD RELOAD FROM PROBLEMATIC PAGES ---------------- */
+//   /* ---------------- MOBILE DETECTION ---------------- */
 //   useEffect(() => {
-//     const problematicPaths = ["/pulse", "/teraamart", "/teraacharge"];
+//     const check = () => setIsMobile(window.innerWidth < 640);
+//     check();
+//     window.addEventListener("resize", check);
+//     return () => window.removeEventListener("resize", check);
+//   }, []);
 
-//     // Use navigation type if available (for back/forward)
-//     if (typeof window !== "undefined" && "navigation" in window) {
-//       const navEntry = (window.navigation as any).currentEntry;
-//       if (navEntry) {
-//         const prevUrl = navEntry.url || "";
-//         if (problematicPaths.some(p => prevUrl.includes(p)) && pathname === "/investors") {
-//           window.location.reload();
-//         }
-//       }
-//     }
+//   /* ---------------- SCROLL DISTANCE ---------------- */
+//   useEffect(() => {
+//     const calc = () => {
+//       if (window.innerWidth < 640) return TOTAL_FRAMES * 2;
+//       if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
+//       return TOTAL_FRAMES * 6;
+//     };
 
-//     // Fallback to sessionStorage tracking
-//     const prevPath = sessionStorage.getItem("prevPath");
-//     sessionStorage.setItem("prevPath", pathname);
-
-//     if (problematicPaths.includes(prevPath || "") && pathname === "/investors") {
-//       window.location.reload();
-//     }
-
-//     // Always scroll to top
-//     window.scrollTo(0, 0);
+//     scrollDistanceRef.current = calc();
 //     ScrollTrigger.refresh();
-//   }, [pathname]);
+//   }, []);
 
-//   /* ---------------- VIDEO SETUP ---------------- */
-//   useEffect(() => {
-//     if (!videoRef.current) return;
+//   /* ---------------- VIDEO SETUP + WAKE ---------------- */
+//   /* ---------------- VIDEO SETUP + HARD WAKE ---------------- */
+// useEffect(() => {
+//   if (!videoRef.current || !bgVideoRef.current) return;
 
-//     const video = videoRef.current;
-//     video.src = "/investwebp/new/invest.webm";
+//   const wake = async (video: HTMLVideoElement) => {
 //     video.muted = true;
 //     video.playsInline = true;
 //     video.preload = "auto";
-//     video.crossOrigin = "anonymous";
-//     video.load();
 
-//     video.currentTime = 0.01;
-//     setTimeout(() => {
+//     try {
+//       await video.play();   // 🔥 forces decode
+//       video.pause();        // stop immediately
 //       video.currentTime = 0;
-//     }, 300);
-//   }, []);
+//     } catch {
+//       // autoplay blocked? fallback
+//       video.currentTime = 0.01;
+//       setTimeout(() => (video.currentTime = 0), 200);
+//     }
+//   };
 
-//   /* ---------------- SMOOTH SCRUBBING LOOP ---------------- */
+//   const fg = videoRef.current;
+//   fg.src = "/investwebp/invest.mp4";
+//   fg.load();
+//   wake(fg);
+
+//   const bg = bgVideoRef.current;
+//   bg.src = "/investwebp/invest.mp4";
+//   bg.loop = true;
+//   bg.load();
+//   wake(bg);
+// }, []);
+
+
+//   /* ---------------- SCRUB LOOP ---------------- */
 //   useEffect(() => {
 //     const video = videoRef.current;
 //     if (!video) return;
 
 //     let raf: number;
-//     let lastTime = performance.now();
+//     let last = performance.now();
 
 //     const animate = (time: number) => {
-//       const delta = Math.min((time - lastTime) / 1000, 0.1);
-//       lastTime = time;
+//       const delta = Math.min((time - last) / 1000, 0.1);
+//       last = time;
 
 //       if (!video.duration || isNaN(video.duration)) {
 //         raf = requestAnimationFrame(animate);
 //         return;
 //       }
 
-//       const lerpFactor = Math.min(delta * 18, 1);
-//       smoothProgressRef.current += (rawProgressRef.current - smoothProgressRef.current) * lerpFactor;
+//       const speed = isMobile ? 8 : 18;
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current - smoothProgressRef.current) *
+//         Math.min(delta * speed, 1);
 
-//       const targetTime = smoothProgressRef.current * video.duration;
-//       if (Math.abs(video.currentTime - targetTime) > 0.015) {
-//         video.currentTime = targetTime;
+//       const target = smoothProgressRef.current * video.duration;
+//       if (Math.abs(video.currentTime - target) > 0.015) {
+//         video.currentTime = target;
 //       }
 
 //       raf = requestAnimationFrame(animate);
@@ -97,29 +107,23 @@
 
 //     raf = requestAnimationFrame(animate);
 //     return () => cancelAnimationFrame(raf);
-//   }, []);
+//   }, [isMobile]);
 
 //   /* ---------------- SCROLLTRIGGER ---------------- */
 //   useEffect(() => {
 //     if (!containerRef.current) return;
 
-//     if (scrollTriggerRef.current) scrollTriggerRef.current.kill();
+//     ScrollTrigger.getAll().forEach(st => st.kill());
 
 //     const st = ScrollTrigger.create({
 //       trigger: containerRef.current,
 //       start: "top top",
-//       end: `+=${SCROLL_DISTANCE}px`,
+//       end: `+=${scrollDistanceRef.current}px`,
 //       pin: true,
 //       anticipatePin: 1,
-//       onUpdate: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
-//       onRefresh: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
+//       onUpdate: self => (rawProgressRef.current = self.progress),
 //     });
 
-//     scrollTriggerRef.current = st;
 //     return () => st.kill();
 //   }, []);
 
@@ -128,26 +132,45 @@
 //     <>
 //       <Navbar />
 
-//       <div className="w-full flex flex-col overflow-hidden bg-[#04111E] min-h-screen">
-//         <div ref={containerRef} className="relative w-full bg-[#04111E]">
-//           <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-[#04111E]">
-//             <video
-//               ref={videoRef}
-//               className="w-full h-full object-cover"
-//               style={{ pointerEvents: "none" }}
-//               playsInline
-//               muted
-//             />
-//           </div>
-
-//           <div style={{ height: `${SCROLL_DISTANCE}px` }} />
+//       <div className="relative w-full min-h-screen bg-black overflow-hidden">
+//         {/* MOBILE BLURRED BACKGROUND */}
+//         <div className="fixed inset-0 z-0 sm:hidden">
+//           <video
+//             ref={bgVideoRef}
+//             autoPlay
+//             muted
+//             loop
+//             playsInline
+//             className="w-screen h-screen object-cover blur-2xl opacity-70"
+//           />
+//           <div className="absolute inset-0 bg-black/40" />
 //         </div>
 
-        
+//         {/* FOREGROUND */}
+//         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
+//           <div className="sticky top-0 h-screen flex items-center justify-center">
+//             <div className="w-full h-full max-h-screen flex items-center justify-center">
+//               <video
+//                 ref={videoRef}
+//                 className="w-full h-full object-contain sm:object-cover"
+//                 muted
+//                 playsInline
+//               />
+//             </div>
+//           </div>
+
+//           <div style={{ height: `${scrollDistanceRef.current}px` }} />
+//         </div>
+//       </div>
+
+//       <div className="relative">
+//         <Footer />
 //       </div>
 //     </>
 //   );
 // }
+
+
 
 
 
@@ -179,10 +202,11 @@ export default function InvestorsPage() {
   const scrollDistanceRef = useRef(0);
 
   const [isMobile, setIsMobile] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const TOTAL_FRAMES = 516;
 
-  /* ---------------- MOBILE DETECTION ---------------- */
+  /* ---------------- MOBILE ---------------- */
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
     check();
@@ -202,41 +226,66 @@ export default function InvestorsPage() {
     ScrollTrigger.refresh();
   }, []);
 
-  /* ---------------- VIDEO SETUP ---------------- */
+  /* ---------------- VIDEO HARD WAKE ---------------- */
   useEffect(() => {
     if (!videoRef.current || !bgVideoRef.current) return;
 
-    // Foreground (main) video
     const fg = videoRef.current;
+    const bg = bgVideoRef.current;
+
     fg.src = "/investwebp/invest.mp4";
     fg.muted = true;
     fg.playsInline = true;
     fg.preload = "auto";
-    fg.load();
 
-    // Background video (same source, blurred)
-    const bg = bgVideoRef.current;
     bg.src = "/investwebp/invest.mp4";
     bg.muted = true;
     bg.playsInline = true;
     bg.loop = true;
     bg.preload = "auto";
+
+    fg.load();
     bg.load();
+
+    const wake = async () => {
+      try {
+        await fg.play();
+        fg.pause();
+        fg.currentTime = 0;
+
+        await bg.play();
+        bg.pause();
+        bg.currentTime = 0;
+      } catch {
+        fg.currentTime = 0.01;
+        bg.currentTime = 0.01;
+        setTimeout(() => {
+          fg.currentTime = 0;
+          bg.currentTime = 0;
+        }, 200);
+      }
+
+      setReady(true); // 🔥 now safe to scrub
+    };
+
+    fg.addEventListener("loadeddata", wake, { once: true });
   }, []);
 
   /* ---------------- SCRUB LOOP ---------------- */
   useEffect(() => {
+    if (!ready) return;
+
     const video = videoRef.current;
     if (!video) return;
 
-    let raf: number;
+    let raf = 0;
     let last = performance.now();
 
     const animate = (time: number) => {
       const delta = Math.min((time - last) / 1000, 0.1);
       last = time;
 
-      if (!video.duration) {
+      if (!video.duration || isNaN(video.duration)) {
         raf = requestAnimationFrame(animate);
         return;
       }
@@ -247,6 +296,7 @@ export default function InvestorsPage() {
         Math.min(delta * speed, 1);
 
       const target = smoothProgressRef.current * video.duration;
+
       if (Math.abs(video.currentTime - target) > 0.015) {
         video.currentTime = target;
       }
@@ -256,11 +306,11 @@ export default function InvestorsPage() {
 
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
-  }, [isMobile]);
+  }, [isMobile, ready]);
 
   /* ---------------- SCROLLTRIGGER ---------------- */
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !ready) return;
 
     ScrollTrigger.getAll().forEach(st => st.kill());
 
@@ -274,56 +324,239 @@ export default function InvestorsPage() {
     });
 
     return () => st.kill();
-  }, []);
+  }, [ready]);
 
   /* ---------------- JSX ---------------- */
   return (
     <>
       <Navbar />
 
-      <div className="relative  w-full min-h-screen bg-black overflow-hidden">
-        {/* 🔹 BLURRED BACKGROUND (MOBILE ONLY) */}
-<div className="fixed inset-0 z-0 sm:hidden ">
-  <video
-    ref={bgVideoRef}
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="
-      w-screen h-screen
-      object-cover
-      
-      blur-2xl
-      opacity-70
-    "
-  />
-  <div className=" inset-0 bg-black/40" />
-</div>
+      <div className="relative w-full min-h-screen bg-black overflow-hidden">
+        {/* MOBILE BLUR */}
+        <div className="fixed inset-0 z-0 sm:hidden">
+          <video
+            ref={bgVideoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-screen h-screen object-cover blur-2xl opacity-70"
+          />
+          <div className="inset-0 bg-black/40" />
+        </div>
 
-
-        {/* 🔹 FOREGROUND VIDEO */}
-        <div
-          ref={containerRef}
-          className="relative z-10 w-full overflow-hidden"
-        >
+        {/* FOREGROUND */}
+        <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
           <div className="sticky top-0 h-screen flex items-center justify-center">
-            <div className="w-full h-full max-h-screen   flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <video
                 ref={videoRef}
-                className="w-full h-full  object-contain sm:object-cover"
+                className="w-full h-full object-contain lg:object-fill sm:object-cover"
                 muted
                 playsInline
               />
             </div>
           </div>
 
-          <div style={{ height: `${scrollDistanceRef.current}px` }} />
+          
         </div>
       </div>
-      <div className="relative ">
+
+      <div className="relative">
         <Footer/>
       </div>
     </>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Optimized version 
+
+// "use client";
+
+// import { useEffect, useRef, useState } from "react";
+// import Navbar from "@/components/Navbar";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import Footer from "@/components/Footer";
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// export default function InvestorsPage() {
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const videoRef = useRef<HTMLVideoElement>(null);
+//   const bgVideoRef = useRef<HTMLVideoElement>(null);
+
+//   const rawProgressRef = useRef(0);
+//   const smoothProgressRef = useRef(0);
+//   const scrollDistanceRef = useRef(0);
+
+//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+
+//   const [isMobile, setIsMobile] = useState(false);
+
+//   /* ---------------- MOBILE DETECTION ---------------- */
+//   useEffect(() => {
+//     const check = () => setIsMobile(window.innerWidth < 640);
+//     check();
+//     window.addEventListener("resize", check);
+//     return () => window.removeEventListener("resize", check);
+//   }, []);
+
+//   /* ---------------- SCROLL DISTANCE ---------------- */
+//   useEffect(() => {
+//     const calc = () => {
+//       if (window.innerWidth < 640) return 1000;
+//       if (window.innerWidth < 1024) return 2000;
+//       return 3000;
+//     };
+
+//     const update = () => {
+//       scrollDistanceRef.current = calc();
+//       ScrollTrigger.refresh();
+//     };
+
+//     update();
+//     window.addEventListener("resize", update);
+//     return () => window.removeEventListener("resize", update);
+//   }, []);
+
+//   /* ---------------- VIDEO SETUP ---------------- */
+//   useEffect(() => {
+//     if (!videoRef.current || !bgVideoRef.current) return;
+
+//     const fg = videoRef.current;
+//     fg.src = "/investwebp/invest.mp4";
+//     fg.muted = true;
+//     fg.playsInline = true;
+//     fg.preload = "auto";
+//     fg.load();
+
+//     // Safari warmup
+//     fg.currentTime = 0.01;
+//     setTimeout(() => (fg.currentTime = 0), 200);
+
+//     const bg = bgVideoRef.current;
+//     bg.src = "/investwebp/invest.mp4";
+//   }, []);
+
+//   /* ---------------- SCRUB LOOP ---------------- */
+//   useEffect(() => {
+//     const video = videoRef.current;
+//     if (!video) return;
+
+//     let raf = 0;
+//     let lastTime = performance.now();
+//     let lastRender = 0;
+//     let duration = 0;
+
+//     const animate = (time: number) => {
+//       // cap ~60fps
+//       if (time - lastRender < 16) {
+//         raf = requestAnimationFrame(animate);
+//         return;
+//       }
+//       lastRender = time;
+
+//       const delta = Math.min((time - lastTime) / 1000, 0.1);
+//       lastTime = time;
+
+//       if (!duration && video.duration) duration = video.duration;
+//       if (!duration) {
+//         raf = requestAnimationFrame(animate);
+//         return;
+//       }
+
+//       // exponential smoothing
+//       const damping = 1 - Math.exp(-delta * (isMobile ? 8 : 18));
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current - smoothProgressRef.current) * damping;
+
+//       const target = smoothProgressRef.current * duration;
+//       const diff = Math.abs(video.currentTime - target);
+
+//       // avoid micro seeks
+//       if (diff > 0.03) {
+//         video.currentTime = target;
+//       }
+
+//       raf = requestAnimationFrame(animate);
+//     };
+
+//     raf = requestAnimationFrame(animate);
+//     return () => cancelAnimationFrame(raf);
+//   }, [isMobile]);
+
+//   /* ---------------- SCROLLTRIGGER ---------------- */
+//   useEffect(() => {
+//     if (!containerRef.current) return;
+
+//     scrollTriggerRef.current?.kill();
+
+//     const st = ScrollTrigger.create({
+//       trigger: containerRef.current,
+//       start: "top top",
+//       end: `+=${scrollDistanceRef.current}px`,
+//       pin: true,
+//       anticipatePin: 1,
+//       onUpdate: (self) => {
+//         rawProgressRef.current = self.progress;
+//       },
+//     });
+
+//     scrollTriggerRef.current = st;
+//     return () => st.kill();
+//   }, []);
+
+//   /* ---------------- JSX ---------------- */
+//   return (
+//     <>
+//       <Navbar />
+
+//       <div className="relative w-full min-h-screen bg-black overflow-hidden">
+//         {/* MOBILE BLUR BG */}
+//         <div className="fixed inset-0 z-0 sm:hidden">
+//           <video
+//             ref={bgVideoRef}
+//             autoPlay
+//             muted
+//             loop
+//             playsInline
+//             className="w-screen h-screen object-cover blur-2xl opacity-70"
+//           />
+//           <div className="absolute inset-0 bg-black/40" />
+//         </div>
+
+//         {/* FOREGROUND */}
+//         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
+//           <div className="sticky top-0 h-screen flex items-center justify-center">
+//             <video
+//               ref={videoRef}
+//               className="w-full h-full object-contain sm:object-cover"
+//               muted
+//               playsInline
+//             />
+//           </div>
+
+//           <div style={{ height: `${scrollDistanceRef.current}px` }} />
+//         </div>
+//       </div>
+
+//       <Footer />
+//     </>
+//   );
+// }
