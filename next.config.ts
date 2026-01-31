@@ -10,7 +10,12 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "ik.imagekit.io",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "teraawattdev.blob.core.windows.net",
+        pathname: "/**",
+      },
     ],
   },
 };

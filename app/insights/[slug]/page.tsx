@@ -36,7 +36,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
         const blogs: Blog[] = json?.data?.blogs || [];
         const match = blogs.find((b) => b.slug === slug);
 
-        if (!match) {                          
+        if (!match) {
           setLoading(false);
           return;
         }
@@ -58,23 +58,31 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
   const handleShare = async () => {
   if (!blog) return;
 
-  const shareData = {
-    title: blog.title,
-    text: blog.shortDescription,
-    url: window.location.href,
-  };
+  const url = window.location.href;
+
+  // Detect Apple desktop (MacBooks / iMacs)
+  const isAppleDesktop =
+    typeof navigator !== "undefined" &&
+    /Macintosh|Mac OS X/.test(navigator.userAgent);
 
   try {
-    if (navigator.share) {
-      await navigator.share(shareData);
+    // Use native share ONLY on mobile devices
+    if (navigator.share && !isAppleDesktop) {
+      await navigator.share({
+        title: blog.title,
+        text: blog.shortDescription,
+        url,
+      });
     } else {
-      await navigator.clipboard.writeText(window.location.href);
+      // Fallback: always copy ONLY the URL
+      await navigator.clipboard.writeText(url);
       alert("Link copied to clipboard!");
     }
   } catch (err) {
     console.error("Share failed:", err);
   }
 };
+
 
 
   // --- Loading State ---
@@ -119,7 +127,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
 
       <main className="relative z-10 pt-32 pb-24 px-6 md:px-12">
         <article className="max-w-5xl mx-auto">
-          
+
           {/* Header Section */}
           <header className="mb-16 md:mb-24">
             <motion.div
@@ -135,7 +143,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
               </Link>
             </motion.div>
 
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
@@ -144,7 +152,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
               {blog.title}
             </motion.h1>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -175,7 +183,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
 
           {/* Hero Image with Parallax Feel */}
           {blog.images?.[0]?.url && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -192,7 +200,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
 
           {/* Content Area */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
+
             {/* Sidebar / Table of Contents Area */}
             <div className="hidden lg:block lg:col-span-3">
               <div className="sticky top-32">
@@ -210,7 +218,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
             </div>
 
             {/* Main Prose */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
@@ -233,7 +241,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
                   __html: blog.content || blog.shortDescription,
                 }}
               />
-              
+
               {/* Footer of article */}
               <div className="mt-20 pt-10 border-t border-neutral-800">
                 <p className="text-neutral-500 italic">
@@ -245,7 +253,250 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
 
         </article>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useState, use, useCallback } from "react";
+// import Navbar from "@/components/Navbar";
+// import Footer from "@/components/Footer";
+// import { motion, useScroll, useTransform } from "framer-motion";
+// import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
+// import Link from "next/link";
+
+// interface Blog {
+//   id: string;
+//   title: string;
+//   slug: string;
+//   shortDescription: string;
+//   content?: string;
+//   publishDate: string;
+//   images: { url: string }[];
+// }
+
+// export default function BlogPost({
+//   params,
+// }: {
+//   params: Promise<{ slug: string }>;
+// }) {
+//   const { slug } = use(params);
+
+//   const [blog, setBlog] = useState<Blog | null>(null);
+//   const [loading, setLoading] = useState(true);
+
+//   /* scroll progress */
+//   const { scrollYProgress } = useScroll();
+//   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+//   /* ---------------- data fetch ---------------- */
+
+//   useEffect(() => {
+//     const controller = new AbortController();
+
+//     async function loadBlog() {
+//       try {
+//         const res = await fetch(
+//           "https://devapi.teraawatt.com/api/v1/users/blog/all",
+//           { signal: controller.signal }
+//         );
+
+//         const json = await res.json();
+//         const blogs: Blog[] = json?.data?.blogs || [];
+//         const match = blogs.find((b) => b.slug === slug);
+
+//         if (!match) {
+//           setLoading(false);
+//           return;
+//         }
+
+//         const res2 = await fetch(
+//           `https://devapi.teraawatt.com/api/v1/users/blog/${match.id}`,
+//           { signal: controller.signal }
+//         );
+
+//         const fullBlog = await res2.json();
+//         setBlog(fullBlog?.data || match);
+//       } catch (e) {
+//         if (!controller.signal.aborted) console.error(e);
+//       }
+
+//       setLoading(false);
+//     }
+
+//     loadBlog();
+
+//     return () => controller.abort();
+//   }, [slug]);
+
+//   /* ---------------- share ---------------- */
+
+//   const handleShare = useCallback(async () => {
+//     if (!blog) return;
+
+//     const shareData = {
+//       title: blog.title,
+//       text: blog.shortDescription,
+//       url: window.location.href,
+//     };
+
+//     try {
+//       if (navigator.share) {
+//         await navigator.share(shareData);
+//       } else {
+//         await navigator.clipboard.writeText(window.location.href);
+//         alert("Link copied to clipboard!");
+//       }
+//     } catch {}
+//   }, [blog]);
+
+//   /* loading */
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+//         <div className="flex flex-col items-center gap-4">
+//           <div className="w-12 h-12 border-t-2 border-cyan-500 rounded-full animate-spin" />
+//           <p className="text-neutral-500 text-sm uppercase tracking-widest">
+//             Loading Experience
+//           </p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   /* 404 */
+
+//   if (!blog) {
+//     return (
+//       <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-white">
+//         <h1 className="text-4xl font-bold mb-4">Content Not Found</h1>
+//         <Link
+//           href="/"
+//           className="px-6 py-2 border border-neutral-700 hover:bg-neutral-800 transition rounded-full text-sm"
+//         >
+//           Return Home
+//         </Link>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-[#050505] text-neutral-200 font-sans selection:bg-cyan-500/30">
+//       <Navbar />
+
+//       {/* progress bar */}
+//       <motion.div
+//         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 origin-left z-50"
+//         style={{ scaleX }}
+//       />
+
+//       {/* ambient glow */}
+//       <div className="fixed inset-0 pointer-events-none z-0">
+//         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-900/10 rounded-full blur-[120px]" />
+//         <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[120px]" />
+//       </div>
+
+//       <main className="relative z-10 pt-32 pb-24 px-6 md:px-12">
+//         <article className="max-w-5xl mx-auto">
+
+//           {/* header */}
+//           <header className="mb-16 md:mb-24">
+//             <Link
+//               href="/insights"
+//               className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-8 group"
+//             >
+//               <div className="p-2 rounded-full border border-neutral-800 group-hover:border-neutral-600 transition-colors">
+//                 <ArrowLeft size={16} />
+//               </div>
+//               <span className="text-sm font-medium tracking-wide uppercase">
+//                 Back to Journal
+//               </span>
+//             </Link>
+
+//             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.1] mb-8">
+//               {blog.title}
+//             </h1>
+
+//             <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-400 border-t border-neutral-800 pt-6">
+//               <div className="flex items-center gap-2">
+//                 <Calendar size={16} className="text-cyan-500" />
+//                 {new Date(blog.publishDate).toLocaleDateString("en-US", {
+//                   month: "long",
+//                   day: "numeric",
+//                   year: "numeric",
+//                 })}
+//               </div>
+
+//               <div className="w-1 h-1 bg-neutral-700 rounded-full" />
+
+//               <div className="flex items-center gap-2">
+//                 <Clock size={16} className="text-cyan-500" />
+//                 5 min read
+//               </div>
+
+//               <div className="flex-grow" />
+
+//               <button
+//                 onClick={handleShare}
+//                 className="flex items-center gap-2 hover:text-cyan-400 transition"
+//               >
+//                 <Share2 size={16} />
+//                 <span className="hidden sm:inline">Share</span>
+//               </button>
+//             </div>
+//           </header>
+
+//           {/* hero */}
+//           {blog.images?.[0]?.url && (
+//             <motion.div
+//               initial={{ opacity: 0, scale: 0.95 }}
+//               animate={{ opacity: 1, scale: 1 }}
+//               transition={{ duration: 0.8, delay: 0.3 }}
+//               className="relative aspect-video w-full rounded-3xl overflow-hidden mb-20 shadow-2xl shadow-cyan-900/20"
+//             >
+//               <img
+//                 src={blog.images[0].url}
+//                 alt={blog.title}
+//                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2s] ease-out"
+//               />
+//               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60" />
+//             </motion.div>
+//           )}
+
+//           {/* content */}
+//           <div
+//             className="
+//               prose prose-lg prose-invert max-w-none
+//               prose-headings:text-white
+//               prose-p:text-neutral-300 prose-p:leading-8
+//             "
+//             dangerouslySetInnerHTML={{
+//               __html: blog.content || blog.shortDescription,
+//             }}
+//           />
+
+//           <div className="mt-20 pt-10 border-t border-neutral-800">
+//             <p className="text-neutral-500 italic">Thanks for reading.</p>
+//           </div>
+
+//         </article>
+//       </main>
+
+//       <Footer />
+//     </div>
+//   );
+// }

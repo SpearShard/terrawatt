@@ -4,7 +4,7 @@
   "static/chunks/node_modules_next_624244a6._.js",
   "static/chunks/node_modules_motion-dom_dist_es_da948acf._.js",
   "static/chunks/node_modules_framer-motion_dist_es_247c3ff9._.js",
-  "static/chunks/node_modules_gsap_f48a6384._.js",
+  "static/chunks/node_modules_gsap_0e537b14._.js",
   "static/chunks/node_modules_a90390e8._.js",
   "static/chunks/_97df09be._.js"
 ],

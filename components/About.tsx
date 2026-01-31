@@ -269,7 +269,7 @@ interface ProductData {
 const products: ProductData[] = [
   {
     id: "charge",
-    titleImage: "/teraaCharge.png",
+    titleImage: "/teraacharge.png",
     subtitle: "The Charging Network",
     description:
       "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform.",
@@ -464,7 +464,7 @@ export default function About() {
     hover:border-white/30
     hover:shadow-[0_8px_32px_rgba(5,223,114,0.2)]
     active:scale-95
-    transition-all duration-300
+    transition-all duration-300 cursor-pointer
   "
 >
   Get Started

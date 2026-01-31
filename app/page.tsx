@@ -15,6 +15,7 @@
 // import { useCarLights } from "../components/useCarLights";
 // import { Suspense } from "react";
 // import { useEffect, useLayoutEffect, useRef, useState, useMemo } from "react";
+// import Footer from "@/components/Footer";
 
 // const DashboardAnimation = dynamic(
 //   () => import("../components/DashboardAnimation"),
@@ -32,7 +33,7 @@
 //   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
 //   scale?: number;
 // }) {
-//   const { scene } = useGLTF("/models/lastwala.glb");
+//   const { scene } = useGLTF("/models/final.glb");
 //   const [ready, setReady] = useState(false);
 
 //   const memoizedScene = useMemo(() => scene, []);
@@ -58,31 +59,33 @@
 //   const { camera } = useThree();
 
 //   useEffect(() => {
-//     camera.position.set(0, 50, 480);
+//     camera.position.set(0, 50, 450);
 //     camera.lookAt(0, 50, 0);
 
 //     const isMobile = window.innerWidth < 768;
 
 //     if (isMobile) {
-//       camera.position.set(0, 45, 580);
+//       camera.position.set(0, 45, 480);
 //       camera.lookAt(0, 35, 0);
 //     }
+
+//     const CAMERA_SCROLL_PX = 1900; // 🔑 camera always finishes fast
 
 //     const tl = gsap.timeline({
 //       scrollTrigger: {
 //         trigger: "#scroll-container",
 //         start: "top top",
-//         end: isMobile ? "80% bottom" : "bottom bottom",
-//         scrub: 0.5, // Smooth scrubbing (lower = smoother, higher = more responsive)
+//         end: `+=${CAMERA_SCROLL_PX}`, // ✅ FIXED distance
+//         scrub: 0.5,
 //       },
 //     });
 
-//     // Camera movement
-//     // tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
+
+
 //     tl.to(camera.position, {
-//       z: isMobile ? 35 : 1,
-//       y: isMobile ? 18 : 20,
-//       duration: 3,
+//       z: isMobile ? 10 : 15,
+//       y: isMobile ? 20 : 20,
+//       duration: 1,
 //     });
 
 //     // Animate all rear lights
@@ -132,6 +135,14 @@
 // }
 
 // export default function Home() {
+
+//   useEffect(() => {
+//   if ("scrollRestoration" in history) {
+//     history.scrollRestoration = "manual";
+//   }
+// }, []);
+
+
 //   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
 //   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
 //   const progressRef = useRef(0); // 👈 add this line
@@ -141,23 +152,40 @@
 //   const [showPreloader, setShowPreloader] = useState(false);
 //   const [ready, setReady] = useState(false);
 
-// useEffect(() => {
-//   const isPulse = window.location.pathname === "/";
-//   const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
+ 
 
-//   if (isPulse && wasReload) {
-//     setShowPreloader(true);
-//   } else {
-//     setShowPreloader(false);
-//   }
 
-//   sessionStorage.removeItem("PAGE_WAS_RELOADED");
-//   setReady(true);
-// }, []);
+//   useEffect(() => {
+//     const isPulse = window.location.pathname === "/";
+//     const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
+//     const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
+
+//     const isFirstVisit = !sessionStorage.getItem("HAS_VISITED_PULSE");
+
+//     // 👇 NEW: check which tab was active before reload
+//     const lastActive = localStorage.getItem("TW_ACTIVE_NAV") || "Pulse";
+//     const wasPulseTab = lastActive === "Pulse";
+
+//     // Show loader on FIRST visit or REAL reload — ONLY if Pulse tab
+//     if (isPulse && wasPulseTab && (isFirstVisit || wasReload) && !hasAction) {
+//       setShowPreloader(true);
+//     } else {
+//       setShowPreloader(false);
+//     }
+
+//     // Mark that Pulse has been visited
+//     sessionStorage.setItem("HAS_VISITED_PULSE", "true");
+
+//     sessionStorage.removeItem("PAGE_WAS_RELOADED");
+//     setReady(true);
+//   }, []);
+
+
+
 
 //   useEffect(() => {
 //     const handleChargeJump = () => {
-//       const targetProgress = 765 / 1464;
+//       const targetProgress = -0.18;
 
 //       const scrollContainer = document.getElementById("scroll-container");
 //       if (!scrollContainer) return;
@@ -170,7 +198,9 @@
 //           const containerHeight = scrollContainer.offsetHeight;
 //           const windowHeight = window.innerHeight;
 
-//           const startOffset = containerHeight * 0.7;
+//           const isMobile = window.innerWidth < 768;
+//           const startOffset = containerHeight * (isMobile ? 0.635 : 0.7);
+
 //           const scrollableDistance = containerHeight - windowHeight;
 //           const maxProgressDistance = Math.max(1, scrollableDistance - startOffset);
 
@@ -209,8 +239,8 @@
 //     return () => window.removeEventListener("resize", handleResize);
 //   }, []);
 
-//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "1100vh";
-//   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "120vh" : "300vh";
+//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "850vh" : "5000vh";
+//   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "50vh" : "300vh";
 
 //   useEffect(() => {
 //     const runAction = () => {
@@ -223,18 +253,56 @@
 //         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
 //       }
 
+//       // if (action === "go_mart") {
+//       //   const scrollContainer = document.getElementById("scroll-container");
+//       //   if (!scrollContainer) return;
+
+//       //   ScrollTrigger.refresh(true);
+
+//       //   requestAnimationFrame(() => {
+//       //     requestAnimationFrame(() => {
+//       //       const containerTop = scrollContainer.offsetTop;
+//       //       const containerHeight = scrollContainer.offsetHeight;
+//       //       const windowHeight = window.innerHeight;
+
+//       //       const targetY = containerTop + containerHeight - windowHeight - 50;
+
+//       //       window.scrollTo({
+//       //         top: targetY,
+//       //         behavior: "smooth",
+//       //       });
+
+//       //       setTimeout(() => {
+//       //         window.dispatchEvent(new Event("triggerVideoJump"));
+//       //       }, 600);
+//       //     });
+//       //   });
+//       // }
+
 //       if (action === "go_mart") {
-//         ScrollTrigger.refresh(true);
+//   const videoSection = document.getElementById("video-section");
+//   if (!videoSection) return;
 
-//         requestAnimationFrame(() => {
-//           const section = document.querySelector("#video-section");
-//           section?.scrollIntoView({ behavior: "smooth" });
+//   // 1️⃣ First physically scroll to video section
+//   videoSection.scrollIntoView({ behavior: "smooth" });
 
-//           setTimeout(() => {
-//             window.dispatchEvent(new CustomEvent("scrollToPhoneFrame598"));
-//           }, 600);
-//         });
-//       }
+//   // 2️⃣ Then wait for Video ScrollTrigger
+//   const waitForVideo = () => {
+//     if ((window as any).__VIDEO_READY__) {
+//       window.dispatchEvent(new Event("triggerVideoJump"));
+//       return;
+//     }
+//     requestAnimationFrame(waitForVideo);
+//   };
+
+//   requestAnimationFrame(waitForVideo);
+// }
+
+
+
+      
+
+
 
 //     };
 
@@ -246,6 +314,46 @@
 //     window.addEventListener("pulseReady", runAction);
 //     return () => window.removeEventListener("pulseReady", runAction);
 //   }, [showPreloader]);
+
+//   useEffect(() => {
+//     const onScroll = () => {
+//       const scrollY = window.scrollY;
+
+//       const scrollContainer = document.getElementById("scroll-container");
+//       const videoSection = document.getElementById("video-section");
+
+//       if (!scrollContainer) return;
+
+//       const containerTop = scrollContainer.offsetTop;
+//       const containerHeight = scrollContainer.offsetHeight;
+
+//       // 🔁 SAME math used by TeraaCharge jump
+//       const isMobile = window.innerWidth < 768;
+//       const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
+//       const chargeTriggerY = containerTop + startOffset;
+
+//       const martTriggerY = videoSection?.offsetTop ?? Infinity;
+
+//       if (scrollY >= martTriggerY - 20) {
+//         localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
+//         window.dispatchEvent(new Event("storage"));
+//         return;
+//       }
+
+//       if (scrollY >= chargeTriggerY) {
+//         localStorage.setItem("TW_ACTIVE_NAV", "TeraaCharge");
+//         window.dispatchEvent(new Event("storage"));
+//         return;
+//       }
+
+//       localStorage.setItem("TW_ACTIVE_NAV", "Pulse");
+//       window.dispatchEvent(new Event("storage"));
+//     };
+
+//     window.addEventListener("scroll", onScroll);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, []);
+
 
 //   if (!ready) return null;
 
@@ -265,9 +373,13 @@
 //     );
 //   }
 
+//   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+//   const cameraFov = isMobile ? 70 : 50; // 👈 tweak values here
+
+
 //   return (
 
-//     <main style={{ background: "black", minHeight: scrollHeight, color: "white" }}>
+//     <main style={{ background: "black", color: "white" }}>
 //       {/* 🧭 Navbar stays fixed at top */}
 //       <Navbar />
 
@@ -291,7 +403,7 @@
 //           }}
 //         >
 //           <Canvas
-//             camera={{ position: [0, 1.5, 25], fov: 50 }}
+//             camera={{ position: [0, 1.5, 25], fov: cameraFov }}
 //             style={{
 //               height: "100vh",
 //               width: "100vw",
@@ -330,10 +442,12 @@
 //         <About />
 //       </div>
 
+//       <Footer />
+
 //     </main>
 //   );
 // }
-// useGLTF.preload("/models/lastwala.glb");
+// useGLTF.preload("/models/final.glb");
 
 
 
@@ -421,20 +535,20 @@ function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.Mutable
 
     const CAMERA_SCROLL_PX = 1900; // 🔑 camera always finishes fast
 
-const tl = gsap.timeline({
-  scrollTrigger: {
-    trigger: "#scroll-container",
-    start: "top top",
-    end: `+=${CAMERA_SCROLL_PX}`, // ✅ FIXED distance
-    scrub: 0.5,
-  },
-});
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#scroll-container",
+        start: "top top",
+        end: `+=${CAMERA_SCROLL_PX}`, // ✅ FIXED distance
+        scrub: 0.5,
+      },
+    });
 
 
 
     tl.to(camera.position, {
       z: isMobile ? 10 : 15,
-      y: isMobile ? 20: 20,
+      y: isMobile ? 20 : 20,
       duration: 1,
     });
 
@@ -494,30 +608,33 @@ export default function Home() {
   const [showPreloader, setShowPreloader] = useState(false);
   const [ready, setReady] = useState(false);
 
+ 
+
+
   useEffect(() => {
-  const isPulse = window.location.pathname === "/";
-  const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
-  const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
+    const isPulse = window.location.pathname === "/";
+    const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
+    const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
 
-  const isFirstVisit = !sessionStorage.getItem("HAS_VISITED_PULSE");
+    const isFirstVisit = !sessionStorage.getItem("HAS_VISITED_PULSE");
 
-  // 👇 NEW: check which tab was active before reload
-  const lastActive = localStorage.getItem("TW_ACTIVE_NAV") || "Pulse";
-  const wasPulseTab = lastActive === "Pulse";
+    // 👇 NEW: check which tab was active before reload
+    const lastActive = localStorage.getItem("TW_ACTIVE_NAV") || "Pulse";
+    const wasPulseTab = lastActive === "Pulse";
 
-  // Show loader on FIRST visit or REAL reload — ONLY if Pulse tab
-  if (isPulse && wasPulseTab && (isFirstVisit || wasReload) && !hasAction) {
-    setShowPreloader(true);
-  } else {
-    setShowPreloader(false);
-  }
+    // Show loader on FIRST visit or REAL reload — ONLY if Pulse tab
+    if (isPulse && wasPulseTab && (isFirstVisit || wasReload) && !hasAction) {
+      setShowPreloader(true);
+    } else {
+      setShowPreloader(false);
+    }
 
-  // Mark that Pulse has been visited
-  sessionStorage.setItem("HAS_VISITED_PULSE", "true");
+    // Mark that Pulse has been visited
+    sessionStorage.setItem("HAS_VISITED_PULSE", "true");
 
-  sessionStorage.removeItem("PAGE_WAS_RELOADED");
-  setReady(true);
-}, []);
+    sessionStorage.removeItem("PAGE_WAS_RELOADED");
+    setReady(true);
+  }, []);
 
 
 
@@ -593,30 +710,33 @@ export default function Home() {
       }
 
       if (action === "go_mart") {
-  const scrollContainer = document.getElementById("scroll-container");
-  if (!scrollContainer) return;
+        const scrollContainer = document.getElementById("scroll-container");
+        if (!scrollContainer) return;
 
-  ScrollTrigger.refresh(true);
+        ScrollTrigger.refresh(true);
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const containerTop = scrollContainer.offsetTop;
-      const containerHeight = scrollContainer.offsetHeight;
-      const windowHeight = window.innerHeight;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const containerTop = scrollContainer.offsetTop;
+            const containerHeight = scrollContainer.offsetHeight;
+            const windowHeight = window.innerHeight;
 
-      const targetY = containerTop + containerHeight - windowHeight - 50;
+            const targetY = containerTop + containerHeight - windowHeight - 50;
 
-      window.scrollTo({
-        top: targetY,
-        behavior: "smooth",
-      });
+            window.scrollTo({
+              top: targetY,
+              behavior: "smooth",
+            });
 
-      setTimeout(() => {
-        window.dispatchEvent(new Event("triggerVideoJump"));
-      }, 600);
-    });
-  });
-}
+            setTimeout(() => {
+              window.dispatchEvent(new Event("triggerVideoJump"));
+            }, 600);
+          });
+        });
+      }
+
+      
+
 
 
     };
@@ -631,43 +751,43 @@ export default function Home() {
   }, [showPreloader]);
 
   useEffect(() => {
-  const onScroll = () => {
-    const scrollY = window.scrollY;
+    const onScroll = () => {
+      const scrollY = window.scrollY;
 
-    const scrollContainer = document.getElementById("scroll-container");
-    const videoSection = document.getElementById("video-section");
+      const scrollContainer = document.getElementById("scroll-container");
+      const videoSection = document.getElementById("video-section");
 
-    if (!scrollContainer) return;
+      if (!scrollContainer) return;
 
-    const containerTop = scrollContainer.offsetTop;
-    const containerHeight = scrollContainer.offsetHeight;
+      const containerTop = scrollContainer.offsetTop;
+      const containerHeight = scrollContainer.offsetHeight;
 
-    // 🔁 SAME math used by TeraaCharge jump
-    const isMobile = window.innerWidth < 768;
-    const startOffset = containerHeight * (isMobile ? 0.588 : 0.649); 
-    const chargeTriggerY = containerTop + startOffset;
+      // 🔁 SAME math used by TeraaCharge jump
+      const isMobile = window.innerWidth < 768;
+      const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
+      const chargeTriggerY = containerTop + startOffset;
 
-    const martTriggerY = videoSection?.offsetTop ?? Infinity;
+      const martTriggerY = videoSection?.offsetTop ?? Infinity;
 
-    if (scrollY >= martTriggerY - 20) {
-      localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
+      if (scrollY >= martTriggerY - 20) {
+        localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
+        window.dispatchEvent(new Event("storage"));
+        return;
+      }
+
+      if (scrollY >= chargeTriggerY) {
+        localStorage.setItem("TW_ACTIVE_NAV", "TeraaCharge");
+        window.dispatchEvent(new Event("storage"));
+        return;
+      }
+
+      localStorage.setItem("TW_ACTIVE_NAV", "Pulse");
       window.dispatchEvent(new Event("storage"));
-      return;
-    }
+    };
 
-    if (scrollY >= chargeTriggerY) {
-      localStorage.setItem("TW_ACTIVE_NAV", "TeraaCharge");
-      window.dispatchEvent(new Event("storage"));
-      return;
-    }
-
-    localStorage.setItem("TW_ACTIVE_NAV", "Pulse");
-    window.dispatchEvent(new Event("storage"));
-  };
-
-  window.addEventListener("scroll", onScroll);
-  return () => window.removeEventListener("scroll", onScroll);
-}, []);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
 
   if (!ready) return null;
@@ -694,7 +814,7 @@ export default function Home() {
 
   return (
 
-    <main style={{ background: "black",  color: "white" }}>
+    <main style={{ background: "black", color: "white" }}>
       {/* 🧭 Navbar stays fixed at top */}
       <Navbar />
 
@@ -757,7 +877,7 @@ export default function Home() {
         <About />
       </div>
 
-      <Footer/>
+      <Footer />
 
     </main>
   );

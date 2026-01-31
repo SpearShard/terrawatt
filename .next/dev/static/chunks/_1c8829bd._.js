@@ -14,7 +14,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navi
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/components/AnimatePresence/index.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/gsap/index.js [app-client] (ecmascript) <locals>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/gsap/ScrollTrigger.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
@@ -24,25 +23,17 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-;
-if ("TURBOPACK compile-time truthy", 1) {
-    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].registerPlugin(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"]);
-}
-const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
+const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV";
 function Navbar() {
     _s();
+    const navRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
     const [active, setActive] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("Pulse");
     const [isScrolled, setIsScrolled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false); // New State for Mobile
-    const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
-    // --- NEW: Prevent Body Scroll when Menu is Open ---
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    /* ---------------- body lock ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
-            if (isMobileMenuOpen) {
-                document.body.style.overflow = "hidden";
-            } else {
-                document.body.style.overflow = "auto";
-            }
+            document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
             return ({
                 "Navbar.useEffect": ()=>{
                     document.body.style.overflow = "auto";
@@ -52,64 +43,127 @@ function Navbar() {
     }["Navbar.useEffect"], [
         isMobileMenuOpen
     ]);
-    // --- Scroll Detection ---
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ---------------- scroll bg ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
-            const handleScroll = {
-                "Navbar.useEffect.handleScroll": ()=>setIsScrolled(window.scrollY > 20)
-            }["Navbar.useEffect.handleScroll"];
-            window.addEventListener("scroll", handleScroll);
+            const onScroll = {
+                "Navbar.useEffect.onScroll": ()=>setIsScrolled(window.scrollY > 20)
+            }["Navbar.useEffect.onScroll"];
+            window.addEventListener("scroll", onScroll);
             return ({
-                "Navbar.useEffect": ()=>window.removeEventListener("scroll", handleScroll)
+                "Navbar.useEffect": ()=>window.removeEventListener("scroll", onScroll)
             })["Navbar.useEffect"];
         }
     }["Navbar.useEffect"], []);
-    // --- State Initialization & URL Sync ---
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* -------- desktop hide / reveal -------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
-            const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
-            if (storedActive) {
-                setActive(storedActive);
+            if (!navRef.current || window.innerWidth < 768) return;
+            const nav = navRef.current;
+            let lastScroll = window.scrollY;
+            const onScroll = {
+                "Navbar.useEffect.onScroll": ()=>{
+                    const current = window.scrollY;
+                    if (current > lastScroll && current > 80) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].to(nav, {
+                            y: -120,
+                            duration: 0.4,
+                            ease: "power2.out"
+                        });
+                    }
+                    lastScroll = current;
+                }
+            }["Navbar.useEffect.onScroll"];
+            const show = {
+                "Navbar.useEffect.show": ()=>__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].to(nav, {
+                        y: 0,
+                        duration: 0.25,
+                        ease: "power2.out"
+                    })
+            }["Navbar.useEffect.show"];
+            const topZone = document.createElement("div");
+            Object.assign(topZone.style, {
+                position: "fixed",
+                top: "0",
+                left: "0",
+                width: "100%",
+                height: "20px",
+                zIndex: "40"
+            });
+            document.body.appendChild(topZone);
+            window.addEventListener("scroll", onScroll);
+            nav.addEventListener("mouseenter", show);
+            topZone.addEventListener("mouseenter", show);
+            return ({
+                "Navbar.useEffect": ()=>{
+                    window.removeEventListener("scroll", onScroll);
+                    nav.removeEventListener("mouseenter", show);
+                    topZone.remove();
+                }
+            })["Navbar.useEffect"];
+        }
+    }["Navbar.useEffect"], []);
+    /* ---------------- route syncing ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "Navbar.useEffect": ()=>{
+            const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+            if (stored) {
+                setActive(stored);
                 localStorage.removeItem(ACTIVE_NAV_KEY);
                 return;
             }
-            // Only set default "Pulse" on homepage if no specific tab was requested
             if (pathname === "/") {
-                // Check if we arrived with a specific action (TeraaCharge or TeraaMart)
                 const action = localStorage.getItem("TW_action");
-                if (action === "go_charge") {
-                    setActive("TeraaCharge");
-                } else if (action === "go_mart") {
-                    setActive("TeraaMart");
-                } else {
-                    setActive("Pulse");
-                }
-            } else if (pathname.includes("investors")) {
-                setActive("Investors & Partners");
-            } else if (pathname.includes("insights")) {
-                setActive("Insights");
-            } else if (pathname.includes("connect")) {
-                setActive("Connect");
-            }
+                if (action === "go_charge") setActive("TeraaCharge");
+                else if (action === "go_mart") setActive("TeraaMart");
+                else setActive("Pulse");
+            } else if (pathname.includes("investors")) setActive("Investors & Partners");
+            else if (pathname.includes("insights")) setActive("Insights");
+            else if (pathname.includes("connect")) setActive("Connect");
         }
     }["Navbar.useEffect"], [
         pathname
     ]);
-    // --- Sync Active Tab From Scroll (page.tsx) ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
-            const syncFromScroll = {
-                "Navbar.useEffect.syncFromScroll": ()=>{
-                    const v = localStorage.getItem("TW_ACTIVE_NAV");
+            if (pathname !== "/") return;
+            const sync = {
+                "Navbar.useEffect.sync": ()=>{
+                    const v = localStorage.getItem(ACTIVE_NAV_KEY);
                     if (v) setActive(v);
                 }
-            }["Navbar.useEffect.syncFromScroll"];
-            window.addEventListener("storage", syncFromScroll);
+            }["Navbar.useEffect.sync"];
+            window.addEventListener("storage", sync);
             return ({
-                "Navbar.useEffect": ()=>window.removeEventListener("storage", syncFromScroll)
+                "Navbar.useEffect": ()=>window.removeEventListener("storage", sync)
             })["Navbar.useEffect"];
         }
-    }["Navbar.useEffect"], []);
+    }["Navbar.useEffect"], [
+        pathname
+    ]);
+    /* ---------------- navigation ---------------- */ const handleNavigation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "Navbar.useCallback[handleNavigation]": (name)=>{
+            setIsMobileMenuOpen(false);
+            const onHome = window.location.pathname === "/";
+            if (name === "TeraaCharge") {
+                setActive(name);
+                if (onHome) window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+                else {
+                    localStorage.setItem("TW_action", "go_charge");
+                    window.location.href = "/";
+                }
+                return true;
+            }
+            if (name === "TeraaMart") {
+                setActive(name);
+                if (onHome) window.dispatchEvent(new Event("triggerVideoJump"));
+                else {
+                    localStorage.setItem("TW_action", "go_mart");
+                    window.location.href = "/";
+                }
+                return true;
+            }
+            setActive(name);
+            return false;
+        }
+    }["Navbar.useCallback[handleNavigation]"], []);
     const navItems = [
         {
             name: "Pulse",
@@ -119,15 +173,15 @@ function Navbar() {
             name: "TeraaCharge",
             href: "/",
             image: "/teraacharge.png",
-            width: 90,
-            height: 28
+            w: 90,
+            h: 28
         },
         {
             name: "TeraaMart",
             href: "/",
             image: "/teraamartlogo.png",
-            width: 80,
-            height: 26
+            w: 80,
+            h: 26
         },
         {
             name: "Investors & Partners",
@@ -143,213 +197,122 @@ function Navbar() {
             isButton: true
         }
     ];
-    // Function to handle custom routing and setting state
-    const handleCustomNavigation = (itemName)=>{
-        sessionStorage.removeItem("PAGE_WAS_RELOADED");
-        const isOnPulse = window.location.pathname === "/";
-        // Close mobile menu immediately if open
-        setIsMobileMenuOpen(false);
-        if (itemName === "TeraaCharge") {
-            setActive("TeraaCharge");
-            if (isOnPulse) {
-                // Already on homepage → immediately jump to TeraaCharge frame
-                window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-            } else {
-                // Coming from any other page (Investors, Insights, Connect, etc.)
-                // Set flag and redirect to homepage
-                localStorage.setItem("TW_action", "go_charge");
-                window.location.href = "/";
-            }
-            return true;
-        }
-        if (itemName === "TeraaMart") {
-            setActive("TeraaMart");
-            if (isOnPulse) {
-                // Already on homepage → trigger mart jump
-                window.dispatchEvent(new Event("triggerVideoJump"));
-            } else {
-                // Coming from other page
-                localStorage.setItem("TW_action", "go_mart");
-                window.location.href = "/";
-            }
-            return true;
-        }
-        return false;
-    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
-        className: `fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen ? "bg-black/90 backdrop-blur-xl  shadow-lg" : "py-6 bg-transparent"}`,
+        ref: navRef,
+        className: `fixed top-0 left-0 w-full z-50 transition-all ${isScrolled || isMobileMenuOpen ? "bg-black/90 backdrop-blur-xl shadow-lg" : "py-6 bg-transparent"}`,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex  lg:p-[0.2vw] items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            href: "/",
-                            className: "flex items-center relative z-50",
-                            onClick: ()=>{
-                                sessionStorage.setItem("NAV_SOURCE", "navbar");
-                                setActive("Pulse");
-                                setIsMobileMenuOpen(false);
-                            },
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                src: "/teraawatt.svg",
-                                alt: "TeraaWatt Logo",
-                                width: 125,
-                                height: 45,
-                                className: "object-contain"
-                            }, void 0, false, {
-                                fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 179,
-                                columnNumber: 13
-                            }, this)
+                className: "flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:px-10",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        href: "/",
+                        onClick: ()=>handleNavigation("Pulse"),
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                            src: "/teraawatt.svg",
+                            alt: "logo",
+                            width: 125,
+                            height: 45,
+                            className: "p-[1vw] mr-[1vw]"
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 169,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            className: "md:hidden relative z-50 text-white p-2 focus:outline-none",
-                            onClick: ()=>setIsMobileMenuOpen(!isMobileMenuOpen),
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "w-6 h-6 flex flex-col justify-center space-y-1.5",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: `block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""}`
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 194,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: `block w-full h-0.5 bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 198,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: `block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 202,
-                                        columnNumber: 15
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 193,
-                                columnNumber: 13
-                            }, this)
-                        }, void 0, false, {
-                            fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 189,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "hidden md:flex items-center space-x-8 text-white font-normal relative",
-                            children: navItems.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                    href: item.href,
-                                    className: "relative px-2 py-1 group",
-                                    onClick: (e)=>{
-                                        if (item.name === "Investors & Partners") {
-                                            e.preventDefault();
-                                            window.location.href = "/investors-and-partners";
-                                            return;
-                                        }
-                                        const handled = handleCustomNavigation(item.name);
-                                        if (handled) {
-                                            e.preventDefault();
-                                        } else {
-                                            setActive(item.name);
-                                        }
-                                    },
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: `relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400 group-hover:text-white"}`,
-                                            onClick: (e)=>{
-                                                const handled = handleCustomNavigation(item.name);
-                                                if (handled) {
-                                                    e.preventDefault();
-                                                } else {
-                                                    setActive(item.name);
-                                                }
-                                            },
-                                            children: item.image ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                src: item.image,
-                                                alt: item.name,
-                                                width: item.width,
-                                                height: item.height,
-                                                className: `transition-all duration-300 ${active === item.name ? "opacity-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]" : "opacity-70 group-hover:opacity-100"}`
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/Navbar.tsx",
-                                                lineNumber: 246,
-                                                columnNumber: 3
-                                            }, this) : !item.isButton ? item.name : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                src: "/Contact_page/connect1.svg",
-                                                alt: "Connect",
-                                                width: 70,
-                                                height: 48,
-                                                className: `transition duration-300 ${active === "Connect" ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : "opacity-80 hover:opacity-100"}`
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/Navbar.tsx",
-                                                lineNumber: 260,
-                                                columnNumber: 3
-                                            }, this)
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 231,
-                                            columnNumber: 17
-                                        }, this),
-                                        !item.isButton && active === item.name && // <motion.div
-                                        //   layoutId="navbar-indicator"
-                                        //   className="absolute inset-0 z-10 rounded-full"
-                                        //   style={{
-                                        //     background:
-                                        //       "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)",
-                                        //     boxShadow:
-                                        //       "0 5px 20px -8px rgba(34, 211, 238, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05)",
-                                        //   }}
-                                        //   transition={{
-                                        //     type: "spring",
-                                        //     bounce: 0.2,
-                                        //     stiffness: 100,
-                                        //     damping: 10,
-                                        //   }}
-                                        // />
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                                            layoutId: "navbar-indicator",
-                                            className: "absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full",
-                                            transition: {
-                                                type: "spring",
-                                                stiffness: 300,
-                                                damping: 30
-                                            }
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 293,
-                                            columnNumber: 19
-                                        }, this)
-                                    ]
-                                }, item.name, true, {
-                                    fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 212,
-                                    columnNumber: 15
-                                }, this))
-                        }, void 0, false, {
-                            fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 210,
+                            lineNumber: 171,
                             columnNumber: 11
                         }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 166,
-                    columnNumber: 9
-                }, this)
-            }, void 0, false, {
+                    }, void 0, false, {
+                        fileName: "[project]/components/Navbar.tsx",
+                        lineNumber: 170,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        className: "md:hidden relative z-50 w-10 h-10 flex items-center justify-center",
+                        onClick: ()=>setIsMobileMenuOpen((v)=>!v),
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "w-6 h-6 flex flex-col justify-center space-y-1.5",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Navbar.tsx",
+                                    lineNumber: 186,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    className: `block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Navbar.tsx",
+                                    lineNumber: 191,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Navbar.tsx",
+                                    lineNumber: 196,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/components/Navbar.tsx",
+                            lineNumber: 185,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/components/Navbar.tsx",
+                        lineNumber: 181,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "hidden md:flex space-x-8 text-white",
+                        children: navItems.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: item.href,
+                                onClick: (e)=>{
+                                    if (handleNavigation(item.name)) e.preventDefault();
+                                },
+                                className: `relative ${active === item.name ? "opacity-100" : "opacity-60"}`,
+                                children: [
+                                    item.image ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        src: item.image,
+                                        alt: item.name,
+                                        width: item.w,
+                                        height: item.h,
+                                        className: `relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/Navbar.tsx",
+                                        lineNumber: 216,
+                                        columnNumber: 17
+                                    }, this) : item.isButton ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        src: "/Contact_page/connect1.svg",
+                                        alt: "connect",
+                                        width: 70,
+                                        height: 48
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/Navbar.tsx",
+                                        lineNumber: 226,
+                                        columnNumber: 17
+                                    }, this) : item.name,
+                                    !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+                                        layoutId: "navbar-indicator",
+                                        className: "absolute left-0 right-0 h-[2px] bg-red-500"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/Navbar.tsx",
+                                        lineNumber: 232,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, item.name, true, {
+                                fileName: "[project]/components/Navbar.tsx",
+                                lineNumber: 207,
+                                columnNumber: 13
+                            }, this))
+                    }, void 0, false, {
+                        fileName: "[project]/components/Navbar.tsx",
+                        lineNumber: 205,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 163,
+                lineNumber: 168,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -388,77 +351,64 @@ function Navbar() {
                         className: "w-full px-6 space-y-3",
                         children: navItems.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 href: item.href,
-                                className: "relative block",
                                 onClick: (e)=>{
-                                    if (item.name === "Investors & Partners") {
-                                        e.preventDefault();
-                                        window.location.href = "/investors-and-partners";
-                                        setIsMobileMenuOpen(false);
-                                        return;
-                                    }
-                                    const handled = handleCustomNavigation(item.name);
-                                    if (handled) {
-                                        e.preventDefault();
-                                    } else {
-                                        setActive(item.name);
-                                        setIsMobileMenuOpen(false);
-                                    }
+                                    if (handleNavigation(item.name)) e.preventDefault();
                                 },
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: `relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active === item.name ? "bg-white/5" : "bg-white/0 hover:bg-white/5"}`,
+                                    className: `relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active === item.name ? "bg-white/5" : "hover:bg-white/5"}`,
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: `text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"}`,
                                             children: !item.isButton ? item.name : "Connect"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 360,
-                                            columnNumber: 15
+                                            lineNumber: 272,
+                                            columnNumber: 21
                                         }, this),
                                         !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                             layoutId: "mobile-indicator",
                                             className: "absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 370,
-                                            columnNumber: 17
+                                            lineNumber: 281,
+                                            columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 353,
-                                    columnNumber: 13
+                                    lineNumber: 267,
+                                    columnNumber: 19
                                 }, this)
                             }, item.name, false, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 332,
-                                columnNumber: 11
+                                lineNumber: 260,
+                                columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 324,
-                        columnNumber: 7
+                        lineNumber: 252,
+                        columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 317,
-                    columnNumber: 5
+                    lineNumber: 245,
+                    columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 315,
-                columnNumber: 1
+                lineNumber: 243,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 156,
+        lineNumber: 160,
         columnNumber: 5
     }, this);
 } // "use client";
  // import Image from "next/image";
  // import Link from "next/link";
- // import { useState, useEffect } from "react";
+ // import { useState,useRef, useEffect } from "react";
  // import { usePathname } from "next/navigation";
  // import { motion, AnimatePresence } from "framer-motion";
  // import gsap from "gsap";
@@ -467,12 +417,8 @@ function Navbar() {
  //   gsap.registerPlugin(ScrollTrigger);
  // }
  // const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
- // const SECTION_MAP = [
- //   { id: "pulse", tab: "Pulse" },
- //   { id: "teraacharge", tab: "TeraaCharge" },
- //   { id: "teraamart", tab: "TeraaMart" },
- // ];
  // export default function Navbar() {
+ //   const navRef = useRef<HTMLDivElement>(null);
  //   const [active, setActive] = useState("Pulse");
  //   const [isScrolled, setIsScrolled] = useState(false);
  //   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State for Mobile
@@ -492,6 +438,45 @@ function Navbar() {
  //     window.addEventListener("scroll", handleScroll);
  //     return () => window.removeEventListener("scroll", handleScroll);
  //   }, []);
+ //   useEffect(() => {
+ //   if (!navRef.current) return;
+ //   // Desktop only
+ //   if (window.innerWidth < 768) return;
+ //   const nav = navRef.current;
+ //   gsap.set(nav, { y: 0 });
+ //   let lastScroll = window.scrollY;
+ //   const onScroll = () => {
+ //     const current = window.scrollY;
+ //     if (current > lastScroll && current > 80) {
+ //       // scrolling down → hide
+ //       gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
+ //      } // else {
+ //       // scrolling up → show
+ //     //   gsap.to(nav, { y: 0, duration: 0.4, ease: "power2.out" });
+ //     // }
+ //     lastScroll = current;
+ //   };
+ //   window.addEventListener("scroll", onScroll);
+ //   // Reveal on hover
+ //   const show = () =>
+ //     gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
+ //   nav.addEventListener("mouseenter", show);
+ //   // Invisible top trigger zone
+ //   const topZone = document.createElement("div");
+ //   topZone.style.position = "fixed";
+ //   topZone.style.top = "0";
+ //   topZone.style.left = "0";
+ //   topZone.style.width = "100%";
+ //   topZone.style.height = "20px";
+ //   topZone.style.zIndex = "40";
+ //   document.body.appendChild(topZone);
+ //   topZone.addEventListener("mouseenter", show);
+ //   return () => {
+ //     window.removeEventListener("scroll", onScroll);
+ //     nav.removeEventListener("mouseenter", show);
+ //     topZone.remove();
+ //   };
+ // }, []);
  //   // --- State Initialization & URL Sync ---
  //   useEffect(() => {
  //     const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
@@ -501,7 +486,7 @@ function Navbar() {
  //       return;
  //     }
  //     // Only set default "Pulse" on homepage if no specific tab was requested
- //     if (pathname === "/") {
+ //     if (pathname === "/" && !localStorage.getItem("TW_action")) {
  //       // Check if we arrived with a specific action (TeraaCharge or TeraaMart)
  //       const action = localStorage.getItem("TW_action");
  //       if (action === "go_charge") {
@@ -519,68 +504,36 @@ function Navbar() {
  //       setActive("Connect");
  //     }
  //   }, [pathname]);
- //   // --- Scroll-based Active Tab Sync ---
- //   // useEffect(() => {
- //   //   if (pathname !== "/") return;
- //   //   const triggers: ScrollTrigger[] = [];
- //   //   SECTION_MAP.forEach(({ id, tab }) => {
- //   //     const el = document.getElementById(id);
- //   //     if (!el) return;
- //   //     const trigger = ScrollTrigger.create({
- //   //       trigger: el,
- //   //       start: "top center",
- //   //       end: "bottom center",
- //   //       onEnter: () => setActive(tab),
- //   //       onEnterBack: () => setActive(tab),
- //   //     });
- //   //     triggers.push(trigger);
- //   //   });
- //   //   return () => {
- //   //     triggers.forEach(t => t.kill());
- //   //   };
- //   // }, [pathname]);
- //   // --- Scroll-progress based active tab sync ---
- //   // useEffect(() => {
- //   //   let raf: number;
- //   //   // 🔧 TUNE THESE VALUES
- //   //   const TERAACHARGE_PROGRESS = 0.622;
- //   //   const TERAAMART_PROGRESS = 0.9;
- //   //   const checkProgress = () => {
- //   //     const p = (window as any).__SCROLL_PROGRESS__;
- //   //     if (typeof p === "number") {
- //   //       if (p >= TERAAMART_PROGRESS) {
- //   //         setActive("TeraaMart");
- //   //       } else if (p >= TERAACHARGE_PROGRESS) {
- //   //         setActive("TeraaCharge");
- //   //       } else {
- //   //         setActive("Pulse");
- //   //       }
- //   //     }
- //   //     raf = requestAnimationFrame(checkProgress);
- //   //   };
- //   //   raf = requestAnimationFrame(checkProgress);
- //   //   return () => cancelAnimationFrame(raf);
- //   // }, []);
+ //   // --- Sync Active Tab From Scroll (page.tsx) ---
+ // useEffect(() => {
+ //   if (pathname !== "/") return;
+ //   const syncFromScroll = () => {
+ //     const v = localStorage.getItem("TW_ACTIVE_NAV");
+ //     if (v) setActive(v);
+ //   };
+ //   window.addEventListener("storage", syncFromScroll);
+ //   return () => window.removeEventListener("storage", syncFromScroll);
+ // }, [pathname]);
  //   const navItems = [
- //     { name: "Pulse", href: "/" },
- //     {
- //       name: "TeraaCharge",
- //       href: "/",
- //       image: "/teraacharge.png",
- //       width: 80,
- //       height: 28,
- //     },
- //     {
- //       name: "TeraaMart",
- //       href: "/",
- //       image: "/teraamartlogo.png",
- //       width: 70,
- //       height: 26,
- //     },
- //     { name: "Investors & Partners", href: "/investors-and-partners" },
- //     { name: "Insights", href: "/insights" },
- //     { name: "Connect", href: "/connect", isButton: true },
- //   ];
+ //   { name: "Pulse", href: "/" },
+ //   {
+ //     name: "TeraaCharge",
+ //     href: "/",
+ //     image: "/teraacharge.png",
+ //     width: 90,
+ //     height: 28,
+ //   },
+ //   {
+ //     name: "TeraaMart",
+ //     href: "/",
+ //     image: "/teraamartlogo.png",
+ //     width: 80,
+ //     height: 26,
+ //   },
+ //   { name: "Investors & Partners", href: "/investors-and-partners" },
+ //   { name: "Insights", href: "/insights" },
+ //   { name: "Connect", href: "/connect", isButton: true },
+ // ];
  //   // Function to handle custom routing and setting state
  //   const handleCustomNavigation = (itemName: string) => {
  //     sessionStorage.removeItem("PAGE_WAS_RELOADED");
@@ -616,18 +569,19 @@ function Navbar() {
  //   };
  //   return (
  //     <nav
+ //       ref={navRef}
  //       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
- //         ? "bg-black/90  backdrop-blur-xl  shadow-lg"
+ //         ? "bg-black/90 backdrop-blur-xl  shadow-lg"
  //         : "py-6 bg-transparent"
  //         }`}
  //     >
- //       <div className="flex  py-[0.5vw] items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
+ //       <div className="flex  lg:p-[0.2vw] items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
  //         {/* Logo and Nav Items Container */}
  //         <div className="flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start">
  //           {/* Logo */}
  //           <Link
  //             href="/"
- //             className="flex   items-center relative z-50"
+ //             className="flex items-center relative z-50"
  //             onClick={() => {
  //               sessionStorage.setItem("NAV_SOURCE", "navbar");
  //               setActive("Pulse");
@@ -668,11 +622,12 @@ function Navbar() {
  //               <Link
  //                 key={item.name}
  //                 href={item.href}
- //                 className="relative   lg:h-auto group"
+ //                 className="relative px-2 py-1 group"
  //                 onClick={(e) => {
  //                   if (item.name === "Investors & Partners") {
- //                     e.preventDefault();
- //                     window.location.href = "/investors-and-partners";
+ //                     // e.preventDefault();
+ //                     setActive("Investors & Partners");
+ //                     // window.location.href = "/investors-and-partners";
  //                     return;
  //                   }
  //                   const handled = handleCustomNavigation(item.name);
@@ -698,34 +653,36 @@ function Navbar() {
  //                   }}
  //                 >
  //                   {item.image ? (
- //                     <Image
- //                       src={item.image}
- //                       alt={item.name}
- //                       width={item.width}
- //                       height={item.height}
- //                       className={`transition-all duration-300 ${active === item.name
- //                           ? "opacity-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
- //                           : "opacity-70 group-hover:opacity-100"
- //                         }`}
- //                     />
- //                   ) : !item.isButton ? (
- //                     item.name
- //                   ) : (
- //                     <Image
- //                       src="/Contact_page/connect1.svg"
- //                       alt="Connect"
- //                       width={70}
- //                       height={48}
- //                       className={`transition  duration-300 ${active === "Connect"
- //                           ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
- //                           : "opacity-80 hover:opacity-100"
- //                         }`}
- //                     />
- //                   )}
+ //   <Image
+ //     src={item.image}
+ //     alt={item.name}
+ //     width={item.width}
+ //     height={item.height}
+ //     className={`transition-all duration-300 ${
+ //       active === item.name
+ //         ? "opacity-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+ //         : "opacity-70 group-hover:opacity-100"
+ //     }`}
+ //   />
+ // ) : !item.isButton ? (
+ //   item.name
+ // ) : (
+ //   <Image
+ //     src="/Contact_page/connect1.svg"
+ //     alt="Connect"
+ //     width={70}
+ //     height={48}
+ //     className={`transition duration-300 ${
+ //       active === "Connect"
+ //         ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
+ //         : "opacity-80 hover:opacity-100"
+ //     }`}
+ //   />
+ // )}
  //                 </span>
  //                 {/* Desktop Indicator */}
  //                 {!item.isButton && active === item.name && (
- //   <motion.div
+ //                   <motion.div
  //     layoutId="navbar-indicator"
  //     className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
  //     transition={{
@@ -734,77 +691,83 @@ function Navbar() {
  //       damping: 30,
  //     }}
  //   />
- // )}
- //                 {/* Desktop Hover Glow */}
+ //                 )}
  //               </Link>
  //             ))}
  //           </div>
  //         </div>
  //       </div>
  //       {/* --- Mobile Menu Overlay --- */}
- //       <AnimatePresence>
- //         {isMobileMenuOpen && (
- //           <motion.div
- //             initial={{ opacity: 0, y: -20 }}
- //             animate={{ opacity: 1, y: 0 }}
- //             exit={{ opacity: 0, y: -20 }}
- //             transition={{ duration: 0.3 }}
- //             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-xl z-40 md:hidden flex flex-col items-center pt-10 h-screen"
+ // <AnimatePresence>
+ //   {isMobileMenuOpen && (
+ //     <motion.div
+ //       initial={{ opacity: 0 }}
+ //       animate={{ opacity: 1 }}
+ //       exit={{ opacity: 0 }}
+ //       transition={{ duration: 0.25 }}
+ //       className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
+ //     >
+ //       <motion.div
+ //         initial={{ y: 20, opacity: 0 }}
+ //         animate={{ y: 0, opacity: 1 }}
+ //         exit={{ y: 20, opacity: 0 }}
+ //         transition={{ type: "spring", stiffness: 120, damping: 18 }}
+ //         className="w-full px-6 space-y-3"
+ //       >
+ //         {navItems.map((item) => (
+ //           <Link
+ //             key={item.name}
+ //             href={item.href}
+ //             className="relative block"
+ //             onClick={(e) => {
+ //               if (item.name === "Investors & Partners") {
+ //                 // e.preventDefault();
+ //                 setActive("Investors & Partners");
+ //                 // window.location.href = "/investors-and-partners";
+ //                 setIsMobileMenuOpen(false);
+ //                 return;
+ //               }
+ //               const handled = handleCustomNavigation(item.name);
+ //               if (handled) {
+ //                 e.preventDefault();
+ //               } else {
+ //                 setActive(item.name);
+ //                 setIsMobileMenuOpen(false);
+ //               }
+ //             }}
  //           >
- //             <div className="flex flex-col space-y-6 text-center">
- //               {navItems.map((item) => (
- //                 <Link
- //                   key={item.name}
- //                   href={item.href}
- //                   className="relative px-4 py-2"
- //                   onClick={(e) => {
- //                     if (item.name === "Investors & Partners") {
- //                       e.preventDefault();
- //                       window.location.href = "/investors-and-partners";
- //                       setIsMobileMenuOpen(false);
- //                       return;
- //                     }
- //                     const handled = handleCustomNavigation(item.name);
- //                     if (handled) {
- //                       e.preventDefault();
- //                     } else {
- //                       setActive(item.name);
- //                       setIsMobileMenuOpen(false);
- //                     }
- //                   }}
- //                 >
- //                   <span
- //                     className={`text-xl font-medium tracking-wide ${active === item.name
- //                       ? "text-white"
- //                       : "text-neutral-400"
- //                       }`}
- //                   >
- //                     {!item.isButton ? (
- //                       item.name
- //                     ) : (
- //                       // Simplified Connect button for Mobile
- //                       <span className={`${active === "Connect" ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]" : ""}`}>
- //                         Connect
- //                       </span>
- //                     )}
- //                   </span>
- //                   {/* Mobile Active Indicator (Simple Underline) */}
- //                   {!item.isButton && active === item.name && (
- //                     <motion.div
- //                       layoutId="mobile-indicator"
- //                       className="absolute bottom-0 left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
- //                     />
- //                   )}
- //                 </Link>
- //               ))}
+ //             <div
+ //               className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
+ //                 active === item.name
+ //                   ? "bg-white/5"
+ //                   : "bg-white/0 hover:bg-white/5"
+ //               }`}
+ //             >
+ //               <span
+ //                 className={`text-lg font-medium tracking-wide ${
+ //                   active === item.name ? "text-white" : "text-neutral-400"
+ //                 }`}
+ //               >
+ //                 {!item.isButton ? item.name : "Connect"}
+ //               </span>
+ //               {/* Active red underline */}
+ //               {!item.isButton && active === item.name && (
+ //                 <motion.div
+ //                   layoutId="mobile-indicator"
+ //                   className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
+ //                 />
+ //               )}
  //             </div>
- //           </motion.div>
- //         )}
- //       </AnimatePresence>
+ //           </Link>
+ //         ))}
+ //       </motion.div>
+ //     </motion.div>
+ //   )}
+ // </AnimatePresence>
  //     </nav>
  //   );
  // }
-_s(Navbar, "fuE6FDl/mXVA8o8+ARnJ8Lxz/CM=", false, function() {
+_s(Navbar, "0lRvTdPAAjxhxEz1oSQtLYlWAkc=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"]
     ];
@@ -1156,16 +1119,20 @@ function BlogPost({ params }) {
     ]);
     const handleShare = async ()=>{
         if (!blog) return;
-        const shareData = {
-            title: blog.title,
-            text: blog.shortDescription,
-            url: window.location.href
-        };
+        const url = window.location.href;
+        // Detect Apple desktop (MacBooks / iMacs)
+        const isAppleDesktop = typeof navigator !== "undefined" && /Macintosh|Mac OS X/.test(navigator.userAgent);
         try {
-            if (navigator.share) {
-                await navigator.share(shareData);
+            // Use native share ONLY on mobile devices
+            if (navigator.share && !isAppleDesktop) {
+                await navigator.share({
+                    title: blog.title,
+                    text: blog.shortDescription,
+                    url
+                });
             } else {
-                await navigator.clipboard.writeText(window.location.href);
+                // Fallback: always copy ONLY the URL
+                await navigator.clipboard.writeText(url);
                 alert("Link copied to clipboard!");
             }
         } catch (err) {
@@ -1183,7 +1150,7 @@ function BlogPost({ params }) {
                         className: "w-12 h-12 border-t-2 border-cyan-500 rounded-full animate-spin"
                     }, void 0, false, {
                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                        lineNumber: 85,
+                        lineNumber: 93,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1191,18 +1158,18 @@ function BlogPost({ params }) {
                         children: "Loading Experience"
                     }, void 0, false, {
                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                        lineNumber: 86,
+                        lineNumber: 94,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                lineNumber: 84,
+                lineNumber: 92,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/insights/[slug]/page.tsx",
-            lineNumber: 83,
+            lineNumber: 91,
             columnNumber: 7
         }, this);
     }
@@ -1216,7 +1183,7 @@ function BlogPost({ params }) {
                     children: "Content Not Found"
                 }, void 0, false, {
                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                    lineNumber: 96,
+                    lineNumber: 104,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1225,13 +1192,13 @@ function BlogPost({ params }) {
                     children: "Return Home"
                 }, void 0, false, {
                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                    lineNumber: 97,
+                    lineNumber: 105,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/insights/[slug]/page.tsx",
-            lineNumber: 95,
+            lineNumber: 103,
             columnNumber: 7
         }, this);
     }
@@ -1240,7 +1207,7 @@ function BlogPost({ params }) {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                lineNumber: 106,
+                lineNumber: 114,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1250,7 +1217,7 @@ function BlogPost({ params }) {
                 }
             }, void 0, false, {
                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                lineNumber: 109,
+                lineNumber: 117,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1260,20 +1227,20 @@ function BlogPost({ params }) {
                         className: "absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-900/10 rounded-full blur-[120px]"
                     }, void 0, false, {
                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                        lineNumber: 116,
+                        lineNumber: 124,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[120px]"
                     }, void 0, false, {
                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                        lineNumber: 117,
+                        lineNumber: 125,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                lineNumber: 115,
+                lineNumber: 123,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1307,12 +1274,12 @@ function BlogPost({ params }) {
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 132,
+                                                    lineNumber: 140,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                lineNumber: 131,
+                                                lineNumber: 139,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1320,18 +1287,18 @@ function BlogPost({ params }) {
                                                 children: "Back to Journal"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                lineNumber: 134,
+                                                lineNumber: 142,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                                        lineNumber: 130,
+                                        lineNumber: 138,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 125,
+                                    lineNumber: 133,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].h1, {
@@ -1352,7 +1319,7 @@ function BlogPost({ params }) {
                                     children: blog.title
                                 }, void 0, false, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 138,
+                                    lineNumber: 146,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1376,7 +1343,7 @@ function BlogPost({ params }) {
                                                     className: "text-cyan-500"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 154,
+                                                    lineNumber: 162,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1387,20 +1354,20 @@ function BlogPost({ params }) {
                                                     })
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 155,
+                                                    lineNumber: 163,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 153,
+                                            lineNumber: 161,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "w-1 h-1 bg-neutral-700 rounded-full"
                                         }, void 0, false, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 163,
+                                            lineNumber: 171,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1411,27 +1378,27 @@ function BlogPost({ params }) {
                                                     className: "text-cyan-500"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 165,
+                                                    lineNumber: 173,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "5 min read"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 166,
+                                                    lineNumber: 174,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 164,
+                                            lineNumber: 172,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "flex-grow"
                                         }, void 0, false, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 168,
+                                            lineNumber: 176,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1442,7 +1409,7 @@ function BlogPost({ params }) {
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 170,
+                                                    lineNumber: 178,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1450,25 +1417,25 @@ function BlogPost({ params }) {
                                                     children: "Share"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                    lineNumber: 171,
+                                                    lineNumber: 179,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 169,
+                                            lineNumber: 177,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 147,
+                                    lineNumber: 155,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                            lineNumber: 124,
+                            lineNumber: 132,
                             columnNumber: 11
                         }, this),
                         blog.images?.[0]?.url && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1498,20 +1465,20 @@ function BlogPost({ params }) {
                                     className: "w-full h-full object-cover hover:scale-105 transition-transform duration-[2s] ease-out"
                                 }, void 0, false, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 184,
+                                    lineNumber: 192,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60"
                                 }, void 0, false, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 189,
+                                    lineNumber: 197,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                            lineNumber: 178,
+                            lineNumber: 186,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1527,7 +1494,7 @@ function BlogPost({ params }) {
                                                 children: "Written By"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                lineNumber: 199,
+                                                lineNumber: 207,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1538,7 +1505,7 @@ function BlogPost({ params }) {
                                                         children: "A"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                        lineNumber: 201,
+                                                        lineNumber: 209,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1548,7 +1515,7 @@ function BlogPost({ params }) {
                                                                 children: "Author Name"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                                lineNumber: 205,
+                                                                lineNumber: 213,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1556,30 +1523,30 @@ function BlogPost({ params }) {
                                                                 children: "Editor & Chief"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                                lineNumber: 206,
+                                                                lineNumber: 214,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                        lineNumber: 204,
+                                                        lineNumber: 212,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                lineNumber: 200,
+                                                lineNumber: 208,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/insights/[slug]/page.tsx",
-                                        lineNumber: 198,
+                                        lineNumber: 206,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 197,
+                                    lineNumber: 205,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1607,7 +1574,7 @@ function BlogPost({ params }) {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 220,
+                                            lineNumber: 228,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1617,49 +1584,240 @@ function BlogPost({ params }) {
                                                 children: "Thanks for reading."
                                             }, void 0, false, {
                                                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                                                lineNumber: 239,
+                                                lineNumber: 247,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                                            lineNumber: 238,
+                                            lineNumber: 246,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                                    lineNumber: 213,
+                                    lineNumber: 221,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/insights/[slug]/page.tsx",
-                            lineNumber: 194,
+                            lineNumber: 202,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/insights/[slug]/page.tsx",
-                    lineNumber: 121,
+                    lineNumber: 129,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                lineNumber: 120,
+                lineNumber: 128,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/insights/[slug]/page.tsx",
-                lineNumber: 248,
+                lineNumber: 256,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/insights/[slug]/page.tsx",
-        lineNumber: 105,
+        lineNumber: 113,
         columnNumber: 5
     }, this);
-}
+} // "use client";
+ // import { useEffect, useState, use, useCallback } from "react";
+ // import Navbar from "@/components/Navbar";
+ // import Footer from "@/components/Footer";
+ // import { motion, useScroll, useTransform } from "framer-motion";
+ // import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
+ // import Link from "next/link";
+ // interface Blog {
+ //   id: string;
+ //   title: string;
+ //   slug: string;
+ //   shortDescription: string;
+ //   content?: string;
+ //   publishDate: string;
+ //   images: { url: string }[];
+ // }
+ // export default function BlogPost({
+ //   params,
+ // }: {
+ //   params: Promise<{ slug: string }>;
+ // }) {
+ //   const { slug } = use(params);
+ //   const [blog, setBlog] = useState<Blog | null>(null);
+ //   const [loading, setLoading] = useState(true);
+ //   /* scroll progress */
+ //   const { scrollYProgress } = useScroll();
+ //   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
+ //   /* ---------------- data fetch ---------------- */
+ //   useEffect(() => {
+ //     const controller = new AbortController();
+ //     async function loadBlog() {
+ //       try {
+ //         const res = await fetch(
+ //           "https://devapi.teraawatt.com/api/v1/users/blog/all",
+ //           { signal: controller.signal }
+ //         );
+ //         const json = await res.json();
+ //         const blogs: Blog[] = json?.data?.blogs || [];
+ //         const match = blogs.find((b) => b.slug === slug);
+ //         if (!match) {
+ //           setLoading(false);
+ //           return;
+ //         }
+ //         const res2 = await fetch(
+ //           `https://devapi.teraawatt.com/api/v1/users/blog/${match.id}`,
+ //           { signal: controller.signal }
+ //         );
+ //         const fullBlog = await res2.json();
+ //         setBlog(fullBlog?.data || match);
+ //       } catch (e) {
+ //         if (!controller.signal.aborted) console.error(e);
+ //       }
+ //       setLoading(false);
+ //     }
+ //     loadBlog();
+ //     return () => controller.abort();
+ //   }, [slug]);
+ //   /* ---------------- share ---------------- */
+ //   const handleShare = useCallback(async () => {
+ //     if (!blog) return;
+ //     const shareData = {
+ //       title: blog.title,
+ //       text: blog.shortDescription,
+ //       url: window.location.href,
+ //     };
+ //     try {
+ //       if (navigator.share) {
+ //         await navigator.share(shareData);
+ //       } else {
+ //         await navigator.clipboard.writeText(window.location.href);
+ //         alert("Link copied to clipboard!");
+ //       }
+ //     } catch {}
+ //   }, [blog]);
+ //   /* loading */
+ //   if (loading) {
+ //     return (
+ //       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+ //         <div className="flex flex-col items-center gap-4">
+ //           <div className="w-12 h-12 border-t-2 border-cyan-500 rounded-full animate-spin" />
+ //           <p className="text-neutral-500 text-sm uppercase tracking-widest">
+ //             Loading Experience
+ //           </p>
+ //         </div>
+ //       </div>
+ //     );
+ //   }
+ //   /* 404 */
+ //   if (!blog) {
+ //     return (
+ //       <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-white">
+ //         <h1 className="text-4xl font-bold mb-4">Content Not Found</h1>
+ //         <Link
+ //           href="/"
+ //           className="px-6 py-2 border border-neutral-700 hover:bg-neutral-800 transition rounded-full text-sm"
+ //         >
+ //           Return Home
+ //         </Link>
+ //       </div>
+ //     );
+ //   }
+ //   return (
+ //     <div className="min-h-screen bg-[#050505] text-neutral-200 font-sans selection:bg-cyan-500/30">
+ //       <Navbar />
+ //       {/* progress bar */}
+ //       <motion.div
+ //         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 origin-left z-50"
+ //         style={{ scaleX }}
+ //       />
+ //       {/* ambient glow */}
+ //       <div className="fixed inset-0 pointer-events-none z-0">
+ //         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-900/10 rounded-full blur-[120px]" />
+ //         <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[120px]" />
+ //       </div>
+ //       <main className="relative z-10 pt-32 pb-24 px-6 md:px-12">
+ //         <article className="max-w-5xl mx-auto">
+ //           {/* header */}
+ //           <header className="mb-16 md:mb-24">
+ //             <Link
+ //               href="/insights"
+ //               className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-8 group"
+ //             >
+ //               <div className="p-2 rounded-full border border-neutral-800 group-hover:border-neutral-600 transition-colors">
+ //                 <ArrowLeft size={16} />
+ //               </div>
+ //               <span className="text-sm font-medium tracking-wide uppercase">
+ //                 Back to Journal
+ //               </span>
+ //             </Link>
+ //             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.1] mb-8">
+ //               {blog.title}
+ //             </h1>
+ //             <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-400 border-t border-neutral-800 pt-6">
+ //               <div className="flex items-center gap-2">
+ //                 <Calendar size={16} className="text-cyan-500" />
+ //                 {new Date(blog.publishDate).toLocaleDateString("en-US", {
+ //                   month: "long",
+ //                   day: "numeric",
+ //                   year: "numeric",
+ //                 })}
+ //               </div>
+ //               <div className="w-1 h-1 bg-neutral-700 rounded-full" />
+ //               <div className="flex items-center gap-2">
+ //                 <Clock size={16} className="text-cyan-500" />
+ //                 5 min read
+ //               </div>
+ //               <div className="flex-grow" />
+ //               <button
+ //                 onClick={handleShare}
+ //                 className="flex items-center gap-2 hover:text-cyan-400 transition"
+ //               >
+ //                 <Share2 size={16} />
+ //                 <span className="hidden sm:inline">Share</span>
+ //               </button>
+ //             </div>
+ //           </header>
+ //           {/* hero */}
+ //           {blog.images?.[0]?.url && (
+ //             <motion.div
+ //               initial={{ opacity: 0, scale: 0.95 }}
+ //               animate={{ opacity: 1, scale: 1 }}
+ //               transition={{ duration: 0.8, delay: 0.3 }}
+ //               className="relative aspect-video w-full rounded-3xl overflow-hidden mb-20 shadow-2xl shadow-cyan-900/20"
+ //             >
+ //               <img
+ //                 src={blog.images[0].url}
+ //                 alt={blog.title}
+ //                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2s] ease-out"
+ //               />
+ //               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60" />
+ //             </motion.div>
+ //           )}
+ //           {/* content */}
+ //           <div
+ //             className="
+ //               prose prose-lg prose-invert max-w-none
+ //               prose-headings:text-white
+ //               prose-p:text-neutral-300 prose-p:leading-8
+ //             "
+ //             dangerouslySetInnerHTML={{
+ //               __html: blog.content || blog.shortDescription,
+ //             }}
+ //           />
+ //           <div className="mt-20 pt-10 border-t border-neutral-800">
+ //             <p className="text-neutral-500 italic">Thanks for reading.</p>
+ //           </div>
+ //         </article>
+ //       </main>
+ //       <Footer />
+ //     </div>
+ //   );
+ // }
 _s(BlogPost, "lnDT9UeEvvM41+YYxQ5nSTv9zj4=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$scroll$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useScroll"],
