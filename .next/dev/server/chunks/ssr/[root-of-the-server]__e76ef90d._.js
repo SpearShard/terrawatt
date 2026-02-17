@@ -13,9 +13,618 @@ module.exports = mod;
 }),
 "[project]/components/Navbar.tsx [app-ssr] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-const e = new Error('Could not parse module \'[project]/components/Navbar.tsx\'\n\nExpected \'</\', got \' {active === item.name ? "opacity-100" : "opacity-70"}\r\n                />\r\n              ) : item.isButton ? (\r\n                <Image\r\n                  src="/Contact_page/connect1.svg"\r\n                  alt="connect"\r\n                  width={70}\r\n                  height={48}\r\n                />\r\n              ) : (\r\n                item.name\r\n              )}\r\n\r\n              {!item.isButton && active === item.name && (\r\n                <motion.div\r\n                  layoutId="navbar-indicator"\r\n                  className="absolute left-0 right-0  h-[2px] bg-red-500"\r\n                />\r\n              )}\r\n            </Link>\r\n          ))}\r\n        </div>\r\n      </div>\r\n\r\n      {/* mobile */}\r\n      <AnimatePresence>\r\n        {isMobileMenuOpen && (\r\n          <motion.div\r\n            initial={{ opacity: 0 }}\r\n            animate={{ opacity: 1 }}\r\n            exit={{ opacity: 0 }}\r\n            className="fixed inset-0 top-[70px] bg-black/95 md:hidden"\r\n          >\r\n            {navItems.map((item) => (\r\n              <Link\r\n                key={item.name}\r\n                href={item.href}\r\n                onClick={(e) => {\r\n                  if (handleNavigation(item.name)) e.preventDefault();\r\n                }}\r\n                className="block px-6 py-4"\r\n              >\r\n                {item.name}\r\n              </Link>\r\n            ))}\r\n          </motion.div>\r\n        )}\r\n      </AnimatePresence>\r\n    </nav>\r\n  );\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n// "use client";\r\n// import Image from "next/image";\r\n// import Link from "next/link";\r\n// import { useState,useRef, useEffect } from "react";\r\n// import { usePathname } from "next/navigation";\r\n// import { motion, AnimatePresence } from "framer-motion";\r\n// import gsap from "gsap";\r\n// import { ScrollTrigger } from "gsap/ScrollTrigger";\r\n\r\n// if (typeof window !== "undefined") {\r\n//   gsap.registerPlugin(ScrollTrigger);\r\n// }\r\n\r\n// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage\r\n\r\n\r\n\r\n// export default function Navbar() {\r\n//   const navRef = useRef<HTMLDivElement>(null);\r\n//   const [active, setActive] = useState("Pulse");\r\n//   const [isScrolled, setIsScrolled] = useState(false);\r\n//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State for Mobile\r\n//   const pathname = usePathname();\r\n\r\n//   // --- NEW: Prevent Body Scroll when Menu is Open ---\r\n//   useEffect(() => {\r\n//     if (isMobileMenuOpen) {\r\n//       document.body.style.overflow = "hidden";\r\n//     } else {\r\n//       document.body.style.overflow = "auto";\r\n//     }\r\n//     return () => { document.body.style.overflow = "auto"; };\r\n//   }, [isMobileMenuOpen]);\r\n\r\n//   // --- Scroll Detection ---\r\n//   useEffect(() => {\r\n//     const handleScroll = () => setIsScrolled(window.scrollY > 20);\r\n//     window.addEventListener("scroll", handleScroll);\r\n//     return () => window.removeEventListener("scroll", handleScroll);\r\n//   }, []);\r\n\r\n//   useEffect(() => {\r\n//   if (!navRef.current) return;\r\n\r\n//   // Desktop only\r\n//   if (window.innerWidth < 768) return;\r\n\r\n//   const nav = navRef.current;\r\n\r\n//   gsap.set(nav, { y: 0 });\r\n\r\n//   let lastScroll = window.scrollY;\r\n\r\n//   const onScroll = () => {\r\n//     const current = window.scrollY;\r\n\r\n//     if (current > lastScroll && current > 80) {\r\n//       // scrolling down → hide\r\n//       gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });\r\n//      } // else {\r\n//       // scrolling up → show\r\n//     //   gsap.to(nav, { y: 0, duration: 0.4, ease: "power2.out" });\r\n//     // }\r\n\r\n//     lastScroll = current;\r\n//   };\r\n\r\n//   window.addEventListener("scroll", onScroll);\r\n\r\n//   // Reveal on hover\r\n//   const show = () =>\r\n//     gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });\r\n\r\n//   nav.addEventListener("mouseenter", show);\r\n\r\n//   // Invisible top trigger zone\r\n//   const topZone = document.createElement("div");\r\n//   topZone.style.position = "fixed";\r\n//   topZone.style.top = "0";\r\n//   topZone.style.left = "0";\r\n//   topZone.style.width = "100%";\r\n//   topZone.style.height = "20px";\r\n//   topZone.style.zIndex = "40";\r\n//   document.body.appendChild(topZone);\r\n\r\n//   topZone.addEventListener("mouseenter", show);\r\n\r\n//   return () => {\r\n//     window.removeEventListener("scroll", onScroll);\r\n//     nav.removeEventListener("mouseenter", show);\r\n//     topZone.remove();\r\n//   };\r\n// }, []);\r\n\r\n\r\n//   // --- State Initialization & URL Sync ---\r\n//   useEffect(() => {\r\n//     const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);\r\n\r\n//     if (storedActive) {\r\n//       setActive(storedActive);\r\n//       localStorage.removeItem(ACTIVE_NAV_KEY);\r\n//       return;\r\n//     }\r\n\r\n//     // Only set default "Pulse" on homepage if no specific tab was requested\r\n//     if (pathname === "/" && !localStorage.getItem("TW_action")) {\r\n//       // Check if we arrived with a specific action (TeraaCharge or TeraaMart)\r\n//       const action = localStorage.getItem("TW_action");\r\n//       if (action === "go_charge") {\r\n//         setActive("TeraaCharge");\r\n//       } else if (action === "go_mart") {\r\n//         setActive("TeraaMart");\r\n//       } else {\r\n//         setActive("Pulse");\r\n//       }\r\n//     } else if (pathname.includes("investors")) {\r\n//       setActive("Investors & Partners");\r\n//     } else if (pathname.includes("insights")) {\r\n//       setActive("Insights");\r\n//     } else if (pathname.includes("connect")) {\r\n//       setActive("Connect");\r\n//     }\r\n//   }, [pathname]);\r\n\r\n//   // --- Sync Active Tab From Scroll (page.tsx) ---\r\n// useEffect(() => {\r\n//   if (pathname !== "/") return;\r\n\r\n//   const syncFromScroll = () => {\r\n//     const v = localStorage.getItem("TW_ACTIVE_NAV");\r\n//     if (v) setActive(v);\r\n//   };\r\n\r\n//   window.addEventListener("storage", syncFromScroll);\r\n//   return () => window.removeEventListener("storage", syncFromScroll);\r\n// }, [pathname]);\r\n\r\n\r\n\r\n//   const navItems = [\r\n//   { name: "Pulse", href: "/" },\r\n\r\n//   {\r\n//     name: "TeraaCharge",\r\n//     href: "/",\r\n//     image: "/teraacharge.png",\r\n//     width: 90,\r\n//     height: 28,\r\n//   },\r\n\r\n//   {\r\n//     name: "TeraaMart",\r\n//     href: "/",\r\n//     image: "/teraamartlogo.png",\r\n//     width: 80,\r\n//     height: 26,\r\n//   },\r\n\r\n//   { name: "Investors & Partners", href: "/investors-and-partners" },\r\n//   { name: "Insights", href: "/insights" },\r\n//   { name: "Connect", href: "/connect", isButton: true },\r\n// ];\r\n\r\n\r\n//   // Function to handle custom routing and setting state\r\n//   const handleCustomNavigation = (itemName: string) => {\r\n//     sessionStorage.removeItem("PAGE_WAS_RELOADED");\r\n\r\n\r\n//     const isOnPulse = window.location.pathname === "/";\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n//     // Close mobile menu immediately if open\r\n//     setIsMobileMenuOpen(false);\r\n\r\n//     if (itemName === "TeraaCharge") {\r\n//       setActive("TeraaCharge");\r\n\r\n//       if (isOnPulse) {\r\n//         // Already on homepage → immediately jump to TeraaCharge frame\r\n//         window.dispatchEvent(new CustomEvent("scrollToFrame804"));\r\n//       } else {\r\n//         // Coming from any other page (Investors, Insights, Connect, etc.)\r\n//         // Set flag and redirect to homepage\r\n//         localStorage.setItem("TW_action", "go_charge");\r\n//         window.location.href = "/";\r\n//       }\r\n//       return true;\r\n//     }\r\n\r\n//     if (itemName === "TeraaMart") {\r\n//       setActive("TeraaMart");\r\n\r\n//       if (isOnPulse) {\r\n//         // Already on homepage → trigger mart jump\r\n//         window.dispatchEvent(new Event("triggerVideoJump"));\r\n//       } else {\r\n//         // Coming from other page\r\n//         localStorage.setItem("TW_action", "go_mart");\r\n//         window.location.href = "/";\r\n//       }\r\n//       return true;\r\n//     }\r\n\r\n//     return false;\r\n//   };\r\n\r\n//   return (\r\n//     <nav\r\n//       ref={navRef}\r\n//       className={\'');
-e.code = 'MODULE_UNPARSABLE';
-throw e;
+// "use client";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { useState, useRef, useEffect, useCallback } from "react";
+// import { usePathname } from "next/navigation";
+// import { motion, AnimatePresence } from "framer-motion";
+// import gsap from "gsap";
+// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV";
+// export default function Navbar() {
+//   const navRef = useRef<HTMLDivElement>(null);
+//   const pathname = usePathname();
+//   const [active, setActive] = useState("Pulse");
+//   const [isScrolled, setIsScrolled] = useState(false);
+//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+//   /* ---------------- body lock ---------------- */
+//   useEffect(() => {
+//     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
+//     return () => {
+//       document.body.style.overflow = "auto";
+//     };
+//   }, [isMobileMenuOpen]);
+//   /* ---------------- scroll bg ---------------- */
+//   useEffect(() => {
+//     const onScroll = () => setIsScrolled(window.scrollY > 20);
+//     window.addEventListener("scroll", onScroll);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, []);
+//   /* -------- desktop hide / reveal -------- */
+//   useEffect(() => {
+//     if (!navRef.current || window.innerWidth < 768) return;
+//     const nav = navRef.current;
+//     let lastScroll = window.scrollY;
+//     const onScroll = () => {
+//       const current = window.scrollY;
+//       if (current > lastScroll && current > 80) {
+//         gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
+//       }
+//       lastScroll = current;
+//     };
+//     const show = () =>
+//       gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
+//     const topZone = document.createElement("div");
+//     Object.assign(topZone.style, {
+//       position: "fixed",
+//       top: "0",
+//       left: "0",
+//       width: "100%",
+//       height: "20px",
+//       zIndex: "40",
+//     });
+//     document.body.appendChild(topZone);
+//     window.addEventListener("scroll", onScroll);
+//     nav.addEventListener("mouseenter", show);
+//     topZone.addEventListener("mouseenter", show);
+//     return () => {
+//       window.removeEventListener("scroll", onScroll);
+//       nav.removeEventListener("mouseenter", show);
+//       topZone.remove();
+//     };
+//   }, []);
+//   /* ---------------- route syncing ---------------- */
+//   useEffect(() => {
+//     const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+//     if (stored) {
+//       setActive(stored);
+//       localStorage.removeItem(ACTIVE_NAV_KEY);
+//       return;
+//     }
+//     if (pathname === "/") {
+//       const action = localStorage.getItem("TW_action");
+//       if (action === "go_charge") setActive("TeraaCharge");
+//       else if (action === "go_mart") setActive("TeraaMart");
+//       else setActive("Pulse");
+//     } else if (pathname.includes("investors")) setActive("Investors & Partners");
+//     else if (pathname.includes("insights")) setActive("Insights");
+//     else if (pathname.includes("connect")) setActive("Connect");
+//   }, [pathname]);
+//   useEffect(() => {
+//     if (pathname !== "/") return;
+//     const sync = () => {
+//       const v = localStorage.getItem(ACTIVE_NAV_KEY);
+//       if (v) setActive(v);
+//     };
+//     window.addEventListener("storage", sync);
+//     return () => window.removeEventListener("storage", sync);
+//   }, [pathname]);
+//   /* ---------------- navigation ---------------- */
+//   const handleNavigation = useCallback((name: string) => {
+//     setIsMobileMenuOpen(false);
+//     const onHome = window.location.pathname === "/";
+//     if (name === "TeraaCharge") {
+//       setActive(name);
+//       if (onHome) window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+//       else {
+//         localStorage.setItem("TW_action", "go_charge");
+//         window.location.href = "/";
+//       }
+//       return true;
+//     }
+//     if (name === "TeraaMart") {
+//       setActive(name);
+//       if (onHome) window.dispatchEvent(new Event("triggerVideoJump"));
+//       else {
+//         localStorage.setItem("TW_action", "go_mart");
+//         window.location.href = "/";
+//       }
+//       return true;
+//     }
+//     setActive(name);
+//     return false;
+//   }, []);
+//   const navItems = [
+//     { name: "Pulse", href: "/" },
+//     { name: "TeraaCharge", href: "/", image: "/teraacharge.png", w: 90, h: 28 },
+//     { name: "TeraaMart", href: "/", image: "/teraamartlogo.png", w: 80, h: 26 },
+//     { name: "Investors & Partners", href: "/investors-and-partners" },
+//     { name: "Insights", href: "/insights" },
+//     { name: "Connect", href: "/connect", isButton: true },
+//   ];
+//   return (
+//     <nav
+//       ref={navRef}
+//       className={`fixed top-0 left-0 w-full z-50 transition-all ${
+//         isScrolled || isMobileMenuOpen
+//           ? "bg-black/90 backdrop-blur-xl shadow-lg"
+//           : "py-6 bg-transparent"
+//       }`}
+//     >
+//       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:px-10">
+//         <Link href="/" onClick={() => handleNavigation("Pulse")}>
+//           <Image
+//             src="/teraawatt.svg"
+//             alt="logo"
+//             width={125}
+//             height={45}
+//             className="p-[1vw] mr-[1vw]"
+//           />
+//         </Link>
+//         {/* hamburger */}
+//         <button
+//           className="md:hidden relative z-50 w-10 h-10 flex items-center justify-center"
+//           onClick={() => setIsMobileMenuOpen((v) => !v)}
+//         >
+//           <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
+//             <span
+//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
+//                 isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""
+//               }`}
+//             />
+//             <span
+//               className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${
+//                 isMobileMenuOpen ? "opacity-0" : ""
+//               }`}
+//             />
+//             <span
+//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
+//                 isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""
+//               }`}
+//             />
+//           </div>
+//         </button>
+//         {/* desktop */}
+//         <div className="hidden md:flex space-x-8 text-white">
+//           {navItems.map((item) => (
+//             <Link
+//               key={item.name}
+//               href={item.href}
+//               onClick={(e) => {
+//                 if (handleNavigation(item.name)) e.preventDefault();
+//               }}
+//               className={`relative ${active === item.name ? "opacity-100" : "opacity-60"}`}
+//             >
+//               {item.image ? (
+//                 <Image
+//                   src={item.image}
+//                   alt={item.name}
+//                   width={item.w}
+//                   height={item.h}
+//                   className={`relative top-[6%] ${
+//                     active === item.name ? "opacity-100" : "opacity-90"
+//                   }`}
+//                 />
+//               ) : item.isButton ? (
+//                 <Image src="/Contact_page/connect1.svg" alt="connect" width={70} height={48} />
+//               ) : (
+//                 item.name
+//               )}
+//               {!item.isButton && active === item.name && (
+//                 <motion.div
+//                   layoutId="navbar-indicator"
+//                   className="absolute left-0 right-0 h-[2px] bg-red-500"
+//                 />
+//               )}
+//             </Link>
+//           ))}
+//         </div>
+//       </div>
+//       {/* mobile menu */}
+//       <AnimatePresence>
+//         {isMobileMenuOpen && (
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             exit={{ opacity: 0 }}
+//             transition={{ duration: 0.25 }}
+//             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
+//           >
+//             <motion.div
+//               initial={{ y: 20, opacity: 0 }}
+//               animate={{ y: 0, opacity: 1 }}
+//               exit={{ y: 20, opacity: 0 }}
+//               transition={{ type: "spring", stiffness: 120, damping: 18 }}
+//               className="w-full px-6 space-y-3"
+//             >
+//               {navItems.map((item) => (
+//                 <Link
+//                   key={item.name}
+//                   href={item.href}
+//                   onClick={(e) => {
+//                     if (handleNavigation(item.name)) e.preventDefault();
+//                   }}
+//                 >
+//                   <div
+//                     className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
+//                       active === item.name ? "bg-white/5" : "hover:bg-white/5"
+//                     }`}
+//                   >
+//                     <span
+//                       className={`text-lg font-medium tracking-wide ${
+//                         active === item.name ? "text-white" : "text-neutral-400"
+//                       }`}
+//                     >
+//                       {!item.isButton ? item.name : "Connect"}
+//                     </span>
+//                     {!item.isButton && active === item.name && (
+//                       <motion.div
+//                         layoutId="mobile-indicator"
+//                         className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
+//                       />
+//                     )}
+//                   </div>
+//                 </Link>
+//               ))}
+//             </motion.div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </nav>
+//   );
+// }
+// "use client";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { useState,useRef, useEffect } from "react";
+// import { usePathname } from "next/navigation";
+// import { motion, AnimatePresence } from "framer-motion";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// if (typeof window !== "undefined") {
+//   gsap.registerPlugin(ScrollTrigger);
+// }
+// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
+// export default function Navbar() {
+//   const navRef = useRef<HTMLDivElement>(null);
+//   const [active, setActive] = useState("Pulse");
+//   const [isScrolled, setIsScrolled] = useState(false);
+//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State for Mobile
+//   const pathname = usePathname();
+//   // --- NEW: Prevent Body Scroll when Menu is Open ---
+//   useEffect(() => {
+//     if (isMobileMenuOpen) {
+//       document.body.style.overflow = "hidden";
+//     } else {
+//       document.body.style.overflow = "auto";
+//     }
+//     return () => { document.body.style.overflow = "auto"; };
+//   }, [isMobileMenuOpen]);
+//   // --- Scroll Detection ---
+//   useEffect(() => {
+//     const handleScroll = () => setIsScrolled(window.scrollY > 20);
+//     window.addEventListener("scroll", handleScroll);
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+//   useEffect(() => {
+//   if (!navRef.current) return;
+//   // Desktop only
+//   if (window.innerWidth < 768) return;
+//   const nav = navRef.current;
+//   gsap.set(nav, { y: 0 });
+//   let lastScroll = window.scrollY;
+//   const onScroll = () => {
+//     const current = window.scrollY;
+//     if (current > lastScroll && current > 80) {
+//       // scrolling down → hide
+//       gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
+//      } // else {
+//       // scrolling up → show
+//     //   gsap.to(nav, { y: 0, duration: 0.4, ease: "power2.out" });
+//     // }
+//     lastScroll = current;
+//   };
+//   window.addEventListener("scroll", onScroll);
+//   // Reveal on hover
+//   const show = () =>
+//     gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
+//   nav.addEventListener("mouseenter", show);
+//   // Invisible top trigger zone
+//   const topZone = document.createElement("div");
+//   topZone.style.position = "fixed";
+//   topZone.style.top = "0";
+//   topZone.style.left = "0";
+//   topZone.style.width = "100%";
+//   topZone.style.height = "20px";
+//   topZone.style.zIndex = "40";
+//   document.body.appendChild(topZone);
+//   topZone.addEventListener("mouseenter", show);
+//   return () => {
+//     window.removeEventListener("scroll", onScroll);
+//     nav.removeEventListener("mouseenter", show);
+//     topZone.remove();
+//   };
+// }, []);
+//   // --- State Initialization & URL Sync ---
+//   useEffect(() => {
+//     const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
+//     if (storedActive) {
+//       setActive(storedActive);
+//       localStorage.removeItem(ACTIVE_NAV_KEY);
+//       return;
+//     }
+//     // Only set default "Pulse" on homepage if no specific tab was requested
+//     if (pathname === "/" && !localStorage.getItem("TW_action")) {
+//       // Check if we arrived with a specific action (TeraaCharge or TeraaMart)
+//       const action = localStorage.getItem("TW_action");
+//       if (action === "go_charge") {
+//         setActive("TeraaCharge");
+//       } else if (action === "go_mart") {
+//         setActive("TeraaMart");
+//       } else {
+//         setActive("Pulse");
+//       }
+//     } else if (pathname.includes("investors")) {
+//       setActive("Investors & Partners");
+//     } else if (pathname.includes("insights")) {
+//       setActive("Insights");
+//     } else if (pathname.includes("connect")) {
+//       setActive("Connect");
+//     }
+//   }, [pathname]);
+//   // --- Sync Active Tab From Scroll (page.tsx) ---
+// useEffect(() => {
+//   if (pathname !== "/") return;
+//   const syncFromScroll = () => {
+//     const v = localStorage.getItem("TW_ACTIVE_NAV");
+//     if (v) setActive(v);
+//   };
+//   window.addEventListener("storage", syncFromScroll);
+//   return () => window.removeEventListener("storage", syncFromScroll);
+// }, [pathname]);
+//   const navItems = [
+//   { name: "Pulse", href: "/" },
+//   {
+//     name: "TeraaCharge",
+//     href: "/",
+//     image: "/teraacharge.png",
+//     width: 90,
+//     height: 28,
+//   },
+//   {
+//     name: "TeraaMart",
+//     href: "/",
+//     image: "/teraamartlogo.png",
+//     width: 80,
+//     height: 26,
+//   },
+//   { name: "Investors & Partners", href: "/investors-and-partners" },
+//   { name: "Insights", href: "/insights" },
+//   { name: "Connect", href: "/connect", isButton: true },
+// ];
+//   // Function to handle custom routing and setting state
+//   const handleCustomNavigation = (itemName: string) => {
+//     sessionStorage.removeItem("PAGE_WAS_RELOADED");
+//     const isOnPulse = window.location.pathname === "/";
+//     // Close mobile menu immediately if open
+//     setIsMobileMenuOpen(false);
+//     if (itemName === "TeraaCharge") {
+//       setActive("TeraaCharge");
+//       if (isOnPulse) {
+//         // Already on homepage → immediately jump to TeraaCharge frame
+//         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+//       } else {
+//         // Coming from any other page (Investors, Insights, Connect, etc.)
+//         // Set flag and redirect to homepage
+//         localStorage.setItem("TW_action", "go_charge");
+//         window.location.href = "/";
+//       }
+//       return true;
+//     }
+//     if (itemName === "TeraaMart") {
+//       setActive("TeraaMart");
+//       if (isOnPulse) {
+//         // Already on homepage → trigger mart jump
+//         window.dispatchEvent(new Event("triggerVideoJump"));
+//       } else {
+//         // Coming from other page
+//         localStorage.setItem("TW_action", "go_mart");
+//         window.location.href = "/";
+//       }
+//       return true;
+//     }
+//     return false;
+//   };
+//   return (
+//     <nav
+//       ref={navRef}
+//       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
+//         ? "bg-black/90 backdrop-blur-xl  shadow-lg"
+//         : "py-6 bg-transparent"
+//         }`}
+//     >
+//       <div className="flex  lg:p-[0.2vw] items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
+//         {/* Logo and Nav Items Container */}
+//         <div className="flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start">
+//           {/* Logo */}
+//           <Link
+//             href="/"
+//             className="flex items-center relative z-50"
+//             onClick={() => {
+//               sessionStorage.setItem("NAV_SOURCE", "navbar");
+//               setActive("Pulse");
+//               setIsMobileMenuOpen(false);
+//             }}
+//           >
+//             <Image
+//               src="/teraawatt.svg"
+//               alt="TeraaWatt Logo"
+//               width={125}
+//               height={45}
+//               className="object-contain"
+//             />
+//           </Link>
+//           {/* --- Mobile Hamburger Button (Visible on mobile only) --- */}
+//           <button
+//             className="md:hidden relative z-50 text-white p-2 focus:outline-none"
+//             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+//           >
+//             <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
+//               <span
+//                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+//                   }`}
+//               />
+//               <span
+//                 className={`block w-full h-0.5 bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""
+//                   }`}
+//               />
+//               <span
+//                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+//                   }`}
+//               />
+//             </div>
+//           </button>
+//           {/* --- Desktop Nav Items (Hidden on Mobile) --- */}
+//           <div className="hidden md:flex items-center space-x-8 text-white font-normal relative">
+//             {navItems.map((item) => (
+//               <Link
+//                 key={item.name}
+//                 href={item.href}
+//                 className="relative px-2 py-1 group"
+//                 onClick={(e) => {
+//                   if (item.name === "Investors & Partners") {
+//                     // e.preventDefault();
+//                     setActive("Investors & Partners");
+//                     // window.location.href = "/investors-and-partners";
+//                     return;
+//                   }
+//                   const handled = handleCustomNavigation(item.name);
+//                   if (handled) {
+//                     e.preventDefault();
+//                   } else {
+//                     setActive(item.name);
+//                   }
+//                 }}
+//               >
+//                 <span
+//                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${active === item.name
+//                     ? "text-white"
+//                     : "text-neutral-400 group-hover:text-white"
+//                     }`}
+//                   onClick={(e) => {
+//                     const handled = handleCustomNavigation(item.name);
+//                     if (handled) {
+//                       e.preventDefault();
+//                     } else {
+//                       setActive(item.name);
+//                     }
+//                   }}
+//                 >
+//                   {item.image ? (
+//   <Image
+//     src={item.image}
+//     alt={item.name}
+//     width={item.width}
+//     height={item.height}
+//     className={`transition-all duration-300 ${
+//       active === item.name
+//         ? "opacity-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+//         : "opacity-70 group-hover:opacity-100"
+//     }`}
+//   />
+// ) : !item.isButton ? (
+//   item.name
+// ) : (
+//   <Image
+//     src="/Contact_page/connect1.svg"
+//     alt="Connect"
+//     width={70}
+//     height={48}
+//     className={`transition duration-300 ${
+//       active === "Connect"
+//         ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
+//         : "opacity-80 hover:opacity-100"
+//     }`}
+//   />
+// )}
+//                 </span>
+//                 {/* Desktop Indicator */}
+//                 {!item.isButton && active === item.name && (
+//                   <motion.div
+//     layoutId="navbar-indicator"
+//     className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+//     transition={{
+//       type: "spring",
+//       stiffness: 300,
+//       damping: 30,
+//     }}
+//   />
+//                 )}
+//               </Link>
+//             ))}
+//           </div>
+//         </div>
+//       </div>
+//       {/* --- Mobile Menu Overlay --- */}
+// <AnimatePresence>
+//   {isMobileMenuOpen && (
+//     <motion.div
+//       initial={{ opacity: 0 }}
+//       animate={{ opacity: 1 }}
+//       exit={{ opacity: 0 }}
+//       transition={{ duration: 0.25 }}
+//       className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
+//     >
+//       <motion.div
+//         initial={{ y: 20, opacity: 0 }}
+//         animate={{ y: 0, opacity: 1 }}
+//         exit={{ y: 20, opacity: 0 }}
+//         transition={{ type: "spring", stiffness: 120, damping: 18 }}
+//         className="w-full px-6 space-y-3"
+//       >
+//         {navItems.map((item) => (
+//           <Link
+//             key={item.name}
+//             href={item.href}
+//             className="relative block"
+//             onClick={(e) => {
+//               if (item.name === "Investors & Partners") {
+//                 // e.preventDefault();
+//                 setActive("Investors & Partners");
+//                 // window.location.href = "/investors-and-partners";
+//                 setIsMobileMenuOpen(false);
+//                 return;
+//               }
+//               const handled = handleCustomNavigation(item.name);
+//               if (handled) {
+//                 e.preventDefault();
+//               } else {
+//                 setActive(item.name);
+//                 setIsMobileMenuOpen(false);
+//               }
+//             }}
+//           >
+//             <div
+//               className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
+//                 active === item.name
+//                   ? "bg-white/5"
+//                   : "bg-white/0 hover:bg-white/5"
+//               }`}
+//             >
+//               <span
+//                 className={`text-lg font-medium tracking-wide ${
+//                   active === item.name ? "text-white" : "text-neutral-400"
+//                 }`}
+//               >
+//                 {!item.isButton ? item.name : "Connect"}
+//               </span>
+//               {/* Active red underline */}
+//               {!item.isButton && active === item.name && (
+//                 <motion.div
+//                   layoutId="mobile-indicator"
+//                   className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
+//                 />
+//               )}
+//             </div>
+//           </Link>
+//         ))}
+//       </motion.div>
+//     </motion.div>
+//   )}
+// </AnimatePresence>
+//     </nav>
+//   );
+// }
 }),
 "[project]/components/About.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -245,7 +854,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$mo
 ======================= */ const products = [
     {
         id: "charge",
-        titleImage: "/teraaCharge.png",
+        titleImage: "/teraacharge.png",
         subtitle: "The Charging Network",
         description: "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform.",
         image: "/About/teraacharge.jpg",
@@ -521,7 +1130,7 @@ function About() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                         href: "/connect",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            className: "   px-10 py-4 max-sm:px-[10vw] max-sm:py-[1vh] max-sm:text-[5vw]   bg-white/10 backdrop-blur-xl   text-white font-semibold text-lg   border border-white/20   rounded-full   hover:bg-white/20   hover:border-white/30   hover:shadow-[0_8px_32px_rgba(5,223,114,0.2)]   active:scale-95   transition-all duration-300   ",
+                            className: "   px-10 py-4 max-sm:px-[10vw] max-sm:py-[1vh] max-sm:text-[5vw]   bg-white/10 backdrop-blur-xl   text-white font-semibold text-lg   border border-white/20   rounded-full   hover:bg-white/20   hover:border-white/30   hover:shadow-[0_8px_32px_rgba(5,223,114,0.2)]   active:scale-95   transition-all duration-300 cursor-pointer   ",
                             children: "Get Started"
                         }, void 0, false, {
                             fileName: "[project]/components/About.tsx",
@@ -939,149 +1548,6 @@ function VideoCoin({ progressRef }) {
 "[project]/components/video.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import { useEffect, useRef, useState } from "react";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import { Canvas } from "@react-three/fiber";
-// import ScrollingCoin from "./ScrollingCoin";
-// gsap.registerPlugin(ScrollTrigger);
-// export default function Video() {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const bgVideoRef = useRef<HTMLVideoElement>(null);
-//   const fgVideoRef = useRef<HTMLVideoElement>(null);
-//   const scrollProgressRef = useRef(0);
-//   const rawProgressRef = useRef(0);
-//   const smoothProgressRef = useRef(0);
-//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-//   const [isDesktop, setIsDesktop] = useState(false);
-//   const FG_TOTAL_FRAMES = 405;
-//   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
-//   const START_BG_AT_FRAME = 130;
-//   const targetProgress = 289 / FG_FRAME_MAX;
-//   /* ---------------- DESKTOP DETECT ---------------- */
-//   useEffect(() => {
-//     const check = () => setIsDesktop(window.innerWidth >= 1024);
-//     check();
-//     window.addEventListener("resize", check);
-//     return () => window.removeEventListener("resize", check);
-//   }, []);
-//   /* ---------------- VIDEO SETUP ---------------- */
-//   useEffect(() => {
-//     const setupVideo = (video: HTMLVideoElement, src: string) => {
-//       video.src = src;
-//       video.muted = true;
-//       video.playsInline = true;
-//       video.preload = "auto";
-//       video.crossOrigin = "anonymous";
-//       video.load();
-//       video.currentTime = 0.01;
-//       setTimeout(() => (video.currentTime = 0), 300);
-//     };
-//     if (bgVideoRef.current)
-//       setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
-//     if (fgVideoRef.current)
-//       setupVideo(fgVideoRef.current, "/iphoneframes/remember.mp4");
-//   }, []);
-//   /* ---------------- RAF LOOP ---------------- */
-//   useEffect(() => {
-//     const bgVideo = bgVideoRef.current;
-//     const fgVideo = fgVideoRef.current;
-//     if (!bgVideo || !fgVideo) return;
-//     let raf = 0;
-//     let lastTime = performance.now();
-//     let fgDuration = 0;
-//     let bgDuration = 0;
-//     const animate = (time: number) => {
-//       const delta = Math.min((time - lastTime) / 1000, 0.1);
-//       lastTime = time;
-//       if (!fgDuration && fgVideo.duration) {
-//         fgDuration = fgVideo.duration;
-//         bgDuration = bgVideo.duration || 0;
-//       }
-//       if (!fgDuration) {
-//         raf = requestAnimationFrame(animate);
-//         return;
-//       }
-//       const damping = 1 - Math.exp(-delta * 18);
-//       smoothProgressRef.current +=
-//         (rawProgressRef.current - smoothProgressRef.current) * damping;
-//       const smooth = smoothProgressRef.current;
-//       const fgTarget = smooth * fgDuration;
-//       if (Math.abs(fgVideo.currentTime - fgTarget) > 0.03) {
-//         fgVideo.currentTime = fgTarget;
-//       }
-//       const currentFrame = smooth * FG_FRAME_MAX;
-//       if (currentFrame >= START_BG_AT_FRAME && bgDuration) {
-//         const bgProgress =
-//           (currentFrame - START_BG_AT_FRAME) /
-//           (FG_FRAME_MAX - START_BG_AT_FRAME);
-//         const bgTarget = bgProgress * bgDuration;
-//         if (Math.abs(bgVideo.currentTime - bgTarget) > 0.03) {
-//           bgVideo.currentTime = bgTarget;
-//         }
-//       } else if (bgVideo.currentTime > 0.03) {
-//         bgVideo.currentTime = 0;
-//       }
-//       scrollProgressRef.current = smooth;
-//       raf = requestAnimationFrame(animate);
-//     };
-//     raf = requestAnimationFrame(animate);
-//     return () => cancelAnimationFrame(raf);
-//   }, []);
-//   /* ---------------- SCROLLTRIGGER ---------------- */
-//   useEffect(() => {
-//     if (!containerRef.current) return;
-//     if (scrollTriggerRef.current) scrollTriggerRef.current.kill();
-//     const st = ScrollTrigger.create({
-//       trigger: containerRef.current,
-//       start: "top top",
-//       end: "+=400%",
-//       pin: true,
-//       anticipatePin: 1,
-//       onUpdate: (self) => (rawProgressRef.current = self.progress),
-//     });
-//     scrollTriggerRef.current = st;
-//     return () => st.kill();
-//   }, []);
-//   /* ---------------- JSX ---------------- */
-//   return (
-//     <div ref={containerRef} className="relative w-full bg-black">
-//       <div
-//         className="sticky min-h-screen flex items-center justify-center bg-black"
-//         style={{
-//           padding: isDesktop ? "8vw" : "0px",
-//           boxSizing: "border-box",
-//         }}
-//       >
-//         <div className="relative w-full h-full overflow-hidden bg-black">
-//           {/* BACKGROUND */}
-//           <video
-//             ref={bgVideoRef}
-//             className="absolute inset-0 w-full h-full object-cover"
-//             muted
-//             playsInline
-//           />
-//           {/* FOREGROUND */}
-//           <div className="relative z-10 w-full h-full flex items-center justify-center">
-//             <video
-//               ref={fgVideoRef}
-//               className="max-w-full max-h-full object-contain pointer-events-none"
-//               playsInline
-//               muted
-//             />
-//           </div>
-//           {/* COIN */}
-//           <div className="absolute inset-0 z-20 pointer-events-none">
-//             <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
-//               <ScrollingCoin progressRef={scrollProgressRef} />
-//             </Canvas>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 __turbopack_context__.s([
     "default",
     ()=>Video
@@ -1108,6 +1574,7 @@ function Video() {
     const rawProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(0);
     const scrollTriggerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const videoReadyRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
     const FG_TOTAL_FRAMES = 405;
     const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
     const START_BG_AT_FRAME = 130;
@@ -1151,6 +1618,10 @@ function Video() {
             if (!fgDuration && fgVideo.duration) {
                 fgDuration = fgVideo.duration;
                 bgDuration = bgVideo.duration || 0;
+                // 🔥 keep decoder alive
+                fgVideo.play().then(()=>fgVideo.pause()).catch(()=>{});
+                bgVideo.play().then(()=>bgVideo.pause()).catch(()=>{});
+                videoReadyRef.current = true;
             }
             if (!fgDuration) {
                 raf = requestAnimationFrame(animate);
@@ -1202,24 +1673,15 @@ function Video() {
         scrollTriggerRef.current = st;
         return ()=>st.kill();
     }, []);
-    /* ---------------- EXTERNAL JUMP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const handleTrigger = ()=>{
-            if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
-                window.scrollTo(0, 0);
-                const st = scrollTriggerRef.current;
-                const pos = st.start + targetProgress * (st.end - st.start);
-                window.scrollTo({
-                    top: pos,
-                    behavior: "instant"
-                });
-                rawProgressRef.current = targetProgress;
-                smoothProgressRef.current = targetProgress;
-                fgVideoRef.current.currentTime = targetProgress * fgVideoRef.current.duration;
-            }
-        };
-        window.addEventListener("triggerVideoJump", handleTrigger);
-        return ()=>window.removeEventListener("triggerVideoJump", handleTrigger);
-    }, []);
+    /* ---------------- EXTERNAL JUMP ---------------- */ const handleTrigger = ()=>{
+        const fg = fgVideoRef.current;
+        if (!videoReadyRef.current || !fg) return;
+        rawProgressRef.current = targetProgress;
+        smoothProgressRef.current = targetProgress;
+        fg.currentTime = targetProgress * fg.duration;
+        // keep decoder warm after jump
+        fg.play().then(()=>fg.pause()).catch(()=>{});
+    };
     /* ---------------- JSX ---------------- */ return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         ref: containerRef,
         className: "relative w-full bg-black",
@@ -1236,7 +1698,7 @@ function Video() {
                     muted: true
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 375,
+                    lineNumber: 183,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
@@ -1249,7 +1711,7 @@ function Video() {
                     muted: true
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 384,
+                    lineNumber: 192,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1269,31 +1731,194 @@ function Video() {
                             progressRef: scrollProgressRef
                         }, void 0, false, {
                             fileName: "[project]/components/video.tsx",
-                            lineNumber: 395,
+                            lineNumber: 203,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/video.tsx",
-                        lineNumber: 394,
+                        lineNumber: 202,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 393,
+                    lineNumber: 201,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/video.tsx",
-            lineNumber: 373,
+            lineNumber: 181,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/video.tsx",
-        lineNumber: 372,
+        lineNumber: 180,
         columnNumber: 5
     }, this);
-}
+} // "use client";
+ // import { useEffect, useRef } from "react";
+ // import gsap from "gsap";
+ // import { ScrollTrigger } from "gsap/ScrollTrigger";
+ // import { Canvas } from "@react-three/fiber";
+ // import ScrollingCoin from "./ScrollingCoin";
+ // gsap.registerPlugin(ScrollTrigger);
+ // export default function Video() {
+ //   const containerRef = useRef<HTMLDivElement>(null);
+ //   const bgVideoRef = useRef<HTMLVideoElement>(null);
+ //   const fgVideoRef = useRef<HTMLVideoElement>(null);
+ //   const scrollProgressRef = useRef(0);
+ //   const rawProgressRef = useRef(0);
+ //   const smoothProgressRef = useRef(0);
+ //   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+ //   const FG_TOTAL_FRAMES = 405;
+ //   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
+ //   const START_BG_AT_FRAME = 130;
+ //   const targetProgress = 289 / FG_FRAME_MAX;
+ //   /* ---------------- VIDEO SETUP ---------------- */
+ //   useEffect(() => {
+ //     const setupVideo = (video: HTMLVideoElement, src: string) => {
+ //       video.src = src;
+ //       video.muted = true;
+ //       video.playsInline = true;
+ //       video.preload = "auto";
+ //       video.crossOrigin = "anonymous";
+ //       video.load();
+ //       // tiny wake-up for Safari
+ //       video.currentTime = 0.01;
+ //       setTimeout(() => {
+ //         video.currentTime = 0;
+ //       }, 300);
+ //     };
+ //     if (bgVideoRef.current) setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
+ //     if (fgVideoRef.current) setupVideo(fgVideoRef.current, "/iphoneframes/remember.mp4");
+ //   }, []);
+ //   /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */
+ //   useEffect(() => {
+ //     const bgVideo = bgVideoRef.current;
+ //     const fgVideo = fgVideoRef.current;
+ //     if (!bgVideo || !fgVideo) return;
+ //     let raf = 0;
+ //     let lastTime = performance.now();
+ //     let lastRender = 0;
+ //     // cache durations once
+ //     let fgDuration = 0;
+ //     let bgDuration = 0;
+ //     const animate = (time: number) => {
+ //       // hard cap ~60fps
+ //       if (time - lastRender < 16) {
+ //         raf = requestAnimationFrame(animate);
+ //         return;
+ //       }
+ //       lastRender = time;
+ //       const delta = Math.min((time - lastTime) / 1000, 0.1);
+ //       lastTime = time;
+ //       if (!fgDuration && fgVideo.duration) {
+ //         fgDuration = fgVideo.duration;
+ //         bgDuration = bgVideo.duration || 0;
+ //       }
+ //       if (!fgDuration) {
+ //         raf = requestAnimationFrame(animate);
+ //         return;
+ //       }
+ //       // physically-smooth damping (better than lerp)
+ //       const damping = 1 - Math.exp(-delta * 18);
+ //       smoothProgressRef.current +=
+ //         (rawProgressRef.current - smoothProgressRef.current) * damping;
+ //       const smooth = smoothProgressRef.current;
+ //       /* ---------- FOREGROUND ---------- */
+ //       const fgTargetTime = smooth * fgDuration;
+ //       const fgDiff = Math.abs(fgVideo.currentTime - fgTargetTime);
+ //       // only seek if meaningful (~1 frame @30fps)
+ //       if (fgDiff > 0.03) {
+ //         fgVideo.currentTime = fgTargetTime;
+ //       }
+ //       /* ---------- BACKGROUND ---------- */
+ //       const currentFgFrame = smooth * FG_FRAME_MAX;
+ //       if (currentFgFrame >= START_BG_AT_FRAME && bgDuration) {
+ //         const bgProgress =
+ //           (currentFgFrame - START_BG_AT_FRAME) /
+ //           (FG_FRAME_MAX - START_BG_AT_FRAME);
+ //         const bgTargetTime = bgProgress * bgDuration;
+ //         const bgDiff = Math.abs(bgVideo.currentTime - bgTargetTime);
+ //         if (bgDiff > 0.03) {
+ //           bgVideo.currentTime = bgTargetTime;
+ //         }
+ //       } else if (bgVideo.currentTime > 0.03) {
+ //         bgVideo.currentTime = 0;
+ //       }
+ //       scrollProgressRef.current = smooth;
+ //       raf = requestAnimationFrame(animate);
+ //     };
+ //     raf = requestAnimationFrame(animate);
+ //     return () => cancelAnimationFrame(raf);
+ //   }, []);
+ //   /* ---------------- SCROLLTRIGGER ---------------- */
+ //   useEffect(() => {
+ //     if (!containerRef.current) return;
+ //     if (scrollTriggerRef.current) scrollTriggerRef.current.kill();
+ //     const st = ScrollTrigger.create({
+ //       trigger: containerRef.current,
+ //       start: "top top",
+ //       end: "+=400%",
+ //       pin: true,
+ //       anticipatePin: 1,
+ //       onUpdate: (self) => {
+ //         rawProgressRef.current = self.progress;
+ //       },
+ //       onRefresh: (self) => {
+ //         rawProgressRef.current = self.progress;
+ //       },
+ //     });
+ //     scrollTriggerRef.current = st;
+ //     return () => st.kill();
+ //   }, []);
+ //   /* ---------------- EXTERNAL JUMP ---------------- */
+ //   useEffect(() => {
+ //     const handleTrigger = () => {
+ //       if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
+ //         window.scrollTo(0, 0);
+ //         const st = scrollTriggerRef.current;
+ //         const pos = st.start + targetProgress * (st.end - st.start);
+ //         window.scrollTo({ top: pos, behavior: "instant" });
+ //         rawProgressRef.current = targetProgress;
+ //         smoothProgressRef.current = targetProgress;
+ //         fgVideoRef.current.currentTime =
+ //           targetProgress * fgVideoRef.current.duration;
+ //       }
+ //     };
+ //     window.addEventListener("triggerVideoJump", handleTrigger);
+ //     return () => window.removeEventListener("triggerVideoJump", handleTrigger);
+ //   }, []);
+ //   /* ---------------- JSX ---------------- */
+ //   return (
+ //     <div ref={containerRef} className="relative w-full bg-black">
+ //       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
+ //         {/* BACKGROUND */}
+ //         <video
+ //           ref={bgVideoRef}
+ //           className="absolute inset-0 w-full h-full object-cover"
+ //           style={{ pointerEvents: "none" }}
+ //           playsInline
+ //           muted
+ //         />
+ //         {/* FOREGROUND */}
+ //         <video
+ //           ref={fgVideoRef}
+ //           className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
+ //           style={{ imageRendering: "crisp-edges" }}
+ //           playsInline
+ //           muted
+ //         />
+ //         {/* 3D COIN */}
+ //         <div className="absolute inset-0 z-20 pointer-events-none">
+ //           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
+ //             <ScrollingCoin progressRef={scrollProgressRef} />
+ //           </Canvas>
+ //         </div>
+ //       </div>
+ //     </div>
+ //   );
+ // }
 }),
 "[project]/components/applyWhiteRimShader.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -2378,6 +3003,7 @@ function Footer() {
 // import { useCarLights } from "../components/useCarLights";
 // import { Suspense } from "react";
 // import { useEffect, useLayoutEffect, useRef, useState, useMemo } from "react";
+// import Footer from "@/components/Footer";
 // const DashboardAnimation = dynamic(
 //   () => import("../components/DashboardAnimation"),
 //   { ssr: false }
@@ -2392,7 +3018,7 @@ function Footer() {
 //   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
 //   scale?: number;
 // }) {
-//   const { scene } = useGLTF("/models/lastwala.glb");
+//   const { scene } = useGLTF("/models/final.glb");
 //   const [ready, setReady] = useState(false);
 //   const memoizedScene = useMemo(() => scene, []);
 //   // wire lights immediately (no visuals yet)
@@ -2410,27 +3036,26 @@ function Footer() {
 // function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
 //   const { camera } = useThree();
 //   useEffect(() => {
-//     camera.position.set(0, 50, 480);
+//     camera.position.set(0, 50, 450);
 //     camera.lookAt(0, 50, 0);
 //     const isMobile = window.innerWidth < 768;
 //     if (isMobile) {
-//       camera.position.set(0, 45, 580);
+//       camera.position.set(0, 45, 480);
 //       camera.lookAt(0, 35, 0);
 //     }
+//     const CAMERA_SCROLL_PX = 1900; // 🔑 camera always finishes fast
 //     const tl = gsap.timeline({
 //       scrollTrigger: {
 //         trigger: "#scroll-container",
 //         start: "top top",
-//         end: isMobile ? "80% bottom" : "bottom bottom",
-//         scrub: 0.5, // Smooth scrubbing (lower = smoother, higher = more responsive)
+//         end: `+=${CAMERA_SCROLL_PX}`, // ✅ FIXED distance
+//         scrub: 0.5,
 //       },
 //     });
-//     // Camera movement
-//     // tl.to(camera.position, { z: -0.3, y: 20, duration: 3 });
 //     tl.to(camera.position, {
-//       z: isMobile ? 35 : 1,
-//       y: isMobile ? 18 : 20,
-//       duration: 3,
+//       z: isMobile ? 10 : 15,
+//       y: isMobile ? 20 : 20,
+//       duration: 1,
 //     });
 //     // Animate all rear lights
 //     // defensive: ensure we have lights array before animating
@@ -2471,6 +3096,11 @@ function Footer() {
 //   return null;
 // }
 // export default function Home() {
+//   useEffect(() => {
+//   if ("scrollRestoration" in history) {
+//     history.scrollRestoration = "manual";
+//   }
+// }, []);
 //   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
 //   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
 //   const progressRef = useRef(0); // 👈 add this line
@@ -2478,20 +3108,28 @@ function Footer() {
 //   const [carScale, setCarScale] = useState(1.2);
 //   const [showPreloader, setShowPreloader] = useState(false);
 //   const [ready, setReady] = useState(false);
-// useEffect(() => {
-//   const isPulse = window.location.pathname === "/";
-//   const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
-//   if (isPulse && wasReload) {
-//     setShowPreloader(true);
-//   } else {
-//     setShowPreloader(false);
-//   }
-//   sessionStorage.removeItem("PAGE_WAS_RELOADED");
-//   setReady(true);
-// }, []);
+//   useEffect(() => {
+//     const isPulse = window.location.pathname === "/";
+//     const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
+//     const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
+//     const isFirstVisit = !sessionStorage.getItem("HAS_VISITED_PULSE");
+//     // 👇 NEW: check which tab was active before reload
+//     const lastActive = localStorage.getItem("TW_ACTIVE_NAV") || "Pulse";
+//     const wasPulseTab = lastActive === "Pulse";
+//     // Show loader on FIRST visit or REAL reload — ONLY if Pulse tab
+//     if (isPulse && wasPulseTab && (isFirstVisit || wasReload) && !hasAction) {
+//       setShowPreloader(true);
+//     } else {
+//       setShowPreloader(false);
+//     }
+//     // Mark that Pulse has been visited
+//     sessionStorage.setItem("HAS_VISITED_PULSE", "true");
+//     sessionStorage.removeItem("PAGE_WAS_RELOADED");
+//     setReady(true);
+//   }, []);
 //   useEffect(() => {
 //     const handleChargeJump = () => {
-//       const targetProgress = 765 / 1464;
+//       const targetProgress = -0.18;
 //       const scrollContainer = document.getElementById("scroll-container");
 //       if (!scrollContainer) return;
 //       // 🔥 CRITICAL: recalc ScrollTrigger first
@@ -2500,7 +3138,8 @@ function Footer() {
 //         requestAnimationFrame(() => {
 //           const containerHeight = scrollContainer.offsetHeight;
 //           const windowHeight = window.innerHeight;
-//           const startOffset = containerHeight * 0.7;
+//           const isMobile = window.innerWidth < 768;
+//           const startOffset = containerHeight * (isMobile ? 0.635 : 0.7);
 //           const scrollableDistance = containerHeight - windowHeight;
 //           const maxProgressDistance = Math.max(1, scrollableDistance - startOffset);
 //           const targetScrollY =
@@ -2532,8 +3171,8 @@ function Footer() {
 //     window.addEventListener("resize", handleResize);
 //     return () => window.removeEventListener("resize", handleResize);
 //   }, []);
-//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "150vh" : "1100vh";
-//   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "120vh" : "300vh";
+//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "850vh" : "5000vh";
+//   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "50vh" : "300vh";
 //   useEffect(() => {
 //     const runAction = () => {
 //       const action = localStorage.getItem("TW_action");
@@ -2542,16 +3181,41 @@ function Footer() {
 //       if (action === "go_charge") {
 //         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
 //       }
+//       // if (action === "go_mart") {
+//       //   const scrollContainer = document.getElementById("scroll-container");
+//       //   if (!scrollContainer) return;
+//       //   ScrollTrigger.refresh(true);
+//       //   requestAnimationFrame(() => {
+//       //     requestAnimationFrame(() => {
+//       //       const containerTop = scrollContainer.offsetTop;
+//       //       const containerHeight = scrollContainer.offsetHeight;
+//       //       const windowHeight = window.innerHeight;
+//       //       const targetY = containerTop + containerHeight - windowHeight - 50;
+//       //       window.scrollTo({
+//       //         top: targetY,
+//       //         behavior: "smooth",
+//       //       });
+//       //       setTimeout(() => {
+//       //         window.dispatchEvent(new Event("triggerVideoJump"));
+//       //       }, 600);
+//       //     });
+//       //   });
+//       // }
 //       if (action === "go_mart") {
-//         ScrollTrigger.refresh(true);
-//         requestAnimationFrame(() => {
-//           const section = document.querySelector("#video-section");
-//           section?.scrollIntoView({ behavior: "smooth" });
-//           setTimeout(() => {
-//             window.dispatchEvent(new CustomEvent("scrollToPhoneFrame598"));
-//           }, 600);
-//         });
-//       }
+//   const videoSection = document.getElementById("video-section");
+//   if (!videoSection) return;
+//   // 1️⃣ First physically scroll to video section
+//   videoSection.scrollIntoView({ behavior: "smooth" });
+//   // 2️⃣ Then wait for Video ScrollTrigger
+//   const waitForVideo = () => {
+//     if ((window as any).__VIDEO_READY__) {
+//       window.dispatchEvent(new Event("triggerVideoJump"));
+//       return;
+//     }
+//     requestAnimationFrame(waitForVideo);
+//   };
+//   requestAnimationFrame(waitForVideo);
+// }
 //     };
 //     if (!showPreloader) {
 //       requestAnimationFrame(() => requestAnimationFrame(runAction));
@@ -2560,6 +3224,35 @@ function Footer() {
 //     window.addEventListener("pulseReady", runAction);
 //     return () => window.removeEventListener("pulseReady", runAction);
 //   }, [showPreloader]);
+//   useEffect(() => {
+//     const onScroll = () => {
+//       const scrollY = window.scrollY;
+//       const scrollContainer = document.getElementById("scroll-container");
+//       const videoSection = document.getElementById("video-section");
+//       if (!scrollContainer) return;
+//       const containerTop = scrollContainer.offsetTop;
+//       const containerHeight = scrollContainer.offsetHeight;
+//       // 🔁 SAME math used by TeraaCharge jump
+//       const isMobile = window.innerWidth < 768;
+//       const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
+//       const chargeTriggerY = containerTop + startOffset;
+//       const martTriggerY = videoSection?.offsetTop ?? Infinity;
+//       if (scrollY >= martTriggerY - 20) {
+//         localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
+//         window.dispatchEvent(new Event("storage"));
+//         return;
+//       }
+//       if (scrollY >= chargeTriggerY) {
+//         localStorage.setItem("TW_ACTIVE_NAV", "TeraaCharge");
+//         window.dispatchEvent(new Event("storage"));
+//         return;
+//       }
+//       localStorage.setItem("TW_ACTIVE_NAV", "Pulse");
+//       window.dispatchEvent(new Event("storage"));
+//     };
+//     window.addEventListener("scroll", onScroll);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, []);
 //   if (!ready) return null;
 //   if (showPreloader) {
 //     return (
@@ -2576,8 +3269,10 @@ function Footer() {
 //       />
 //     );
 //   }
+//   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+//   const cameraFov = isMobile ? 70 : 50; // 👈 tweak values here
 //   return (
-//     <main style={{ background: "black", minHeight: scrollHeight, color: "white" }}>
+//     <main style={{ background: "black", color: "white" }}>
 //       {/* 🧭 Navbar stays fixed at top */}
 //       <Navbar />
 //       {/* 🚗 3D Car Section */}
@@ -2597,7 +3292,7 @@ function Footer() {
 //           }}
 //         >
 //           <Canvas
-//             camera={{ position: [0, 1.5, 25], fov: 50 }}
+//             camera={{ position: [0, 1.5, 25], fov: cameraFov }}
 //             style={{
 //               height: "100vh",
 //               width: "100vw",
@@ -2634,10 +3329,11 @@ function Footer() {
 //       <div className="min-h-screen">
 //         <About />
 //       </div>
+//       <Footer />
 //     </main>
 //   );
 // }
-// useGLTF.preload("/models/lastwala.glb");
+// useGLTF.preload("/models/final.glb");
 __turbopack_context__.s([
     "default",
     ()=>Home
@@ -2709,7 +3405,7 @@ function Car({ rearLightsRef, dashboardRef, scale = 1.2 }) {
         scale: scale
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 405,
+        lineNumber: 519,
         columnNumber: 10
     }, this);
 }
@@ -2943,7 +3639,7 @@ function Home() {
             }
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 677,
+            lineNumber: 797,
             columnNumber: 7
         }, this);
     }
@@ -2957,7 +3653,7 @@ function Home() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 699,
+                lineNumber: 819,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3011,7 +3707,7 @@ function Home() {
                                 intensity: 0.6
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 738,
+                                lineNumber: 858,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("directionalLight", {
@@ -3023,7 +3719,7 @@ function Home() {
                                 intensity: 1
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 739,
+                                lineNumber: 859,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Car, {
@@ -3032,21 +3728,21 @@ function Home() {
                                 scale: carScale
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 740,
+                                lineNumber: 860,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ScrollCameraAnimation, {
                                 rearLightsRef: rearLightsRef
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 741,
+                                lineNumber: 861,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(FlickerLights, {
                                 rearLightsRef: rearLightsRef
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 742,
+                                lineNumber: 862,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Suspense"], {
@@ -3056,42 +3752,42 @@ function Home() {
                                     progressRef: progressRef
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 744,
+                                    lineNumber: 864,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 743,
+                                lineNumber: 863,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$VideoTextureEffect$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                 progressRef: progressRef
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 746,
+                                lineNumber: 866,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$OrbitControls$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["OrbitControls"], {
                                 enabled: false
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 747,
+                                lineNumber: 867,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 720,
+                        lineNumber: 840,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 708,
+                    lineNumber: 828,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 706,
+                lineNumber: 826,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3099,35 +3795,35 @@ function Home() {
                 className: "min-h-screen",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$video$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 754,
+                    lineNumber: 874,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 753,
+                lineNumber: 873,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "min-h-screen",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$About$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 757,
+                    lineNumber: 877,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 756,
+                lineNumber: 876,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 760,
+                lineNumber: 880,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 697,
+        lineNumber: 817,
         columnNumber: 5
     }, this);
 }

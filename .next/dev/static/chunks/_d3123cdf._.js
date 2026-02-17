@@ -2,6 +2,256 @@
 "[project]/components/Navbar.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+// "use client";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { useState, useRef, useEffect, useCallback } from "react";
+// import { usePathname } from "next/navigation";
+// import { motion, AnimatePresence } from "framer-motion";
+// import gsap from "gsap";
+// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV";
+// export default function Navbar() {
+//   const navRef = useRef<HTMLDivElement>(null);
+//   const pathname = usePathname();
+//   const [active, setActive] = useState("Pulse");
+//   const [isScrolled, setIsScrolled] = useState(false);
+//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+//   /* ---------------- body lock ---------------- */
+//   useEffect(() => {
+//     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
+//     return () => {
+//       document.body.style.overflow = "auto";
+//     };
+//   }, [isMobileMenuOpen]);
+//   /* ---------------- scroll bg ---------------- */
+//   useEffect(() => {
+//     const onScroll = () => setIsScrolled(window.scrollY > 20);
+//     window.addEventListener("scroll", onScroll);
+//     return () => window.removeEventListener("scroll", onScroll);
+//   }, []);
+//   /* -------- desktop hide / reveal -------- */
+//   useEffect(() => {
+//     if (!navRef.current || window.innerWidth < 768) return;
+//     const nav = navRef.current;
+//     let lastScroll = window.scrollY;
+//     const onScroll = () => {
+//       const current = window.scrollY;
+//       if (current > lastScroll && current > 80) {
+//         gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
+//       }
+//       lastScroll = current;
+//     };
+//     const show = () =>
+//       gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
+//     const topZone = document.createElement("div");
+//     Object.assign(topZone.style, {
+//       position: "fixed",
+//       top: "0",
+//       left: "0",
+//       width: "100%",
+//       height: "20px",
+//       zIndex: "40",
+//     });
+//     document.body.appendChild(topZone);
+//     window.addEventListener("scroll", onScroll);
+//     nav.addEventListener("mouseenter", show);
+//     topZone.addEventListener("mouseenter", show);
+//     return () => {
+//       window.removeEventListener("scroll", onScroll);
+//       nav.removeEventListener("mouseenter", show);
+//       topZone.remove();
+//     };
+//   }, []);
+//   /* ---------------- route syncing ---------------- */
+//   useEffect(() => {
+//     const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+//     if (stored) {
+//       setActive(stored);
+//       localStorage.removeItem(ACTIVE_NAV_KEY);
+//       return;
+//     }
+//     if (pathname === "/") {
+//       const action = localStorage.getItem("TW_action");
+//       if (action === "go_charge") setActive("TeraaCharge");
+//       else if (action === "go_mart") setActive("TeraaMart");
+//       else setActive("Pulse");
+//     } else if (pathname.includes("investors")) setActive("Investors & Partners");
+//     else if (pathname.includes("insights")) setActive("Insights");
+//     else if (pathname.includes("connect")) setActive("Connect");
+//   }, [pathname]);
+//   useEffect(() => {
+//     if (pathname !== "/") return;
+//     const sync = () => {
+//       const v = localStorage.getItem(ACTIVE_NAV_KEY);
+//       if (v) setActive(v);
+//     };
+//     window.addEventListener("storage", sync);
+//     return () => window.removeEventListener("storage", sync);
+//   }, [pathname]);
+//   /* ---------------- navigation ---------------- */
+//   const handleNavigation = useCallback((name: string) => {
+//     setIsMobileMenuOpen(false);
+//     const onHome = window.location.pathname === "/";
+//     if (name === "TeraaCharge") {
+//       setActive(name);
+//       if (onHome) window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+//       else {
+//         localStorage.setItem("TW_action", "go_charge");
+//         window.location.href = "/";
+//       }
+//       return true;
+//     }
+//     if (name === "TeraaMart") {
+//       setActive(name);
+//       if (onHome) window.dispatchEvent(new Event("triggerVideoJump"));
+//       else {
+//         localStorage.setItem("TW_action", "go_mart");
+//         window.location.href = "/";
+//       }
+//       return true;
+//     }
+//     setActive(name);
+//     return false;
+//   }, []);
+//   const navItems = [
+//     { name: "Pulse", href: "/" },
+//     { name: "TeraaCharge", href: "/", image: "/teraacharge.png", w: 90, h: 28 },
+//     { name: "TeraaMart", href: "/", image: "/teraamartlogo.png", w: 80, h: 26 },
+//     { name: "Investors & Partners", href: "/investors-and-partners" },
+//     { name: "Insights", href: "/insights" },
+//     { name: "Connect", href: "/connect", isButton: true },
+//   ];
+//   return (
+//     <nav
+//       ref={navRef}
+//       className={`fixed top-0 left-0 w-full z-50 transition-all ${
+//         isScrolled || isMobileMenuOpen
+//           ? "bg-black/90 backdrop-blur-xl shadow-lg"
+//           : "py-6 bg-transparent"
+//       }`}
+//     >
+//       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:px-10">
+//         <Link href="/" onClick={() => handleNavigation("Pulse")}>
+//           <Image
+//             src="/teraawatt.svg"
+//             alt="logo"
+//             width={125}
+//             height={45}
+//             className="p-[1vw] mr-[1vw]"
+//           />
+//         </Link>
+//         {/* hamburger */}
+//         <button
+//           className="md:hidden relative z-50 w-10 h-10 flex items-center justify-center"
+//           onClick={() => setIsMobileMenuOpen((v) => !v)}
+//         >
+//           <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
+//             <span
+//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
+//                 isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""
+//               }`}
+//             />
+//             <span
+//               className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${
+//                 isMobileMenuOpen ? "opacity-0" : ""
+//               }`}
+//             />
+//             <span
+//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
+//                 isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""
+//               }`}
+//             />
+//           </div>
+//         </button>
+//         {/* desktop */}
+//         <div className="hidden md:flex space-x-8 text-white">
+//           {navItems.map((item) => (
+//             <Link
+//               key={item.name}
+//               href={item.href}
+//               onClick={(e) => {
+//                 if (handleNavigation(item.name)) e.preventDefault();
+//               }}
+//               className={`relative ${active === item.name ? "opacity-100" : "opacity-60"}`}
+//             >
+//               {item.image ? (
+//                 <Image
+//                   src={item.image}
+//                   alt={item.name}
+//                   width={item.w}
+//                   height={item.h}
+//                   className={`relative top-[6%] ${
+//                     active === item.name ? "opacity-100" : "opacity-90"
+//                   }`}
+//                 />
+//               ) : item.isButton ? (
+//                 <Image src="/Contact_page/connect1.svg" alt="connect" width={70} height={48} />
+//               ) : (
+//                 item.name
+//               )}
+//               {!item.isButton && active === item.name && (
+//                 <motion.div
+//                   layoutId="navbar-indicator"
+//                   className="absolute left-0 right-0 h-[2px] bg-red-500"
+//                 />
+//               )}
+//             </Link>
+//           ))}
+//         </div>
+//       </div>
+//       {/* mobile menu */}
+//       <AnimatePresence>
+//         {isMobileMenuOpen && (
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             exit={{ opacity: 0 }}
+//             transition={{ duration: 0.25 }}
+//             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
+//           >
+//             <motion.div
+//               initial={{ y: 20, opacity: 0 }}
+//               animate={{ y: 0, opacity: 1 }}
+//               exit={{ y: 20, opacity: 0 }}
+//               transition={{ type: "spring", stiffness: 120, damping: 18 }}
+//               className="w-full px-6 space-y-3"
+//             >
+//               {navItems.map((item) => (
+//                 <Link
+//                   key={item.name}
+//                   href={item.href}
+//                   onClick={(e) => {
+//                     if (handleNavigation(item.name)) e.preventDefault();
+//                   }}
+//                 >
+//                   <div
+//                     className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
+//                       active === item.name ? "bg-white/5" : "hover:bg-white/5"
+//                     }`}
+//                   >
+//                     <span
+//                       className={`text-lg font-medium tracking-wide ${
+//                         active === item.name ? "text-white" : "text-neutral-400"
+//                       }`}
+//                     >
+//                       {!item.isButton ? item.name : "Connect"}
+//                     </span>
+//                     {!item.isButton && active === item.name && (
+//                       <motion.div
+//                         layoutId="mobile-indicator"
+//                         className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
+//                       />
+//                     )}
+//                   </div>
+//                 </Link>
+//               ))}
+//             </motion.div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </nav>
+//   );
+// }
 __turbopack_context__.s([
     "default",
     ()=>Navbar
@@ -153,8 +403,10 @@ function Navbar() {
             }
             if (name === "TeraaMart") {
                 setActive(name);
-                if (onHome) window.dispatchEvent(new Event("triggerVideoJump"));
-                else {
+                if (onHome) {
+                    // (window as any).__TERAAMART_PENDING__ = true;
+                    window.dispatchEvent(new Event("triggerVideoJump"));
+                } else {
                     localStorage.setItem("TW_action", "go_mart");
                     window.location.href = "/";
                 }
@@ -215,12 +467,12 @@ function Navbar() {
                             className: "p-[1vw] mr-[1vw]"
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 171,
+                            lineNumber: 493,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 170,
+                        lineNumber: 492,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -233,32 +485,32 @@ function Navbar() {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 186,
+                                    lineNumber: 508,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 191,
+                                    lineNumber: 512,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 196,
+                                    lineNumber: 516,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 185,
+                            lineNumber: 507,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 181,
+                        lineNumber: 503,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -278,7 +530,7 @@ function Navbar() {
                                         className: `relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 216,
+                                        lineNumber: 535,
                                         columnNumber: 17
                                     }, this) : item.isButton ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                         src: "/Contact_page/connect1.svg",
@@ -287,7 +539,7 @@ function Navbar() {
                                         height: 48
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 226,
+                                        lineNumber: 544,
                                         columnNumber: 17
                                     }, this) : item.name,
                                     !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -295,24 +547,24 @@ function Navbar() {
                                         className: "absolute left-0 right-0 h-[2px] bg-red-500"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 232,
+                                        lineNumber: 550,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, item.name, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 207,
+                                lineNumber: 526,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 205,
+                        lineNumber: 524,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 168,
+                lineNumber: 490,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -362,7 +614,7 @@ function Navbar() {
                                             children: !item.isButton ? item.name : "Connect"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 272,
+                                            lineNumber: 589,
                                             columnNumber: 21
                                         }, this),
                                         !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -370,403 +622,42 @@ function Navbar() {
                                             className: "absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 281,
+                                            lineNumber: 597,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 267,
+                                    lineNumber: 585,
                                     columnNumber: 19
                                 }, this)
                             }, item.name, false, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 260,
+                                lineNumber: 578,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 252,
+                        lineNumber: 570,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 245,
+                    lineNumber: 563,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 243,
+                lineNumber: 561,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 160,
+        lineNumber: 483,
         columnNumber: 5
     }, this);
-} // "use client";
- // import Image from "next/image";
- // import Link from "next/link";
- // import { useState,useRef, useEffect } from "react";
- // import { usePathname } from "next/navigation";
- // import { motion, AnimatePresence } from "framer-motion";
- // import gsap from "gsap";
- // import { ScrollTrigger } from "gsap/ScrollTrigger";
- // if (typeof window !== "undefined") {
- //   gsap.registerPlugin(ScrollTrigger);
- // }
- // const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV"; // Key for localStorage
- // export default function Navbar() {
- //   const navRef = useRef<HTMLDivElement>(null);
- //   const [active, setActive] = useState("Pulse");
- //   const [isScrolled, setIsScrolled] = useState(false);
- //   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State for Mobile
- //   const pathname = usePathname();
- //   // --- NEW: Prevent Body Scroll when Menu is Open ---
- //   useEffect(() => {
- //     if (isMobileMenuOpen) {
- //       document.body.style.overflow = "hidden";
- //     } else {
- //       document.body.style.overflow = "auto";
- //     }
- //     return () => { document.body.style.overflow = "auto"; };
- //   }, [isMobileMenuOpen]);
- //   // --- Scroll Detection ---
- //   useEffect(() => {
- //     const handleScroll = () => setIsScrolled(window.scrollY > 20);
- //     window.addEventListener("scroll", handleScroll);
- //     return () => window.removeEventListener("scroll", handleScroll);
- //   }, []);
- //   useEffect(() => {
- //   if (!navRef.current) return;
- //   // Desktop only
- //   if (window.innerWidth < 768) return;
- //   const nav = navRef.current;
- //   gsap.set(nav, { y: 0 });
- //   let lastScroll = window.scrollY;
- //   const onScroll = () => {
- //     const current = window.scrollY;
- //     if (current > lastScroll && current > 80) {
- //       // scrolling down → hide
- //       gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
- //      } // else {
- //       // scrolling up → show
- //     //   gsap.to(nav, { y: 0, duration: 0.4, ease: "power2.out" });
- //     // }
- //     lastScroll = current;
- //   };
- //   window.addEventListener("scroll", onScroll);
- //   // Reveal on hover
- //   const show = () =>
- //     gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
- //   nav.addEventListener("mouseenter", show);
- //   // Invisible top trigger zone
- //   const topZone = document.createElement("div");
- //   topZone.style.position = "fixed";
- //   topZone.style.top = "0";
- //   topZone.style.left = "0";
- //   topZone.style.width = "100%";
- //   topZone.style.height = "20px";
- //   topZone.style.zIndex = "40";
- //   document.body.appendChild(topZone);
- //   topZone.addEventListener("mouseenter", show);
- //   return () => {
- //     window.removeEventListener("scroll", onScroll);
- //     nav.removeEventListener("mouseenter", show);
- //     topZone.remove();
- //   };
- // }, []);
- //   // --- State Initialization & URL Sync ---
- //   useEffect(() => {
- //     const storedActive = localStorage.getItem(ACTIVE_NAV_KEY);
- //     if (storedActive) {
- //       setActive(storedActive);
- //       localStorage.removeItem(ACTIVE_NAV_KEY);
- //       return;
- //     }
- //     // Only set default "Pulse" on homepage if no specific tab was requested
- //     if (pathname === "/" && !localStorage.getItem("TW_action")) {
- //       // Check if we arrived with a specific action (TeraaCharge or TeraaMart)
- //       const action = localStorage.getItem("TW_action");
- //       if (action === "go_charge") {
- //         setActive("TeraaCharge");
- //       } else if (action === "go_mart") {
- //         setActive("TeraaMart");
- //       } else {
- //         setActive("Pulse");
- //       }
- //     } else if (pathname.includes("investors")) {
- //       setActive("Investors & Partners");
- //     } else if (pathname.includes("insights")) {
- //       setActive("Insights");
- //     } else if (pathname.includes("connect")) {
- //       setActive("Connect");
- //     }
- //   }, [pathname]);
- //   // --- Sync Active Tab From Scroll (page.tsx) ---
- // useEffect(() => {
- //   if (pathname !== "/") return;
- //   const syncFromScroll = () => {
- //     const v = localStorage.getItem("TW_ACTIVE_NAV");
- //     if (v) setActive(v);
- //   };
- //   window.addEventListener("storage", syncFromScroll);
- //   return () => window.removeEventListener("storage", syncFromScroll);
- // }, [pathname]);
- //   const navItems = [
- //   { name: "Pulse", href: "/" },
- //   {
- //     name: "TeraaCharge",
- //     href: "/",
- //     image: "/teraacharge.png",
- //     width: 90,
- //     height: 28,
- //   },
- //   {
- //     name: "TeraaMart",
- //     href: "/",
- //     image: "/teraamartlogo.png",
- //     width: 80,
- //     height: 26,
- //   },
- //   { name: "Investors & Partners", href: "/investors-and-partners" },
- //   { name: "Insights", href: "/insights" },
- //   { name: "Connect", href: "/connect", isButton: true },
- // ];
- //   // Function to handle custom routing and setting state
- //   const handleCustomNavigation = (itemName: string) => {
- //     sessionStorage.removeItem("PAGE_WAS_RELOADED");
- //     const isOnPulse = window.location.pathname === "/";
- //     // Close mobile menu immediately if open
- //     setIsMobileMenuOpen(false);
- //     if (itemName === "TeraaCharge") {
- //       setActive("TeraaCharge");
- //       if (isOnPulse) {
- //         // Already on homepage → immediately jump to TeraaCharge frame
- //         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
- //       } else {
- //         // Coming from any other page (Investors, Insights, Connect, etc.)
- //         // Set flag and redirect to homepage
- //         localStorage.setItem("TW_action", "go_charge");
- //         window.location.href = "/";
- //       }
- //       return true;
- //     }
- //     if (itemName === "TeraaMart") {
- //       setActive("TeraaMart");
- //       if (isOnPulse) {
- //         // Already on homepage → trigger mart jump
- //         window.dispatchEvent(new Event("triggerVideoJump"));
- //       } else {
- //         // Coming from other page
- //         localStorage.setItem("TW_action", "go_mart");
- //         window.location.href = "/";
- //       }
- //       return true;
- //     }
- //     return false;
- //   };
- //   return (
- //     <nav
- //       ref={navRef}
- //       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
- //         ? "bg-black/90 backdrop-blur-xl  shadow-lg"
- //         : "py-6 bg-transparent"
- //         }`}
- //     >
- //       <div className="flex  lg:p-[0.2vw] items-center w-full px-6 justify-between md:w-fit md:mx-auto md:justify-center md:px-10">
- //         {/* Logo and Nav Items Container */}
- //         <div className="flex items-center w-full md:w-auto md:space-x-10 justify-between md:justify-start">
- //           {/* Logo */}
- //           <Link
- //             href="/"
- //             className="flex items-center relative z-50"
- //             onClick={() => {
- //               sessionStorage.setItem("NAV_SOURCE", "navbar");
- //               setActive("Pulse");
- //               setIsMobileMenuOpen(false);
- //             }}
- //           >
- //             <Image
- //               src="/teraawatt.svg"
- //               alt="TeraaWatt Logo"
- //               width={125}
- //               height={45}
- //               className="object-contain"
- //             />
- //           </Link>
- //           {/* --- Mobile Hamburger Button (Visible on mobile only) --- */}
- //           <button
- //             className="md:hidden relative z-50 text-white p-2 focus:outline-none"
- //             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
- //           >
- //             <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
- //               <span
- //                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
- //                   }`}
- //               />
- //               <span
- //                 className={`block w-full h-0.5 bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""
- //                   }`}
- //               />
- //               <span
- //                 className={`block w-full h-0.5 bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
- //                   }`}
- //               />
- //             </div>
- //           </button>
- //           {/* --- Desktop Nav Items (Hidden on Mobile) --- */}
- //           <div className="hidden md:flex items-center space-x-8 text-white font-normal relative">
- //             {navItems.map((item) => (
- //               <Link
- //                 key={item.name}
- //                 href={item.href}
- //                 className="relative px-2 py-1 group"
- //                 onClick={(e) => {
- //                   if (item.name === "Investors & Partners") {
- //                     // e.preventDefault();
- //                     setActive("Investors & Partners");
- //                     // window.location.href = "/investors-and-partners";
- //                     return;
- //                   }
- //                   const handled = handleCustomNavigation(item.name);
- //                   if (handled) {
- //                     e.preventDefault();
- //                   } else {
- //                     setActive(item.name);
- //                   }
- //                 }}
- //               >
- //                 <span
- //                   className={`relative z-20 transition-colors duration-300 text-sm font-medium tracking-wide ${active === item.name
- //                     ? "text-white"
- //                     : "text-neutral-400 group-hover:text-white"
- //                     }`}
- //                   onClick={(e) => {
- //                     const handled = handleCustomNavigation(item.name);
- //                     if (handled) {
- //                       e.preventDefault();
- //                     } else {
- //                       setActive(item.name);
- //                     }
- //                   }}
- //                 >
- //                   {item.image ? (
- //   <Image
- //     src={item.image}
- //     alt={item.name}
- //     width={item.width}
- //     height={item.height}
- //     className={`transition-all duration-300 ${
- //       active === item.name
- //         ? "opacity-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
- //         : "opacity-70 group-hover:opacity-100"
- //     }`}
- //   />
- // ) : !item.isButton ? (
- //   item.name
- // ) : (
- //   <Image
- //     src="/Contact_page/connect1.svg"
- //     alt="Connect"
- //     width={70}
- //     height={48}
- //     className={`transition duration-300 ${
- //       active === "Connect"
- //         ? "opacity-100 drop-shadow-[0_0_8px_rgba(5,223,114,0.5)]"
- //         : "opacity-80 hover:opacity-100"
- //     }`}
- //   />
- // )}
- //                 </span>
- //                 {/* Desktop Indicator */}
- //                 {!item.isButton && active === item.name && (
- //                   <motion.div
- //     layoutId="navbar-indicator"
- //     className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
- //     transition={{
- //       type: "spring",
- //       stiffness: 300,
- //       damping: 30,
- //     }}
- //   />
- //                 )}
- //               </Link>
- //             ))}
- //           </div>
- //         </div>
- //       </div>
- //       {/* --- Mobile Menu Overlay --- */}
- // <AnimatePresence>
- //   {isMobileMenuOpen && (
- //     <motion.div
- //       initial={{ opacity: 0 }}
- //       animate={{ opacity: 1 }}
- //       exit={{ opacity: 0 }}
- //       transition={{ duration: 0.25 }}
- //       className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
- //     >
- //       <motion.div
- //         initial={{ y: 20, opacity: 0 }}
- //         animate={{ y: 0, opacity: 1 }}
- //         exit={{ y: 20, opacity: 0 }}
- //         transition={{ type: "spring", stiffness: 120, damping: 18 }}
- //         className="w-full px-6 space-y-3"
- //       >
- //         {navItems.map((item) => (
- //           <Link
- //             key={item.name}
- //             href={item.href}
- //             className="relative block"
- //             onClick={(e) => {
- //               if (item.name === "Investors & Partners") {
- //                 // e.preventDefault();
- //                 setActive("Investors & Partners");
- //                 // window.location.href = "/investors-and-partners";
- //                 setIsMobileMenuOpen(false);
- //                 return;
- //               }
- //               const handled = handleCustomNavigation(item.name);
- //               if (handled) {
- //                 e.preventDefault();
- //               } else {
- //                 setActive(item.name);
- //                 setIsMobileMenuOpen(false);
- //               }
- //             }}
- //           >
- //             <div
- //               className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
- //                 active === item.name
- //                   ? "bg-white/5"
- //                   : "bg-white/0 hover:bg-white/5"
- //               }`}
- //             >
- //               <span
- //                 className={`text-lg font-medium tracking-wide ${
- //                   active === item.name ? "text-white" : "text-neutral-400"
- //                 }`}
- //               >
- //                 {!item.isButton ? item.name : "Connect"}
- //               </span>
- //               {/* Active red underline */}
- //               {!item.isButton && active === item.name && (
- //                 <motion.div
- //                   layoutId="mobile-indicator"
- //                   className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
- //                 />
- //               )}
- //             </div>
- //           </Link>
- //         ))}
- //       </motion.div>
- //     </motion.div>
- //   )}
- // </AnimatePresence>
- //     </nav>
- //   );
- // }
+}
 _s(Navbar, "0lRvTdPAAjxhxEz1oSQtLYlWAkc=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"]
@@ -782,220 +673,17 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/components/About.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import React, { memo } from "react";
-// import Link from "next/link";
-// import Image from "next/image";
-// import { motion } from "framer-motion";
-// /* =======================
-//    Types
-// ======================= */
-// interface ProductData {
-//   id: string;
-//   titleImage: string;
-//   subtitle: string;
-//   description: string;
-//   image: string;
-//   accentColor: string;
-//   features: string[];
-// }
-// /* =======================
-//    Static Data
-// ======================= */
-// const products: ProductData[] = [
-//   {
-//     id: "charge",
-//     titleImage: "/teraaCharge.png",
-//     subtitle: "The Charging Network",
-//     description:
-//       "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform.",
-//     image: "/About/teraacharge.jpg",
-//     accentColor: "#22D3EE",
-//     features: [
-//       "Real-time station availability",
-//       "Fast & Ultra-fast charging",
-//       "Seamless app integration",
-//       "24/7 support",
-//     ],
-//   },
-//   {
-//     id: "coins",
-//     titleImage: "/teraacoins.png",
-//     subtitle: "Digital Currency",
-//     description:
-//       "A reward system for sustainable driving. Earn coins for charging, eco-driving, and participating in the green mobility ecosystem.",
-//     image: "/About/teraacoins.png",
-//     accentColor: "#FFD700",
-//     features: [
-//       "Earn while you drive",
-//       "Redeem for charging",
-//       "Marketplace access",
-//       "Secure & digital",
-//     ],
-//   },
-//   {
-//     id: "vouchers",
-//     titleImage: "/teraavouchers.png",
-//     subtitle: "Flexible Payment",
-//     description:
-//       "Prepaid vouchers that make EV ownership more accessible with discounts and corporate-friendly options.",
-//     image: "/About/teraavoucher.png",
-//     accentColor: "#05DF72",
-//     features: [
-//       "Prepaid flexibility",
-//       "Corporate gifting",
-//       "Bulk discounts",
-//       "Instant delivery",
-//     ],
-//   },
-//   {
-//     id: "mart",
-//     titleImage: "/teraamartlogo.png",
-//     subtitle: "EV Marketplace",
-//     description:
-//       "A curated marketplace for EV accessories, charging equipment, and sustainable mobility products.",
-//     image: "/About/teraamart.png",
-//     accentColor: "#00BFFF",
-//     features: [
-//       "EV accessories",
-//       "Home chargers",
-//       "Verified quality",
-//       "Eco products",
-//     ],
-//   },
-// ];
-// /* =======================
-//    Product Section
-// ======================= */
-// const ProductSection = memo(
-//   ({ data, index }: { data: ProductData; index: number }) => {
-//     const reverse = index % 2 !== 0;
-//     return (
-//       <section id={data.id} className="min-h-screen flex items-center px-6">
-//         <div
-//           className={`container mx-auto flex flex-col md:flex-row items-center gap-16 ${
-//             reverse ? "md:flex-row-reverse" : ""
-//           }`}
-//         >
-//           {/* TEXT */}
-//           <motion.div
-//             initial={{ opacity: 0, y: 40 }}
-//             whileInView={{ opacity: 1, y: 0 }}
-//             viewport={{ once: true, margin: "-120px" }}
-//             transition={{ duration: 0.6, ease: "easeOut" }}
-//             className="flex-1 space-y-8"
-//           >
-//             <span className="text-[#05DF72] font-mono text-sm tracking-widest">
-//               0{index + 1} — {data.subtitle}
-//             </span>
-//             <Image
-//               src={data.titleImage}
-//               alt={data.subtitle}
-//               width={420}
-//               height={120}
-//               priority={index === 0}
-//             />
-//             <p className="text-gray-400 text-lg max-w-lg">
-//               {data.description}
-//             </p>
-//             <ul className="space-y-4 pt-4">
-//               {data.features.map((f) => (
-//                 <li
-//                   key={f}
-//                   className="flex items-center gap-3 border-b border-white/10 pb-3"
-//                 >
-//                   <span className="w-2 h-2 bg-[#05DF72] rounded-full" />
-//                   {f}
-//                 </li>
-//               ))}
-//             </ul>
-//           </motion.div>
-//           {/* IMAGE CONTAINER (NO OPACITY HERE) */}
-//           <motion.div
-//             initial={{ scale: 0.95 }}
-//             whileInView={{ scale: 1 }}
-//             viewport={{ once: true, margin: "-120px" }}
-//             transition={{ duration: 0.6, ease: "easeOut" }}
-//             className="relative flex-1 h-[60vh] rounded-2xl overflow-hidden border border-white/10 bg-neutral-900"
-//             style={{ willChange: "transform" }}
-//           >
-//             {/* IMAGE FADES IN SEPARATELY */}
-//             <motion.div
-//               initial={{ opacity: 0 }}
-//               whileInView={{ opacity: 1 }}
-//               viewport={{ once: true, margin: "-120px" }}
-//               transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-//               className="absolute inset-0"
-//             >
-//               <Image
-//                 src={data.image}
-//                 alt={data.subtitle}
-//                 fill
-//                 sizes="(max-width: 768px) 100vw, 50vw"
-//                 className="object-cover"
-//                 placeholder="empty"
-//                 unoptimized
-//               />
-//             </motion.div>
-//           </motion.div>
-//         </div>
-//       </section>
-//     );
-//   }
-// );
-// ProductSection.displayName = "ProductSection";
-// /* =======================
-//    MAIN ABOUT PAGE
-// ======================= */
-// export default function About() {
-//   return (
-//     <div className="bg-black text-white min-h-screen">
-//       {/* HERO */}
-//       <section className="py-[12vw] flex flex-col items-center justify-center text-center">
-//         <Image
-//           src="/teraawatt.svg"
-//           alt="Teraawatt"
-//           width={420}
-//           height={120}
-//           priority
-//         />
-//         <div className="w-36 h-[6px] bg-red-500 rounded-full my-8" />
-//         <p className="max-w-3xl text-white/90 text-lg leading-relaxed">
-//           Driving electric is just the start.
-//           <br />
-//           We&apos;re building the connected system that powers every part of your EV journey.
-//         </p>
-//       </section>
-//       {/* PRODUCTS */}
-//       {products.map((product, index) => (
-//         <ProductSection key={product.id} data={product} index={index} />
-//       ))}
-//       {/* CTA */}
-//       <section className="py-32 text-center bg-neutral-900 mx-6 rounded-3xl">
-//         <h2 className="text-5xl font-bold mb-8">Join the Revolution</h2>
-//         <p className="max-w-2xl mx-auto text-gray-400 mb-10">
-//           The future of mobility is electric, connected, and rewarding.
-//         </p>
-//         <Link href="/connect">
-//           <button className="px-10 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full hover:bg-white/20 hover:shadow-[0_8px_32px_rgba(5,223,114,0.2)] transition-all">
-//             Get Started
-//           </button>
-//         </Link>
-//       </section>
-//     </div>
-//   );
-// }
 __turbopack_context__.s([
     "default",
     ()=>About
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$scroll$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/value/use-scroll.mjs [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/value/use-transform.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/gsap/index.js [app-client] (ecmascript) <locals>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/gsap/ScrollTrigger.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$up$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowUpRight$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/arrow-up-right.js [app-client] (ecmascript) <export default as ArrowUpRight>");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
@@ -1003,326 +691,474 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+;
+;
+__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].registerPlugin(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"]);
 /* =======================
-   Data (ORDER MATTERS)
+   Data
 ======================= */ const products = [
     {
         id: "charge",
+        title: "Teraa Charge",
         titleImage: "/teraacharge.png",
-        subtitle: "The Charging Network",
-        description: "Access the fastest and most reliable EV charging network. Find stations, manage charging sessions, and view real-time availability all from one seamless platform.",
+        category: "INFRASTRUCTURE",
+        description: "Access the fastest and most reliable EV charging network. Real-time availability, seamless sessions, and high-speed delivery.",
         image: "/About/teraacharge.jpg",
         accentColor: "#22D3EE",
         features: [
-            "Real-time station availability",
-            "Fast & Ultra-fast charging",
-            "Seamless app integration",
-            "24/7 support"
+            "Real-time Data",
+            "Ultra-fast Charging",
+            "24/7 Support"
         ]
     },
     {
         id: "coins",
+        title: "Teraa Coins",
         titleImage: "/teraacoins.png",
-        subtitle: "Digital Currency",
-        description: "A reward system for sustainable driving. Earn coins for charging, eco-driving, and participating in the green mobility ecosystem.",
+        category: "REWARDS",
+        description: "Turn miles into rewards. Earn digital currency for every sustainable kilometer and redeem it for charging or exclusive products.",
         image: "/About/teraacoins.png",
         accentColor: "#FFD700",
         features: [
-            "Earn while you drive",
-            "Redeem for charging",
-            "Marketplace access",
-            "Secure & digital"
+            "Drive & Earn",
+            "Digital Wallet",
+            "Exclusive Perks"
         ]
     },
     {
         id: "vouchers",
+        title: "Teraa Vouchers",
         titleImage: "/teraavouchers.png",
-        subtitle: "Flexible Payment",
-        description: "Prepaid vouchers that make EV ownership more accessible with discounts and corporate-friendly options.",
+        category: "PAYMENTS",
+        description: "Flexible prepaid solutions for individuals and fleets. Gift sustainable mobility or manage corporate expenses with ease.",
         image: "/About/teraavoucher.png",
         accentColor: "#05DF72",
         features: [
-            "Prepaid flexibility",
-            "Corporate gifting",
-            "Bulk discounts",
-            "Instant delivery"
+            "Corporate Gifting",
+            "Bulk Discounts",
+            "Instant Delivery"
         ]
     },
     {
         id: "mart",
+        title: "Teraa Mart",
         titleImage: "/teraamartlogo.png",
-        subtitle: "EV Marketplace",
-        description: "A curated marketplace for EV accessories, charging equipment, and sustainable mobility products.",
+        category: "MARKETPLACE",
+        description: "A curated collection of premium EV accessories and home charging solutions. Quality verified for your peace of mind.",
         image: "/About/teraamart.png",
         accentColor: "#00BFFF",
         features: [
-            "EV accessories",
-            "Home chargers",
-            "Verified quality",
-            "Eco products"
+            "Verified Quality",
+            "Home Charging",
+            "Eco Accessories"
         ]
     }
 ];
-/* =======================
-   Product Section
-======================= */ const ProductSection = ({ data, index })=>{
-    _s();
-    const ref = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const { scrollYProgress } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$scroll$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useScroll"])({
-        target: ref,
-        offset: [
-            "start end",
-            "end start"
-        ]
-    });
-    const yImg = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"])(scrollYProgress, [
-        0,
-        1
-    ], [
-        100,
-        -100
-    ]);
-    const scaleImg = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"])(scrollYProgress, [
-        0.2,
-        0.8
-    ], [
-        0.9,
-        1.05
-    ]);
-    const opacity = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"])(scrollYProgress, [
-        0.1,
-        0.3,
-        0.8
-    ], [
-        0,
-        1,
-        1
-    ]);
-    const reverse = index % 2 !== 0;
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-        ref: ref,
-        id: data.id,
-        className: "min-h-screen flex items-center px-6 ",
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: `container mx-auto flex flex-col md:flex-row items-center gap-16 ${reverse ? "md:flex-row-reverse" : ""}`,
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                    style: {
-                        opacity
-                    },
-                    className: "flex-1 space-y-8",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                            className: "text-[#05DF72] font-mono text-sm tracking-widest",
-                            children: [
-                                "0",
-                                index + 1,
-                                " — ",
-                                data.subtitle
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/components/About.tsx",
-                            lineNumber: 361,
-                            columnNumber: 11
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: data.titleImage,
-                            alt: "image",
-                            width: 420,
-                            height: 120,
-                            className: "mb-2",
-                            priority: index === 0
-                        }, void 0, false, {
-                            fileName: "[project]/components/About.tsx",
-                            lineNumber: 365,
-                            columnNumber: 11
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-gray-400 text-lg max-w-lg",
-                            children: data.description
-                        }, void 0, false, {
-                            fileName: "[project]/components/About.tsx",
-                            lineNumber: 374,
-                            columnNumber: 11
-                        }, ("TURBOPACK compile-time value", void 0)),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                            className: "space-y-4 pt-4",
-                            children: data.features.map((f, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                    className: "flex items-center gap-3 border-b border-white/10 pb-3",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "w-2 h-2 bg-[#05DF72] rounded-full"
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/About.tsx",
-                                            lineNumber: 384,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        f
-                                    ]
-                                }, i, true, {
-                                    fileName: "[project]/components/About.tsx",
-                                    lineNumber: 380,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)))
-                        }, void 0, false, {
-                            fileName: "[project]/components/About.tsx",
-                            lineNumber: 378,
-                            columnNumber: 11
-                        }, ("TURBOPACK compile-time value", void 0))
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/components/About.tsx",
-                    lineNumber: 360,
-                    columnNumber: 9
-                }, ("TURBOPACK compile-time value", void 0)),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                    style: {
-                        y: yImg,
-                        scale: scaleImg
-                    },
-                    className: "flex-1 h-[60vh] rounded-2xl overflow-hidden border border-white/10 bg-neutral-900",
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                        src: data.image,
-                        alt: "image",
-                        className: "w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700"
-                    }, void 0, false, {
-                        fileName: "[project]/components/About.tsx",
-                        lineNumber: 396,
-                        columnNumber: 11
-                    }, ("TURBOPACK compile-time value", void 0))
-                }, void 0, false, {
-                    fileName: "[project]/components/About.tsx",
-                    lineNumber: 392,
-                    columnNumber: 9
-                }, ("TURBOPACK compile-time value", void 0))
-            ]
-        }, void 0, true, {
-            fileName: "[project]/components/About.tsx",
-            lineNumber: 354,
-            columnNumber: 7
-        }, ("TURBOPACK compile-time value", void 0))
-    }, void 0, false, {
-        fileName: "[project]/components/About.tsx",
-        lineNumber: 349,
-        columnNumber: 5
-    }, ("TURBOPACK compile-time value", void 0));
-};
-_s(ProductSection, "AoRU5SWjdh1ZwGPHNmptrKmKl0M=", false, function() {
-    return [
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$scroll$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useScroll"],
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"],
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"],
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$value$2f$use$2d$transform$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTransform"]
-    ];
-});
-_c = ProductSection;
 function About() {
+    _s();
+    const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useLayoutEffect"])({
+        "About.useLayoutEffect": ()=>{
+            const ctx = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].context({
+                "About.useLayoutEffect.ctx": ()=>{
+                    const q = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].utils.selector(containerRef);
+                    // 1. Initial State: All images opacity 0, except first one? 
+                    // Actually, let's start all at 0, and let ScrollTrigger handle the first one being active immediately if scrolled there.
+                    // But for initial load, to avoid flicker, we can set first to 1.
+                    products.forEach({
+                        "About.useLayoutEffect.ctx": (product, i)=>{
+                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].set(`#img-${product.id}`, {
+                                opacity: i === 0 ? 1 : 0,
+                                zIndex: i
+                            });
+                        }
+                    }["About.useLayoutEffect.ctx"]);
+                    // 2. Create ScrollTriggers with onToggle
+                    products.forEach({
+                        "About.useLayoutEffect.ctx": (product, i)=>{
+                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
+                                trigger: `#text-${product.id}`,
+                                start: "top center",
+                                end: "bottom center",
+                                onToggle: {
+                                    "About.useLayoutEffect.ctx": (self)=>{
+                                        if (self.isActive) {
+                                            // Fade In
+                                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].to(`#img-${product.id}`, {
+                                                opacity: 1,
+                                                duration: 0.5,
+                                                overwrite: true
+                                            });
+                                        } else {
+                                            // Fade Out
+                                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].to(`#img-${product.id}`, {
+                                                opacity: 0,
+                                                duration: 0.5,
+                                                overwrite: true
+                                            });
+                                        }
+                                    }
+                                }["About.useLayoutEffect.ctx"]
+                            });
+                        }
+                    }["About.useLayoutEffect.ctx"]);
+                }
+            }["About.useLayoutEffect.ctx"], containerRef);
+            return ({
+                "About.useLayoutEffect": ()=>ctx.revert()
+            })["About.useLayoutEffect"];
+        }
+    }["About.useLayoutEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "bg-black text-white min-h-screen",
+        ref: containerRef,
+        className: "bg-black text-white relative w-full",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "h-auto  py-[12vw] max-sm:py-[10vw] flex flex-col items-center justify-center text-center ",
+                className: "py-32 px-6 container mx-auto flex flex-col items-center text-center",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        src: "/teraawatt.svg",
-                        alt: "Teraawatt",
-                        width: 420,
-                        height: 120,
-                        priority: true,
-                        className: " max-sm:h-[12vw]"
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                        className: "text-sm md:text-base text-gray-500 tracking-[0.2em] font-mono mb-6 uppercase",
+                        children: "The Ecosystem"
                     }, void 0, false, {
                         fileName: "[project]/components/About.tsx",
-                        lineNumber: 418,
+                        lineNumber: 120,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "max-sm:my-[5vw] max-sm:h-[1vw] max-sm:w-[50%] w-36 h-[6px] bg-red-500 rounded-full my-8"
-                    }, void 0, false, {
-                        fileName: "[project]/components/About.tsx",
-                        lineNumber: 427,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "max-w-3xl text-white/90 text-lg leading-relaxed max-sm:py-[5vw]",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                        className: "text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-white mb-8",
                         children: [
-                            "Driving electric is just the start.",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
+                            "Beyond ",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-[#05DF72]",
+                                children: "Driving."
+                            }, void 0, false, {
                                 fileName: "[project]/components/About.tsx",
-                                lineNumber: 431,
-                                columnNumber: 11
-                            }, this),
-                            "We're building the connected system that powers every part of your EV journey."
+                                lineNumber: 124,
+                                columnNumber: 18
+                            }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/About.tsx",
-                        lineNumber: 429,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/About.tsx",
-                lineNumber: 417,
-                columnNumber: 7
-            }, this),
-            products.map((product, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ProductSection, {
-                    data: product,
-                    index: index
-                }, product.id, false, {
-                    fileName: "[project]/components/About.tsx",
-                    lineNumber: 442,
-                    columnNumber: 9
-                }, this)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "py-32 max-sm:p-[5vw] text-center bg-neutral-900 max-sm:m-[5vw] max-sm:rounded-[10vw] max-sm:py-[5vw]",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "text-5xl max-sm:text-[8vw] font-bold mb-8  max-sm:mb-[5vw]",
-                        children: "Join the Revolution"
-                    }, void 0, false, {
-                        fileName: "[project]/components/About.tsx",
-                        lineNumber: 449,
+                        lineNumber: 123,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "max-w-2xl mx-auto text-gray-400 mb-10 max-sm:text-[4.5vw]  max-sm:mb-[5vw] ",
-                        children: "The future of mobility is electric, connected, and rewarding."
+                        className: "max-w-2xl text-gray-400 text-lg md:text-xl leading-relaxed",
+                        children: "We are building the integrated infrastructure that powers the next generation of electric mobility."
                     }, void 0, false, {
                         fileName: "[project]/components/About.tsx",
-                        lineNumber: 452,
+                        lineNumber: 126,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        href: "/connect",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            className: "   px-10 py-4 max-sm:px-[10vw] max-sm:py-[1vh] max-sm:text-[5vw]   bg-white/10 backdrop-blur-xl   text-white font-semibold text-lg   border border-white/20   rounded-full   hover:bg-white/20   hover:border-white/30   hover:shadow-[0_8px_32px_rgba(5,223,114,0.2)]   active:scale-95   transition-all duration-300 cursor-pointer   ",
-                            children: "Get Started"
-                        }, void 0, false, {
-                            fileName: "[project]/components/About.tsx",
-                            lineNumber: 456,
-                            columnNumber: 11
-                        }, this)
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "h-24 w-[1px] bg-gradient-to-b from-gray-800 to-transparent mt-16"
                     }, void 0, false, {
                         fileName: "[project]/components/About.tsx",
-                        lineNumber: 455,
+                        lineNumber: 129,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/About.tsx",
-                lineNumber: 448,
+                lineNumber: 119,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "relative flex flex-col lg:flex-row",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "lg:w-1/2 w-full h-[50vh] lg:h-screen lg:sticky lg:top-0 flex items-center justify-center overflow-hidden relative order-1",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-800/30 via-transparent to-transparent opacity-40"
+                            }, void 0, false, {
+                                fileName: "[project]/components/About.tsx",
+                                lineNumber: 139,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "relative w-full max-w-md aspect-square md:aspect-[4/3] lg:aspect-square lg:w-[400px] lg:h-[400px] mx-auto z-10",
+                                children: products.map((product, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        id: `img-${product.id}`,
+                                        className: "absolute inset-0 w-full h-full",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "relative w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] backdrop-blur-md bg-white/5 group",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700",
+                                                    style: {
+                                                        background: `radial-gradient(circle at 50% 0%, ${product.accentColor}, transparent 70%)`
+                                                    }
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 155,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                    src: product.image,
+                                                    alt: product.title,
+                                                    fill: true,
+                                                    className: "object-cover p-2 rounded-[20px]",
+                                                    priority: index === 0,
+                                                    sizes: "(max-width: 768px) 100vw, 500px"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 160,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "absolute top-4 right-4 w-2 h-2 rounded-full bg-white/20"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 170,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "absolute bottom-4 left-4 w-2 h-2 rounded-full bg-white/20"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 171,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/About.tsx",
+                                            lineNumber: 152,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, product.id, false, {
+                                        fileName: "[project]/components/About.tsx",
+                                        lineNumber: 144,
+                                        columnNumber: 15
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/components/About.tsx",
+                                lineNumber: 142,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "absolute bottom-12 left-12 text-[10px] font-mono text-white/20 tracking-[0.2em] hidden lg:block z-0 rotate-[-90deg] origin-bottom-left",
+                                children: "SYSTEM_VISUAL_INTERFACE // V2.0"
+                            }, void 0, false, {
+                                fileName: "[project]/components/About.tsx",
+                                lineNumber: 178,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/About.tsx",
+                        lineNumber: 136,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "lg:w-1/2 w-full order-2 relative z-10 lg:bg-transparent",
+                        children: products.map((product)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                id: `text-${product.id}`,
+                                className: "min-h-[80vh] lg:min-h-screen flex flex-col justify-center p-6 lg:p-24",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden group hover:border-white/20 transition-colors duration-500",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none group-hover:bg-white/10 transition-colors duration-500",
+                                            style: {
+                                                background: `radial-gradient(circle, ${product.accentColor}20 0%, transparent 70%)`
+                                            }
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/About.tsx",
+                                            lineNumber: 195,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "space-y-6 max-w-lg relative z-10",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center gap-3",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "w-1.5 h-1.5 rounded-full shadow-[0_0_10px_currentColor]",
+                                                            style: {
+                                                                backgroundColor: product.accentColor,
+                                                                color: product.accentColor
+                                                            }
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/About.tsx",
+                                                            lineNumber: 202,
+                                                            columnNumber: 21
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-xs font-mono tracking-widest text-gray-400 uppercase",
+                                                            children: product.category
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/About.tsx",
+                                                            lineNumber: 206,
+                                                            columnNumber: 21
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 201,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "mb-4 relative w-full h-16 md:h-20 flex items-center justify-start",
+                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                        src: product.titleImage,
+                                                        alt: product.title,
+                                                        width: 320,
+                                                        height: 80,
+                                                        className: "object-contain object-left w-auto h-full"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/About.tsx",
+                                                        lineNumber: 213,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 212,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-gray-400 text-base md:text-lg leading-relaxed font-light",
+                                                    children: product.description
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 222,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                                    className: "grid grid-cols-1 gap-3 pt-6 border-t border-white/5",
+                                                    children: product.features.map((f, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                            className: "flex items-center gap-2 text-gray-300 text-sm font-medium",
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$up$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowUpRight$3e$__["ArrowUpRight"], {
+                                                                    className: "w-4 h-4 text-white/40"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/components/About.tsx",
+                                                                    lineNumber: 232,
+                                                                    columnNumber: 25
+                                                                }, this),
+                                                                f
+                                                            ]
+                                                        }, i, true, {
+                                                            fileName: "[project]/components/About.tsx",
+                                                            lineNumber: 228,
+                                                            columnNumber: 23
+                                                        }, this))
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 226,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "pt-6",
+                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                        href: `/${product.id === 'charge' ? 'app' : product.id}`,
+                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                            className: "text-sm font-semibold text-white border-b border-white/30 pb-1 hover:border-white transition-colors flex items-center gap-2",
+                                                            children: [
+                                                                "Explore ",
+                                                                product.title.split(" ")[1],
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$up$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowUpRight$3e$__["ArrowUpRight"], {
+                                                                    className: "w-3 h-3"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/components/About.tsx",
+                                                                    lineNumber: 242,
+                                                                    columnNumber: 25
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/components/About.tsx",
+                                                            lineNumber: 240,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/About.tsx",
+                                                        lineNumber: 239,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/About.tsx",
+                                                    lineNumber: 238,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/About.tsx",
+                                            lineNumber: 200,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/components/About.tsx",
+                                    lineNumber: 192,
+                                    columnNumber: 15
+                                }, this)
+                            }, product.id, false, {
+                                fileName: "[project]/components/About.tsx",
+                                lineNumber: 186,
+                                columnNumber: 13
+                            }, this))
+                    }, void 0, false, {
+                        fileName: "[project]/components/About.tsx",
+                        lineNumber: 184,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/components/About.tsx",
+                lineNumber: 133,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                className: "py-40 bg-white text-black text-center relative overflow-hidden",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "container mx-auto px-6 relative z-10",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                            className: "text-5xl md:text-8xl font-bold tracking-tighter mb-10 text-black",
+                            children: "Start Now"
+                        }, void 0, false, {
+                            fileName: "[project]/components/About.tsx",
+                            lineNumber: 256,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                            href: "/connect",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                className: "px-12 py-5 bg-black text-white text-lg font-bold rounded-full hover:scale-105 transition-transform duration-300 shadow-2xl",
+                                children: "Get the App"
+                            }, void 0, false, {
+                                fileName: "[project]/components/About.tsx",
+                                lineNumber: 260,
+                                columnNumber: 13
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/components/About.tsx",
+                            lineNumber: 259,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/About.tsx",
+                    lineNumber: 255,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/components/About.tsx",
+                lineNumber: 254,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/About.tsx",
-        lineNumber: 412,
+        lineNumber: 116,
         columnNumber: 5
     }, this);
 }
-_c1 = About;
-var _c, _c1;
-__turbopack_context__.k.register(_c, "ProductSection");
-__turbopack_context__.k.register(_c1, "About");
+_s(About, "JVErPvg7bZ6yLj50J4lCvDO7Tjk=");
+_c = About;
+var _c;
+__turbopack_context__.k.register(_c, "About");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }
@@ -1627,8 +1463,8 @@ function VideoCoin({ progressRef }) {
         },
         end: {
             z: 0.01,
-            x: 0.130,
-            y: 0.48,
+            x: 0.20,
+            y: 0.41,
             scale: 6.2
         },
         /* ---- rotation phases ---- */ freeSpinStart: 0.03,
@@ -1738,161 +1574,6 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/components/video.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import { useEffect, useRef } from "react";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import { Canvas } from "@react-three/fiber";
-// import ScrollingCoin from "./ScrollingCoin";
-// gsap.registerPlugin(ScrollTrigger);
-// export default function Video() {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const bgVideoRef = useRef<HTMLVideoElement>(null);
-//   const fgVideoRef = useRef<HTMLVideoElement>(null);
-//   const scrollProgressRef = useRef(0);
-//   const rawProgressRef = useRef(0);
-//   const smoothProgressRef = useRef(0);
-//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-//   const rafRef = useRef<number>(0);
-//   const FG_TOTAL_FRAMES = 405;
-//   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
-//   const START_BG_AT_FRAME = 130;
-//   const targetProgress = 289 / FG_FRAME_MAX;
-//   /* ---------------- VIDEO SETUP ---------------- */
-//   useEffect(() => {
-//     const setup = (v: HTMLVideoElement, src: string) => {
-//       v.src = src;
-//       v.muted = true;
-//       v.playsInline = true;
-//       v.preload = "auto";
-//       v.crossOrigin = "anonymous";
-//       v.load();
-//       // safari wake
-//       v.currentTime = 0.01;
-//       setTimeout(() => (v.currentTime = 0), 300);
-//     };
-//     if (bgVideoRef.current) setup(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
-//     if (fgVideoRef.current) setup(fgVideoRef.current, "/iphoneframes/remember.mp4");
-//   }, []);
-//   /* ---------------- RAF SCRUB ---------------- */
-//   useEffect(() => {
-//     const fg = fgVideoRef.current;
-//     const bg = bgVideoRef.current;
-//     if (!fg || !bg) return;
-//     let lastTime = performance.now();
-//     let lastRender = 0;
-//     let fgDuration = 0;
-//     let bgDuration = 0;
-//     const animate = (time: number) => {
-//       if (time - lastRender < 16) {
-//         rafRef.current = requestAnimationFrame(animate);
-//         return;
-//       }
-//       lastRender = time;
-//       const delta = Math.min((time - lastTime) / 1000, 0.1);
-//       lastTime = time;
-//       if (!fgDuration && fg.duration) {
-//         fgDuration = fg.duration;
-//         bgDuration = bg.duration || 0;
-//       }
-//       if (!fgDuration) {
-//         rafRef.current = requestAnimationFrame(animate);
-//         return;
-//       }
-//       const damping = 1 - Math.exp(-delta * 18);
-//       smoothProgressRef.current +=
-//         (rawProgressRef.current - smoothProgressRef.current) * damping;
-//       const smooth = Math.min(Math.max(smoothProgressRef.current, 0), 1);
-//       const fgTarget = smooth * fgDuration;
-//       if (Math.abs(fg.currentTime - fgTarget) > 0.03) {
-//         fg.fastSeek ? fg.fastSeek(fgTarget) : (fg.currentTime = fgTarget);
-//       }
-//       const frame = smooth * FG_FRAME_MAX;
-//       if (frame >= START_BG_AT_FRAME && bgDuration) {
-//         const bgProg =
-//           (frame - START_BG_AT_FRAME) / (FG_FRAME_MAX - START_BG_AT_FRAME);
-//         const bgTarget = bgProg * bgDuration;
-//         if (Math.abs(bg.currentTime - bgTarget) > 0.03) {
-//           bg.fastSeek ? bg.fastSeek(bgTarget) : (bg.currentTime = bgTarget);
-//         }
-//       } else if (bg.currentTime > 0.03) {
-//         bg.currentTime = 0;
-//       }
-//       scrollProgressRef.current = smooth;
-//       rafRef.current = requestAnimationFrame(animate);
-//     };
-//     rafRef.current = requestAnimationFrame(animate);
-//     return () => cancelAnimationFrame(rafRef.current);
-//   }, []);
-//   /* ---------------- SCROLLTRIGGER + NAV SIGNAL ---------------- */
-//   useEffect(() => {
-//     if (!containerRef.current) return;
-//     scrollTriggerRef.current?.kill();
-//     const st = ScrollTrigger.create({
-//       trigger: containerRef.current,
-//       start: "top top",
-//       end: "+=400%",
-//       pin: true,
-//       anticipatePin: 1,
-//       onUpdate: (self) => {
-//         rawProgressRef.current = self.progress;
-//         // 🔔 NAVBAR SIGNAL
-//         if (self.progress > 0.02) {
-//           localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
-//           window.dispatchEvent(new Event("storage"));
-//         }
-//       },
-//       onRefresh: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
-//     });
-//     scrollTriggerRef.current = st;
-//     // tell Home video is mounted
-//     (window as any).__VIDEO_READY__ = true;
-//     return () => st.kill();
-//   }, []);
-//   /* ---------------- EXTERNAL JUMP ---------------- */
-//   useEffect(() => {
-//     const handle = () => {
-//       if (!fgVideoRef.current) return;
-//       rawProgressRef.current = targetProgress;
-//       smoothProgressRef.current = targetProgress;
-//       fgVideoRef.current.currentTime =
-//         targetProgress * fgVideoRef.current.duration;
-//     };
-//     window.addEventListener("triggerVideoJump", handle);
-//     return () => window.removeEventListener("triggerVideoJump", handle);
-//   }, []);
-//   /* ---------------- JSX ---------------- */
-//   return (
-//     <div ref={containerRef} className="relative w-full bg-black">
-//       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-//         {/* BACKGROUND */}
-//         <video
-//           ref={bgVideoRef}
-//           className="absolute inset-0 w-full h-full object-cover"
-//           style={{ pointerEvents: "none" }}
-//           playsInline
-//           muted
-//         />
-//         {/* FOREGROUND */}
-//         <video
-//           ref={fgVideoRef}
-//           className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
-//           style={{ imageRendering: "crisp-edges" }}
-//           playsInline
-//           muted
-//         />
-//         {/* COIN */}
-//         <div className="absolute inset-0 z-20 pointer-events-none">
-//           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
-//             <ScrollingCoin progressRef={scrollProgressRef} />
-//           </Canvas>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 __turbopack_context__.s([
     "default",
     ()=>Video
@@ -1917,6 +1598,11 @@ function Video() {
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const bgVideoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const fgVideoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "Video.useEffect": ()=>{
+            window.__VIDEO_READY__ = false;
+        }
+    }["Video.useEffect"], []);
     const scrollProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const rawProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
@@ -1927,25 +1613,36 @@ function Video() {
     const targetProgress = 289 / FG_FRAME_MAX;
     /* ---------------- VIDEO SETUP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Video.useEffect": ()=>{
-            const setupVideo = {
-                "Video.useEffect.setupVideo": (video, src)=>{
+            const fg = fgVideoRef.current;
+            const bg = bgVideoRef.current;
+            if (!fg || !bg) return;
+            const setup = {
+                "Video.useEffect.setup": (video, src)=>{
                     video.src = src;
                     video.muted = true;
                     video.playsInline = true;
                     video.preload = "auto";
                     video.crossOrigin = "anonymous";
                     video.load();
-                    // tiny wake-up for Safari
-                    video.currentTime = 0.01;
-                    setTimeout({
-                        "Video.useEffect.setupVideo": ()=>{
-                            video.currentTime = 0;
-                        }
-                    }["Video.useEffect.setupVideo"], 300);
                 }
-            }["Video.useEffect.setupVideo"];
-            if (bgVideoRef.current) setupVideo(bgVideoRef.current, "/iphoneframes/bgscrub.mp4");
-            if (fgVideoRef.current) setupVideo(fgVideoRef.current, "/iphoneframes/remember.mp4");
+            }["Video.useEffect.setup"];
+            setup(bg, "/iphoneframes/whitetickets.mp4");
+            setup(fg, "/iphoneframes/iphonefullvid.mp4");
+            const onReady = {
+                "Video.useEffect.onReady": ()=>{
+                    if (!window.__VIDEO_READY__) {
+                        window.__VIDEO_READY__ = true;
+                        window.dispatchEvent(new Event("videoReady"));
+                    }
+                }
+            }["Video.useEffect.onReady"];
+            // 🔥 THIS is what you were missing
+            fg.addEventListener("loadedmetadata", onReady);
+            return ({
+                "Video.useEffect": ()=>{
+                    fg.removeEventListener("loadedmetadata", onReady);
+                }
+            })["Video.useEffect"];
         }
     }["Video.useEffect"], []);
     /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -1962,7 +1659,7 @@ function Video() {
             const animate = {
                 "Video.useEffect.animate": (time)=>{
                     // hard cap ~60fps
-                    if (time - lastRender < 16) {
+                    if (time - lastRender < 33) {
                         raf = requestAnimationFrame(animate);
                         return;
                     }
@@ -1972,6 +1669,10 @@ function Video() {
                     if (!fgDuration && fgVideo.duration) {
                         fgDuration = fgVideo.duration;
                         bgDuration = bgVideo.duration || 0;
+                        if (!window.__VIDEO_READY__) {
+                            window.__VIDEO_READY__ = true;
+                            window.dispatchEvent(new Event("videoReady"));
+                        }
                     }
                     if (!fgDuration) {
                         raf = requestAnimationFrame(animate);
@@ -2037,25 +1738,69 @@ function Video() {
     }["Video.useEffect"], []);
     /* ---------------- EXTERNAL JUMP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Video.useEffect": ()=>{
-            const handleTrigger = {
-                "Video.useEffect.handleTrigger": ()=>{
-                    if (scrollTriggerRef.current && fgVideoRef.current?.duration) {
-                        window.scrollTo(0, 0);
-                        const st = scrollTriggerRef.current;
-                        const pos = st.start + targetProgress * (st.end - st.start);
-                        window.scrollTo({
-                            top: pos,
-                            behavior: "instant"
-                        });
-                        rawProgressRef.current = targetProgress;
-                        smoothProgressRef.current = targetProgress;
-                        fgVideoRef.current.currentTime = targetProgress * fgVideoRef.current.duration;
+            const jump = {
+                "Video.useEffect.jump": ()=>{
+                    const fg = fgVideoRef.current;
+                    const st = scrollTriggerRef.current;
+                    if (!fg || !st || !fg.duration) return;
+                    window.__MART_LOCK__ = true;
+                    // isProgrammaticJump.current = true; // Use if you have this ref, otherwise ignore
+                    // Force refresh to ensure start/end are correct
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+                    requestAnimationFrame({
+                        "Video.useEffect.jump": ()=>{
+                            const scrollPos = st.start + targetProgress * (st.end - st.start);
+                            // Scroll the window to the correct position within the pinned area
+                            window.scrollTo({
+                                top: scrollPos,
+                                behavior: "auto"
+                            });
+                            // Sync internal refs
+                            rawProgressRef.current = targetProgress;
+                            smoothProgressRef.current = targetProgress;
+                            scrollProgressRef.current = targetProgress;
+                            // Sync video immediately
+                            fg.currentTime = targetProgress * fg.duration;
+                            if (bgVideoRef.current && bgVideoRef.current.duration) {
+                            // Logic for BG sync if needed, mostly handled by RAF loop but good to set roughly
+                            // omitted for simplicity as RAF will catch up
+                            }
+                            requestAnimationFrame({
+                                "Video.useEffect.jump": ()=>{
+                                    window.__MART_LOCK__ = false;
+                                }
+                            }["Video.useEffect.jump"]);
+                        }
+                    }["Video.useEffect.jump"]);
+                }
+            }["Video.useEffect.jump"];
+            const handler = {
+                "Video.useEffect.handler": ()=>{
+                    // If video is ready, jump immediately
+                    if (window.__VIDEO_READY__) {
+                        jump();
+                    } else {
+                        // Otherwise wait for ready event (handled in page.tsx mostly, but safety here)
+                        const onReady = {
+                            "Video.useEffect.handler.onReady": ()=>{
+                                jump();
+                                window.removeEventListener("videoReady", onReady);
+                            }
+                        }["Video.useEffect.handler.onReady"];
+                        window.addEventListener("videoReady", onReady);
                     }
                 }
-            }["Video.useEffect.handleTrigger"];
-            window.addEventListener("triggerVideoJump", handleTrigger);
+            }["Video.useEffect.handler"];
+            window.addEventListener("triggerVideoJump", handler);
+            // Initial check in case it's pending
+            if (window.__TERAAMART_PENDING__) {
+                handler();
+                window.__TERAAMART_PENDING__ = false;
+            }
             return ({
-                "Video.useEffect": ()=>window.removeEventListener("triggerVideoJump", handleTrigger)
+                "Video.useEffect": ()=>{
+                    window.removeEventListener("triggerVideoJump", handler);
+                }
             })["Video.useEffect"];
         }
     }["Video.useEffect"], []);
@@ -2075,7 +1820,7 @@ function Video() {
                     muted: true
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 404,
+                    lineNumber: 244,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
@@ -2088,7 +1833,7 @@ function Video() {
                     muted: true
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 413,
+                    lineNumber: 253,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2108,32 +1853,32 @@ function Video() {
                             progressRef: scrollProgressRef
                         }, void 0, false, {
                             fileName: "[project]/components/video.tsx",
-                            lineNumber: 424,
+                            lineNumber: 264,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/video.tsx",
-                        lineNumber: 423,
+                        lineNumber: 263,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/video.tsx",
-                    lineNumber: 422,
+                    lineNumber: 262,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/video.tsx",
-            lineNumber: 402,
+            lineNumber: 242,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/video.tsx",
-        lineNumber: 401,
+        lineNumber: 241,
         columnNumber: 5
     }, this);
 }
-_s(Video, "Agr4uw11M6nepcad4vpUAaz2A54=");
+_s(Video, "Yw6zT5D1NH+5lHOl8ValZ8kOwYA=");
 _c = Video;
 var _c;
 __turbopack_context__.k.register(_c, "Video");
@@ -2297,6 +2042,33 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/components/preloader.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+// "use client";
+// import { useEffect } from "react";
+// export default function Preloader({ onDone }: { onDone: () => void }) {
+//   useEffect(() => {
+//     const video = document.getElementById(
+//       "pulse-preloader-video"
+//     ) as HTMLVideoElement | null;
+//     if (!video) return;
+//     const handleEnd = () => onDone();
+//     video.addEventListener("ended", handleEnd);
+//     return () => {
+//       video.removeEventListener("ended", handleEnd);
+//     };
+//   }, [onDone]);
+//   return (
+//     <div className="fixed inset-0 z-[9999] bg-black">
+//       <video
+//         id="pulse-preloader-video"
+//         src="/preloader.mp4"
+//         autoPlay
+//         muted
+//         playsInline
+//         className="w-full max-sm:object-fill h-full object-cover"
+//       />
+//     </div>
+//   );
+// }
 __turbopack_context__.s([
     "default",
     ()=>Preloader
@@ -2309,8 +2081,16 @@ var _s = __turbopack_context__.k.signature();
 ;
 function Preloader({ onDone }) {
     _s();
+    const [src, setSrc] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Preloader.useEffect": ()=>{
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            setSrc(isMobile ? "/phoneloader.mp4" : "/desktoploader.mp4");
+        }
+    }["Preloader.useEffect"], []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "Preloader.useEffect": ()=>{
+            if (!src) return;
             const video = document.getElementById("pulse-preloader-video");
             if (!video) return;
             const handleEnd = {
@@ -2324,29 +2104,31 @@ function Preloader({ onDone }) {
             })["Preloader.useEffect"];
         }
     }["Preloader.useEffect"], [
+        src,
         onDone
     ]);
+    if (!src) return null; // prevents flashing wrong video
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "fixed inset-0 z-[9999] bg-black",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
             id: "pulse-preloader-video",
-            src: "/preloader.mp4",
+            src: src,
             autoPlay: true,
             muted: true,
             playsInline: true,
-            className: "w-full max-sm:object-fill h-full object-cover"
+            className: "w-full h-full object-cover"
         }, void 0, false, {
             fileName: "[project]/components/preloader.tsx",
-            lineNumber: 23,
+            lineNumber: 83,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/preloader.tsx",
-        lineNumber: 22,
+        lineNumber: 82,
         columnNumber: 5
     }, this);
 }
-_s(Preloader, "OD7bBpZva5O2jO+Puf00hKivP7c=");
+_s(Preloader, "OzYdcpIVUji+Tf/lRkOvKdR7W3U=");
 _c = Preloader;
 var _c;
 __turbopack_context__.k.register(_c, "Preloader");
@@ -2623,7 +2405,7 @@ function VideoTextureEffect({ progressRef }) {
                     return texture;
                 }
             }["VideoTextureEffect.useEffect.createVideoTexture"];
-            const videoTexture = createVideoTexture("/winshieldvideo.mp4");
+            const videoTexture = createVideoTexture("/windshieldvideo.mp4");
             /* ---------------- APPLY TO MESH ---------------- */ const timeoutId = setTimeout({
                 "VideoTextureEffect.useEffect.timeoutId": ()=>{
                     const processedMeshes = new Set();
@@ -3102,13 +2884,13 @@ function Footer() {
         setIsComplianceOpen(false);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
-        className: "bg-[#E5E7EB] p-4 sm:p-6 md:p-[5vw] text-gray-800 ",
+        className: "bg-[#E5E7EB] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6 sm:gap-8",
+                className: "relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
+                        className: " relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                             src: "/tblack.svg",
                             alt: "Teraawatt Logo",
@@ -3125,7 +2907,7 @@ function Footer() {
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0",
+                        className: "flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0 lg:bg-[blue] lg:align-middle",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 href: "/privacy-policy",
@@ -3171,10 +2953,17 @@ function Footer() {
                                         columnNumber: 13
                                     }, this),
                                     isComplianceOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "absolute right-0 mt-3 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-3 z-50",
+                                        className: "absolute right-0 bottom-full mb-3 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-3 z-50",
                                         onMouseEnter: openDropdown,
                                         onMouseLeave: closeDropdownWithDelay,
                                         children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "absolute -bottom-2 right-6 w-0 h-0    border-l-8 border-l-transparent   border-r-8 border-r-transparent   border-t-8 border-t-white"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/Footer.tsx",
+                                                lineNumber: 146,
+                                                columnNumber: 5
+                                            }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                                 href: "/dcs",
                                                 className: "block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition",
@@ -3182,8 +2971,8 @@ function Footer() {
                                                 children: "Data and Security Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 145,
-                                                columnNumber: 17
+                                                lineNumber: 152,
+                                                columnNumber: 5
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                                 href: "/isc",
@@ -3192,8 +2981,8 @@ function Footer() {
                                                 children: "Industry-Specific Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 153,
-                                                columnNumber: 17
+                                                lineNumber: 160,
+                                                columnNumber: 5
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                                 href: "/pgc",
@@ -3202,8 +2991,8 @@ function Footer() {
                                                 children: "Payment Gateway Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 161,
-                                                columnNumber: 17
+                                                lineNumber: 168,
+                                                columnNumber: 5
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                                 href: "/cgln",
@@ -3212,14 +3001,14 @@ function Footer() {
                                                 children: "Corporate Governance and Legal Notice"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 169,
-                                                columnNumber: 17
+                                                lineNumber: 176,
+                                                columnNumber: 5
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Footer.tsx",
                                         lineNumber: 140,
-                                        columnNumber: 15
+                                        columnNumber: 3
                                     }, this)
                                 ]
                             }, void 0, true, {
@@ -3243,30 +3032,30 @@ function Footer() {
                 className: "border-t border-gray-300 mx-4 sm:mx-6 md:mx-0"
             }, void 0, false, {
                 fileName: "[project]/components/Footer.tsx",
-                lineNumber: 183,
+                lineNumber: 191,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-600 gap-2",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: "© 2025 Teraawatt. All rights reserved."
+                        children: "© 2026 Teraawatt. All rights reserved."
                     }, void 0, false, {
                         fileName: "[project]/components/Footer.tsx",
-                        lineNumber: 187,
+                        lineNumber: 195,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: "Hyderabad, Telangana • info@teraawatt.com"
                     }, void 0, false, {
                         fileName: "[project]/components/Footer.tsx",
-                        lineNumber: 188,
+                        lineNumber: 196,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Footer.tsx",
-                lineNumber: 186,
+                lineNumber: 194,
                 columnNumber: 7
             }, this)
         ]
@@ -3287,354 +3076,6 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/app/page.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import dynamic from "next/dynamic";
-// import Navbar from "../components/Navbar";
-// import About from "../components/About";
-// import Video from "@/components/video";
-// import { applyWhiteRimShader } from "@/components/applyWhiteRimShader";
-// import { applyBlueInteriorShader } from "@/components/applyBlueInteriorShader";
-// import Preloader from "@/components/preloader"
-// import { Canvas, useThree, useFrame } from "@react-three/fiber";
-// import { OrbitControls, useGLTF } from "@react-three/drei";
-// import * as THREE from "three";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import VideoTextureEffect from "../components/VideoTextureEffect";
-// import { useCarLights } from "../components/useCarLights";
-// import { Suspense } from "react";
-// import { useEffect, useLayoutEffect, useRef, useState, useMemo } from "react";
-// import Footer from "@/components/Footer";
-// const DashboardAnimation = dynamic(
-//   () => import("../components/DashboardAnimation"),
-//   { ssr: false }
-// );
-// gsap.registerPlugin(ScrollTrigger);
-// function Car({
-//   rearLightsRef,
-//   dashboardRef,
-//   scale = 1.2,
-// }: {
-//   rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
-//   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
-//   scale?: number;
-// }) {
-//   const { scene } = useGLTF("/models/final.glb");
-//   const [ready, setReady] = useState(false);
-//   const memoizedScene = useMemo(() => scene, []);
-//   // wire lights immediately (no visuals yet)
-//   useCarLights(memoizedScene, rearLightsRef, dashboardRef);
-//   // 🚨 BLOCK FIRST PAINT UNTIL POLISH IS DONE
-//   useLayoutEffect(() => {
-//     applyBlueInteriorShader(scene);
-//     applyWhiteRimShader(scene);
-//     setReady(true); // allow render
-//   }, [scene]);
-//   // ❌ Nothing renders until shaders are ready
-//   if (!ready) return null;
-//   return <primitive object={scene} scale={scale} />;
-// }
-// function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
-//   const { camera } = useThree();
-//   useEffect(() => {
-//     camera.position.set(0, 50, 450);
-//     camera.lookAt(0, 50, 0);
-//     const isMobile = window.innerWidth < 768;
-//     if (isMobile) {
-//       camera.position.set(0, 45, 480);
-//       camera.lookAt(0, 35, 0);
-//     }
-//     const CAMERA_SCROLL_PX = 1900; // 🔑 camera always finishes fast
-//     const tl = gsap.timeline({
-//       scrollTrigger: {
-//         trigger: "#scroll-container",
-//         start: "top top",
-//         end: `+=${CAMERA_SCROLL_PX}`, // ✅ FIXED distance
-//         scrub: 0.5,
-//       },
-//     });
-//     tl.to(camera.position, {
-//       z: isMobile ? 10 : 15,
-//       y: isMobile ? 20 : 20,
-//       duration: 1,
-//     });
-//     // Animate all rear lights
-//     // defensive: ensure we have lights array before animating
-//     (rearLightsRef.current || []).forEach((light: THREE.Mesh) => {
-//       const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
-//       if (!mat) return;
-//       tl.to(mat, { emissiveIntensity: 5, duration: 1 }, 0);
-//       // 0 means it starts with the camera animation
-//     });
-//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
-//   }, [camera, rearLightsRef]);
-//   return null;
-// }
-// function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
-//   useEffect(() => {
-//     if (!rearLightsRef.current || rearLightsRef.current.length === 0) return;
-//     // Trigger flicker when scroll reaches the top of the canvas
-//     ScrollTrigger.create({
-//       trigger: "#scroll-container",
-//       start: "top top", // trigger as soon as scrolling starts
-//       end: "+=1",       // short duration
-//       once: true,       // only trigger once
-//       onEnter: () => {
-//         rearLightsRef.current?.forEach((light) => {
-//           const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
-//           if (!mat) return;
-//           // Flicker timeline (two quick flashes)
-//           gsap.timeline()
-//             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
-//             .to(mat, { emissiveIntensity: 0, duration: 0.1 })
-//             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
-//             .to(mat, { emissiveIntensity: 12, duration: 0.2 }); // final steady intensity
-//         });
-//       },
-//     });
-//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
-//   }, [rearLightsRef]);
-//   return null;
-// }
-// export default function Home() {
-//   useEffect(() => {
-//   if ("scrollRestoration" in history) {
-//     history.scrollRestoration = "manual";
-//   }
-// }, []);
-//   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
-//   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
-//   const progressRef = useRef(0); // 👈 add this line
-//   const pulseReadyRef = useRef(false);
-//   const [carScale, setCarScale] = useState(1.2);
-//   const [showPreloader, setShowPreloader] = useState(false);
-//   const [ready, setReady] = useState(false);
-//   useEffect(() => {
-//     const isPulse = window.location.pathname === "/";
-//     const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
-//     const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
-//     const isFirstVisit = !sessionStorage.getItem("HAS_VISITED_PULSE");
-//     // 👇 NEW: check which tab was active before reload
-//     const lastActive = localStorage.getItem("TW_ACTIVE_NAV") || "Pulse";
-//     const wasPulseTab = lastActive === "Pulse";
-//     // Show loader on FIRST visit or REAL reload — ONLY if Pulse tab
-//     if (isPulse && wasPulseTab && (isFirstVisit || wasReload) && !hasAction) {
-//       setShowPreloader(true);
-//     } else {
-//       setShowPreloader(false);
-//     }
-//     // Mark that Pulse has been visited
-//     sessionStorage.setItem("HAS_VISITED_PULSE", "true");
-//     sessionStorage.removeItem("PAGE_WAS_RELOADED");
-//     setReady(true);
-//   }, []);
-//   useEffect(() => {
-//     const handleChargeJump = () => {
-//       const targetProgress = -0.18;
-//       const scrollContainer = document.getElementById("scroll-container");
-//       if (!scrollContainer) return;
-//       // 🔥 CRITICAL: recalc ScrollTrigger first
-//       ScrollTrigger.refresh(true);
-//       requestAnimationFrame(() => {
-//         requestAnimationFrame(() => {
-//           const containerHeight = scrollContainer.offsetHeight;
-//           const windowHeight = window.innerHeight;
-//           const isMobile = window.innerWidth < 768;
-//           const startOffset = containerHeight * (isMobile ? 0.635 : 0.7);
-//           const scrollableDistance = containerHeight - windowHeight;
-//           const maxProgressDistance = Math.max(1, scrollableDistance - startOffset);
-//           const targetScrollY =
-//             startOffset + targetProgress * maxProgressDistance;
-//           window.scrollTo({
-//             top: targetScrollY,
-//             behavior: "smooth",
-//           });
-//         });
-//       });
-//     };
-//     window.addEventListener("scrollToFrame804", handleChargeJump);
-//     return () =>
-//       window.removeEventListener("scrollToFrame804", handleChargeJump);
-//   }, []);
-//   // Responsive scroll height and car scale
-//   useEffect(() => {
-//     const handleResize = () => {
-//       const width = window.innerWidth;
-//       if (width < 640) {
-//         setCarScale(1); // Mobile
-//       } else if (width < 1024) {
-//         setCarScale(0.9); // Tablet
-//       } else {
-//         setCarScale(1.2); // Desktop
-//       }
-//     };
-//     handleResize();
-//     window.addEventListener("resize", handleResize);
-//     return () => window.removeEventListener("resize", handleResize);
-//   }, []);
-//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "850vh" : "5000vh";
-//   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "50vh" : "300vh";
-//   useEffect(() => {
-//     const runAction = () => {
-//       const action = localStorage.getItem("TW_action");
-//       if (!action) return;
-//       localStorage.removeItem("TW_action");
-//       if (action === "go_charge") {
-//         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-//       }
-//       // if (action === "go_mart") {
-//       //   const scrollContainer = document.getElementById("scroll-container");
-//       //   if (!scrollContainer) return;
-//       //   ScrollTrigger.refresh(true);
-//       //   requestAnimationFrame(() => {
-//       //     requestAnimationFrame(() => {
-//       //       const containerTop = scrollContainer.offsetTop;
-//       //       const containerHeight = scrollContainer.offsetHeight;
-//       //       const windowHeight = window.innerHeight;
-//       //       const targetY = containerTop + containerHeight - windowHeight - 50;
-//       //       window.scrollTo({
-//       //         top: targetY,
-//       //         behavior: "smooth",
-//       //       });
-//       //       setTimeout(() => {
-//       //         window.dispatchEvent(new Event("triggerVideoJump"));
-//       //       }, 600);
-//       //     });
-//       //   });
-//       // }
-//       if (action === "go_mart") {
-//   const videoSection = document.getElementById("video-section");
-//   if (!videoSection) return;
-//   // 1️⃣ First physically scroll to video section
-//   videoSection.scrollIntoView({ behavior: "smooth" });
-//   // 2️⃣ Then wait for Video ScrollTrigger
-//   const waitForVideo = () => {
-//     if ((window as any).__VIDEO_READY__) {
-//       window.dispatchEvent(new Event("triggerVideoJump"));
-//       return;
-//     }
-//     requestAnimationFrame(waitForVideo);
-//   };
-//   requestAnimationFrame(waitForVideo);
-// }
-//     };
-//     if (!showPreloader) {
-//       requestAnimationFrame(() => requestAnimationFrame(runAction));
-//       return;
-//     }
-//     window.addEventListener("pulseReady", runAction);
-//     return () => window.removeEventListener("pulseReady", runAction);
-//   }, [showPreloader]);
-//   useEffect(() => {
-//     const onScroll = () => {
-//       const scrollY = window.scrollY;
-//       const scrollContainer = document.getElementById("scroll-container");
-//       const videoSection = document.getElementById("video-section");
-//       if (!scrollContainer) return;
-//       const containerTop = scrollContainer.offsetTop;
-//       const containerHeight = scrollContainer.offsetHeight;
-//       // 🔁 SAME math used by TeraaCharge jump
-//       const isMobile = window.innerWidth < 768;
-//       const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
-//       const chargeTriggerY = containerTop + startOffset;
-//       const martTriggerY = videoSection?.offsetTop ?? Infinity;
-//       if (scrollY >= martTriggerY - 20) {
-//         localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
-//         window.dispatchEvent(new Event("storage"));
-//         return;
-//       }
-//       if (scrollY >= chargeTriggerY) {
-//         localStorage.setItem("TW_ACTIVE_NAV", "TeraaCharge");
-//         window.dispatchEvent(new Event("storage"));
-//         return;
-//       }
-//       localStorage.setItem("TW_ACTIVE_NAV", "Pulse");
-//       window.dispatchEvent(new Event("storage"));
-//     };
-//     window.addEventListener("scroll", onScroll);
-//     return () => window.removeEventListener("scroll", onScroll);
-//   }, []);
-//   if (!ready) return null;
-//   if (showPreloader) {
-//     return (
-//       <Preloader
-//         onDone={() => {
-//           setShowPreloader(false);
-//           requestAnimationFrame(() => {
-//             requestAnimationFrame(() => {
-//               pulseReadyRef.current = true;
-//               window.dispatchEvent(new Event("pulseReady"));
-//             });
-//           });
-//         }}
-//       />
-//     );
-//   }
-//   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-//   const cameraFov = isMobile ? 70 : 50; // 👈 tweak values here
-//   return (
-//     <main style={{ background: "black", color: "white" }}>
-//       {/* 🧭 Navbar stays fixed at top */}
-//       <Navbar />
-//       {/* 🚗 3D Car Section */}
-//       {/* <div id="scroll-container" style={{ height: scrollHeight }}> */}
-//       {/* Wrapper for scroll animation */}
-//       <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
-//         {/* Sticky 3D Canvas */}
-//         <div
-//           style={{
-//             position: "sticky",
-//             top: 0,
-//             height: "100vh",
-//             width: "100%",
-//             overflow: "hidden",
-//             zIndex: 1,
-//             transformOrigin: "center center"
-//           }}
-//         >
-//           <Canvas
-//             camera={{ position: [0, 1.5, 25], fov: cameraFov }}
-//             style={{
-//               height: "100vh",
-//               width: "100vw",
-//               pointerEvents: "none",
-//               willChange: "transform",
-//             }}
-//             dpr={[1, 1.5]}
-//             performance={{ min: 0.5, max: 1 }}
-//             gl={{
-//               antialias: true,
-//               powerPreference: "high-performance",
-//               alpha: false,
-//               stencil: false,
-//               depth: true,
-//             }}
-//           >
-//             <ambientLight intensity={0.6} />
-//             <directionalLight position={[10, 10, 5]} intensity={1} />
-//             <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
-//             <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
-//             <FlickerLights rearLightsRef={rearLightsRef} />
-//             <Suspense fallback={null}>
-//               <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
-//             </Suspense>
-//             <VideoTextureEffect progressRef={progressRef} />
-//             <OrbitControls enabled={false} />
-//           </Canvas>
-//         </div>
-//       </div>
-//       {/* Normal content appears after scroll section */}
-//       <div id='video-section' className="min-h-screen">
-//         <Video />
-//       </div>
-//       <div className="min-h-screen">
-//         <About />
-//       </div>
-//       <Footer />
-//     </main>
-//   );
-// }
-// useGLTF.preload("/models/final.glb");
 __turbopack_context__.s([
     "default",
     ()=>Home
@@ -3657,10 +3098,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$VideoTextureEf
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$useCarLights$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/useCarLights.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/Footer.tsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$intersection$2d$observer$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-intersection-observer/dist/index.mjs [app-client] (ecmascript)");
 ;
 ;
-var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature(), _s2 = __turbopack_context__.k.signature(), _s3 = __turbopack_context__.k.signature();
+var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature(), _s2 = __turbopack_context__.k.signature(), _s3 = __turbopack_context__.k.signature(), _s4 = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -3713,7 +3156,7 @@ function Car({ rearLightsRef, dashboardRef, scale = 1.2 }) {
         scale: scale
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 519,
+        lineNumber: 57,
         columnNumber: 10
     }, this);
 }
@@ -3924,37 +3367,55 @@ function Home() {
         "Home.useEffect": ()=>{
             const runAction = {
                 "Home.useEffect.runAction": ()=>{
+                    if (window.__MART_LOCK__) return;
                     const action = localStorage.getItem("TW_action");
                     if (!action) return;
                     localStorage.removeItem("TW_action");
                     if (action === "go_charge") {
                         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
                     }
+                    // if (action === "go_mart") {
+                    //   const scrollContainer = document.getElementById("scroll-container");
+                    //   if (!scrollContainer) return;
+                    //   ScrollTrigger.refresh(true);
+                    //   requestAnimationFrame(() => {
+                    //     requestAnimationFrame(() => {
+                    //       const containerTop = scrollContainer.offsetTop;
+                    //       const containerHeight = scrollContainer.offsetHeight;
+                    //       const windowHeight = window.innerHeight;
+                    //       const targetY = containerTop + containerHeight - windowHeight - 50;
+                    //       window.scrollTo({
+                    //         top: targetY,
+                    //         behavior: "smooth",
+                    //       });
+                    //       setTimeout(() => {
+                    //         window.dispatchEvent(new Event("triggerVideoJump"));
+                    //       }, 600);
+                    //     });
+                    //   });
+                    // }
                     if (action === "go_mart") {
-                        const scrollContainer = document.getElementById("scroll-container");
-                        if (!scrollContainer) return;
-                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh(true);
-                        requestAnimationFrame({
-                            "Home.useEffect.runAction": ()=>{
-                                requestAnimationFrame({
-                                    "Home.useEffect.runAction": ()=>{
-                                        const containerTop = scrollContainer.offsetTop;
-                                        const containerHeight = scrollContainer.offsetHeight;
-                                        const windowHeight = window.innerHeight;
-                                        const targetY = containerTop + containerHeight - windowHeight - 50;
-                                        window.scrollTo({
-                                            top: targetY,
-                                            behavior: "smooth"
-                                        });
-                                        setTimeout({
-                                            "Home.useEffect.runAction": ()=>{
-                                                window.dispatchEvent(new Event("triggerVideoJump"));
-                                            }
-                                        }["Home.useEffect.runAction"], 600);
+                        const jump = {
+                            "Home.useEffect.runAction.jump": ()=>{
+                                const videoSection = document.getElementById("video-section");
+                                if (!videoSection) return;
+                                videoSection.scrollIntoView({
+                                    behavior: "smooth"
+                                });
+                                setTimeout({
+                                    "Home.useEffect.runAction.jump": ()=>{
+                                        window.dispatchEvent(new Event("triggerVideoJump"));
                                     }
-                                }["Home.useEffect.runAction"]);
+                                }["Home.useEffect.runAction.jump"], 300);
+                                window.removeEventListener("videoReady", jump);
                             }
-                        }["Home.useEffect.runAction"]);
+                        }["Home.useEffect.runAction.jump"];
+                        // already ready?
+                        if (window.__VIDEO_READY__) {
+                            jump();
+                        } else {
+                            window.addEventListener("videoReady", jump);
+                        }
                     }
                 }
             }["Home.useEffect.runAction"];
@@ -3962,11 +3423,14 @@ function Home() {
                 requestAnimationFrame({
                     "Home.useEffect": ()=>requestAnimationFrame(runAction)
                 }["Home.useEffect"]);
-                return;
             }
             window.addEventListener("pulseReady", runAction);
+            // window.addEventListener("storage", runAction);
             return ({
-                "Home.useEffect": ()=>window.removeEventListener("pulseReady", runAction)
+                "Home.useEffect": ()=>{
+                    window.removeEventListener("pulseReady", runAction);
+                    window.removeEventListener("storage", runAction);
+                }
             })["Home.useEffect"];
         }
     }["Home.useEffect"], [
@@ -3976,6 +3440,7 @@ function Home() {
         "Home.useEffect": ()=>{
             const onScroll = {
                 "Home.useEffect.onScroll": ()=>{
+                    if (window.__MART_LOCK__) return;
                     const scrollY = window.scrollY;
                     const scrollContainer = document.getElementById("scroll-container");
                     const videoSection = document.getElementById("video-section");
@@ -4021,7 +3486,7 @@ function Home() {
             }
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 797,
+            lineNumber: 369,
             columnNumber: 7
         }, this);
     }
@@ -4035,7 +3500,7 @@ function Home() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 819,
+                lineNumber: 391,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4044,180 +3509,536 @@ function Home() {
                     height: scrollHeight,
                     position: "relative"
                 },
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    style: {
-                        position: "sticky",
-                        top: 0,
-                        height: "100vh",
-                        width: "100%",
-                        overflow: "hidden",
-                        zIndex: 1,
-                        transformOrigin: "center center"
-                    },
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$react$2d$three$2d$fiber$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["Canvas"], {
-                        camera: {
-                            position: [
-                                0,
-                                1.5,
-                                25
-                            ],
-                            fov: cameraFov
-                        },
-                        style: {
-                            height: "100vh",
-                            width: "100vw",
-                            pointerEvents: "none",
-                            willChange: "transform"
-                        },
-                        dpr: [
-                            1,
-                            1.5
-                        ],
-                        performance: {
-                            min: 0.5,
-                            max: 1
-                        },
-                        gl: {
-                            antialias: true,
-                            powerPreference: "high-performance",
-                            alpha: false,
-                            stencil: false,
-                            depth: true
-                        },
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ambientLight", {
-                                intensity: 0.6
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 858,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("directionalLight", {
-                                position: [
-                                    10,
-                                    10,
-                                    5
-                                ],
-                                intensity: 1
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 859,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Car, {
-                                rearLightsRef: rearLightsRef,
-                                dashboardRef: dashboardRef,
-                                scale: carScale
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 860,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ScrollCameraAnimation, {
-                                rearLightsRef: rearLightsRef
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 861,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FlickerLights, {
-                                rearLightsRef: rearLightsRef
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 862,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Suspense"], {
-                                fallback: null,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(DashboardAnimation, {
-                                    dashboardRef: dashboardRef,
-                                    progressRef: progressRef
-                                }, void 0, false, {
-                                    fileName: "[project]/app/page.tsx",
-                                    lineNumber: 864,
-                                    columnNumber: 15
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 863,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$VideoTextureEffect$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                progressRef: progressRef
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 866,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$OrbitControls$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["OrbitControls"], {
-                                enabled: false
-                            }, void 0, false, {
-                                fileName: "[project]/app/page.tsx",
-                                lineNumber: 867,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/page.tsx",
-                        lineNumber: 840,
-                        columnNumber: 11
-                    }, this)
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ScrollCanvasWrapper, {
+                    cameraFov: cameraFov,
+                    rearLightsRef: rearLightsRef,
+                    dashboardRef: dashboardRef,
+                    carScale: carScale,
+                    progressRef: progressRef
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 828,
+                    lineNumber: 396,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 826,
+                lineNumber: 394,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 id: "video-section",
-                className: "min-h-screen",
+                className: "min-h-screen relative z-10 bg-black",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$video$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 874,
+                    lineNumber: 401,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 873,
+                lineNumber: 400,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "min-h-screen",
+                className: "min-h-screen relative z-10 bg-black",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$About$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 877,
+                    lineNumber: 404,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 876,
+                lineNumber: 403,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 880,
+                lineNumber: 407,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 817,
+        lineNumber: 389,
         columnNumber: 5
     }, this);
 }
 _s3(Home, "59L7EghjKJcHlMmMSGVaVkLzoqU=");
 _c4 = Home;
-__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$Gltf$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useGLTF"].preload("/models/final.glb");
-var _c, _c1, _c2, _c3, _c4;
+// Separate component to handle InView logic cleanly
+function ScrollCanvasWrapper({ cameraFov, rearLightsRef, dashboardRef, carScale, progressRef }) {
+    _s4();
+    const { ref, inView } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$intersection$2d$observer$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useInView"])({
+        threshold: 0,
+        rootMargin: "200px 0px 200px 0px" // give some buffer so it doesn't pop in/out harshly
+    });
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        ref: ref,
+        style: {
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            width: "100%",
+            overflow: "hidden",
+            zIndex: 1
+        },
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$react$2d$three$2d$fiber$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["Canvas"], {
+            frameloop: inView ? "always" : "never",
+            camera: {
+                position: [
+                    0,
+                    1.5,
+                    25
+                ],
+                fov: cameraFov
+            },
+            style: {
+                height: "100vh",
+                width: "100vw",
+                pointerEvents: "none",
+                willChange: "transform"
+            },
+            dpr: [
+                1,
+                1.5
+            ],
+            // Lower performance mode when scrolling fast or not focused?
+            // keeping default for now but disabling when out of view
+            performance: {
+                min: 0.5,
+                max: 1
+            },
+            gl: {
+                antialias: true,
+                powerPreference: "high-performance",
+                alpha: false,
+                stencil: false,
+                depth: true
+            },
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ambientLight", {
+                    intensity: 0.6
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 459,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("directionalLight", {
+                    position: [
+                        10,
+                        10,
+                        5
+                    ],
+                    intensity: 1
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 460,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Car, {
+                    rearLightsRef: rearLightsRef,
+                    dashboardRef: dashboardRef,
+                    scale: carScale
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 461,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ScrollCameraAnimation, {
+                    rearLightsRef: rearLightsRef
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 462,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FlickerLights, {
+                    rearLightsRef: rearLightsRef
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 463,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Suspense"], {
+                    fallback: null,
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(DashboardAnimation, {
+                        dashboardRef: dashboardRef,
+                        progressRef: progressRef
+                    }, void 0, false, {
+                        fileName: "[project]/app/page.tsx",
+                        lineNumber: 465,
+                        columnNumber: 11
+                    }, this)
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 464,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$VideoTextureEffect$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                    progressRef: progressRef
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 467,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$OrbitControls$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["OrbitControls"], {
+                    enabled: false
+                }, void 0, false, {
+                    fileName: "[project]/app/page.tsx",
+                    lineNumber: 468,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/app/page.tsx",
+            lineNumber: 438,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/app/page.tsx",
+        lineNumber: 421,
+        columnNumber: 5
+    }, this);
+}
+_s4(ScrollCanvasWrapper, "oyd/E8SD7Fx4uOp6P7gVV2pVlaE=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$intersection$2d$observer$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useInView"]
+    ];
+});
+_c5 = ScrollCanvasWrapper;
+__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$drei$2f$core$2f$Gltf$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useGLTF"].preload("/models/final.glb"); // "use client";
+ // import dynamic from "next/dynamic";
+ // import Navbar from "../components/Navbar";
+ // import About from "../components/About";
+ // import Video from "@/components/video";
+ // import { applyWhiteRimShader } from "@/components/applyWhiteRimShader";
+ // import { applyBlueInteriorShader } from "@/components/applyBlueInteriorShader";
+ // import Preloader from "@/components/preloader"
+ // import { Canvas, useThree, useFrame } from "@react-three/fiber";
+ // import { OrbitControls, useGLTF } from "@react-three/drei";
+ // import * as THREE from "three";
+ // import gsap from "gsap";
+ // import { ScrollTrigger } from "gsap/ScrollTrigger";
+ // import VideoTextureEffect from "../components/VideoTextureEffect";
+ // import { useCarLights } from "../components/useCarLights";
+ // import { Suspense } from "react";
+ // import { useEffect, useLayoutEffect, useRef, useState, useMemo } from "react";
+ // import Footer from "@/components/Footer";
+ // const DashboardAnimation = dynamic(
+ //   () => import("../components/DashboardAnimation"),
+ //   { ssr: false }
+ // );
+ // gsap.registerPlugin(ScrollTrigger);
+ // function Car({
+ //   rearLightsRef,
+ //   dashboardRef,
+ //   scale = 1.2,
+ // }: {
+ //   rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
+ //   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
+ //   scale?: number;
+ // }) {
+ //   const { scene } = useGLTF("/models/final.glb");
+ //   const [ready, setReady] = useState(false);
+ //   const memoizedScene = useMemo(() => scene, []);
+ //   // wire lights immediately (no visuals yet)
+ //   useCarLights(memoizedScene, rearLightsRef, dashboardRef);
+ //   // 🚨 BLOCK FIRST PAINT UNTIL POLISH IS DONE
+ //   useLayoutEffect(() => {
+ //     applyBlueInteriorShader(scene);
+ //     applyWhiteRimShader(scene);
+ //     setReady(true); // allow render
+ //   }, [scene]);
+ //   // ❌ Nothing renders until shaders are ready
+ //   if (!ready) return null;
+ //   return <primitive object={scene} scale={scale} />;
+ // }
+ // function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
+ //   const { camera } = useThree();
+ //   useEffect(() => {
+ //     camera.position.set(0, 50, 450);
+ //     camera.lookAt(0, 50, 0);
+ //     const isMobile = window.innerWidth < 768;
+ //     if (isMobile) {
+ //       camera.position.set(0, 45, 480);
+ //       camera.lookAt(0, 35, 0);
+ //     }
+ //     const CAMERA_SCROLL_PX = 1900; // 🔑 camera always finishes fast
+ //     const tl = gsap.timeline({
+ //       scrollTrigger: {
+ //         trigger: "#scroll-container",
+ //         start: "top top",
+ //         end: `+=${CAMERA_SCROLL_PX}`, // ✅ FIXED distance
+ //         scrub: 0.5,
+ //       },
+ //     });
+ //     tl.to(camera.position, {
+ //       z: isMobile ? 10 : 15,
+ //       y: isMobile ? 20 : 20,
+ //       duration: 1,
+ //     });
+ //     // Animate all rear lights
+ //     // defensive: ensure we have lights array before animating
+ //     (rearLightsRef.current || []).forEach((light: THREE.Mesh) => {
+ //       const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+ //       if (!mat) return;
+ //       tl.to(mat, { emissiveIntensity: 5, duration: 1 }, 0);
+ //       // 0 means it starts with the camera animation
+ //     });
+ //     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+ //   }, [camera, rearLightsRef]);
+ //   return null;
+ // }
+ // function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
+ //   useEffect(() => {
+ //     if (!rearLightsRef.current || rearLightsRef.current.length === 0) return;
+ //     // Trigger flicker when scroll reaches the top of the canvas
+ //     ScrollTrigger.create({
+ //       trigger: "#scroll-container",
+ //       start: "top top", // trigger as soon as scrolling starts
+ //       end: "+=1",       // short duration
+ //       once: true,       // only trigger once
+ //       onEnter: () => {
+ //         rearLightsRef.current?.forEach((light) => {
+ //           const mat: any = Array.isArray(light.material) ? light.material[0] : light.material;
+ //           if (!mat) return;
+ //           // Flicker timeline (two quick flashes)
+ //           gsap.timeline()
+ //             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
+ //             .to(mat, { emissiveIntensity: 0, duration: 0.1 })
+ //             .to(mat, { emissiveIntensity: 10, duration: 0.1 })
+ //             .to(mat, { emissiveIntensity: 12, duration: 0.2 }); // final steady intensity
+ //         });
+ //       },
+ //     });
+ //     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+ //   }, [rearLightsRef]);
+ //   return null;
+ // }
+ // export default function Home() {
+ //   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
+ //   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
+ //   const progressRef = useRef(0); // 👈 add this line
+ //   const pulseReadyRef = useRef(false);
+ //   const [carScale, setCarScale] = useState(1.2);
+ //   const [showPreloader, setShowPreloader] = useState(false);
+ //   const [ready, setReady] = useState(false);
+ //   useEffect(() => {
+ //     const isPulse = window.location.pathname === "/";
+ //     const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
+ //     const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
+ //     const isFirstVisit = !sessionStorage.getItem("HAS_VISITED_PULSE");
+ //     // 👇 NEW: check which tab was active before reload
+ //     const lastActive = localStorage.getItem("TW_ACTIVE_NAV") || "Pulse";
+ //     const wasPulseTab = lastActive === "Pulse";
+ //     // Show loader on FIRST visit or REAL reload — ONLY if Pulse tab
+ //     if (isPulse && wasPulseTab && (isFirstVisit || wasReload) && !hasAction) {
+ //       setShowPreloader(true);
+ //     } else {
+ //       setShowPreloader(false);
+ //     }
+ //     // Mark that Pulse has been visited
+ //     sessionStorage.setItem("HAS_VISITED_PULSE", "true");
+ //     sessionStorage.removeItem("PAGE_WAS_RELOADED");
+ //     setReady(true);
+ //   }, []);
+ //   useEffect(() => {
+ //     const handleChargeJump = () => {
+ //       const targetProgress = -0.18;
+ //       const scrollContainer = document.getElementById("scroll-container");
+ //       if (!scrollContainer) return;
+ //       // 🔥 CRITICAL: recalc ScrollTrigger first
+ //       ScrollTrigger.refresh(true);
+ //       requestAnimationFrame(() => {
+ //         requestAnimationFrame(() => {
+ //           const containerHeight = scrollContainer.offsetHeight;
+ //           const windowHeight = window.innerHeight;
+ //           const isMobile = window.innerWidth < 768;
+ //           const startOffset = containerHeight * (isMobile ? 0.635 : 0.7);
+ //           const scrollableDistance = containerHeight - windowHeight;
+ //           const maxProgressDistance = Math.max(1, scrollableDistance - startOffset);
+ //           const targetScrollY =
+ //             startOffset + targetProgress * maxProgressDistance;
+ //           window.scrollTo({
+ //             top: targetScrollY,
+ //             behavior: "smooth",
+ //           });
+ //         });
+ //       });
+ //     };
+ //     window.addEventListener("scrollToFrame804", handleChargeJump);
+ //     return () =>
+ //       window.removeEventListener("scrollToFrame804", handleChargeJump);
+ //   }, []);
+ //   // Responsive scroll height and car scale
+ //   useEffect(() => {
+ //     const handleResize = () => {
+ //       const width = window.innerWidth;
+ //       if (width < 640) {
+ //         setCarScale(1); // Mobile
+ //       } else if (width < 1024) {
+ //         setCarScale(0.9); // Tablet
+ //       } else {
+ //         setCarScale(1.2); // Desktop
+ //       }
+ //     };
+ //     handleResize();
+ //     window.addEventListener("resize", handleResize);
+ //     return () => window.removeEventListener("resize", handleResize);
+ //   }, []);
+ //   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "850vh" : "5000vh";
+ //   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "50vh" : "300vh";
+ //   useEffect(() => {
+ //     const runAction = () => {
+ //       const action = localStorage.getItem("TW_action");
+ //       if (!action) return;
+ //       localStorage.removeItem("TW_action");
+ //       if (action === "go_charge") {
+ //         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+ //       }
+ //       if (action === "go_mart") {
+ //         const scrollContainer = document.getElementById("scroll-container");
+ //         if (!scrollContainer) return;
+ //         ScrollTrigger.refresh(true);
+ //         requestAnimationFrame(() => {
+ //           requestAnimationFrame(() => {
+ //             const containerTop = scrollContainer.offsetTop;
+ //             const containerHeight = scrollContainer.offsetHeight;
+ //             const windowHeight = window.innerHeight;
+ //             const targetY = containerTop + containerHeight - windowHeight - 50;
+ //             window.scrollTo({
+ //               top: targetY,
+ //               behavior: "smooth",
+ //             });
+ //             setTimeout(() => {
+ //               window.dispatchEvent(new Event("triggerVideoJump"));
+ //             }, 600);
+ //           });
+ //         });
+ //       }
+ //     };
+ //     if (!showPreloader) {
+ //       requestAnimationFrame(() => requestAnimationFrame(runAction));
+ //       return;
+ //     }
+ //     window.addEventListener("pulseReady", runAction);
+ //     return () => window.removeEventListener("pulseReady", runAction);
+ //   }, [showPreloader]);
+ //   useEffect(() => {
+ //     const onScroll = () => {
+ //       const scrollY = window.scrollY;
+ //       const scrollContainer = document.getElementById("scroll-container");
+ //       const videoSection = document.getElementById("video-section");
+ //       if (!scrollContainer) return;
+ //       const containerTop = scrollContainer.offsetTop;
+ //       const containerHeight = scrollContainer.offsetHeight;
+ //       // 🔁 SAME math used by TeraaCharge jump
+ //       const isMobile = window.innerWidth < 768;
+ //       const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
+ //       const chargeTriggerY = containerTop + startOffset;
+ //       const martTriggerY = videoSection?.offsetTop ?? Infinity;
+ //       if (scrollY >= martTriggerY - 20) {
+ //         localStorage.setItem("TW_ACTIVE_NAV", "TeraaMart");
+ //         window.dispatchEvent(new Event("storage"));
+ //         return;
+ //       }
+ //       if (scrollY >= chargeTriggerY) {
+ //         localStorage.setItem("TW_ACTIVE_NAV", "TeraaCharge");
+ //         window.dispatchEvent(new Event("storage"));
+ //         return;
+ //       }
+ //       localStorage.setItem("TW_ACTIVE_NAV", "Pulse");
+ //       window.dispatchEvent(new Event("storage"));
+ //     };
+ //     window.addEventListener("scroll", onScroll);
+ //     return () => window.removeEventListener("scroll", onScroll);
+ //   }, []);
+ //   if (!ready) return null;
+ //   if (showPreloader) {
+ //     return (
+ //       <Preloader
+ //         onDone={() => {
+ //           setShowPreloader(false);
+ //           requestAnimationFrame(() => {
+ //             requestAnimationFrame(() => {
+ //               pulseReadyRef.current = true;
+ //               window.dispatchEvent(new Event("pulseReady"));
+ //             });
+ //           });
+ //         }}
+ //       />
+ //     );
+ //   }
+ //   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+ //   const cameraFov = isMobile ? 70 : 50; // 👈 tweak values here
+ //   return (
+ //     <main style={{ background: "black", color: "white" }}>
+ //       {/* 🧭 Navbar stays fixed at top */}
+ //       <Navbar />
+ //       {/* 🚗 3D Car Section */}
+ //       {/* <div id="scroll-container" style={{ height: scrollHeight }}> */}
+ //       {/* Wrapper for scroll animation */}
+ //       <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
+ //         {/* Sticky 3D Canvas */}
+ //         <div
+ //           style={{
+ //             position: "sticky",
+ //             top: 0,
+ //             height: "100vh",
+ //             width: "100%",
+ //             overflow: "hidden",
+ //             zIndex: 1,
+ //             transformOrigin: "center center"
+ //           }}
+ //         >
+ //           <Canvas
+ //             camera={{ position: [0, 1.5, 25], fov: cameraFov }}
+ //             style={{
+ //               height: "100vh",
+ //               width: "100vw",
+ //               pointerEvents: "none",
+ //               willChange: "transform",
+ //             }}
+ //             dpr={[1, 1.5]}
+ //             performance={{ min: 0.5, max: 1 }}
+ //             gl={{
+ //               antialias: true,
+ //               powerPreference: "high-performance",
+ //               alpha: false,
+ //               stencil: false,
+ //               depth: true,
+ //             }}
+ //           >
+ //             <ambientLight intensity={0.6} />
+ //             <directionalLight position={[10, 10, 5]} intensity={1} />
+ //             <Car rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} scale={carScale} />
+ //             <ScrollCameraAnimation rearLightsRef={rearLightsRef} />
+ //             <FlickerLights rearLightsRef={rearLightsRef} />
+ //             <Suspense fallback={null}>
+ //               <DashboardAnimation dashboardRef={dashboardRef} progressRef={progressRef} />
+ //             </Suspense>
+ //             <VideoTextureEffect progressRef={progressRef} />
+ //             <OrbitControls enabled={false} />
+ //           </Canvas>
+ //         </div>
+ //       </div>
+ //       {/* Normal content appears after scroll section */}
+ //       <div id='video-section' className="min-h-screen">
+ //         <Video />
+ //       </div>
+ //       <div className="min-h-screen">
+ //         <About />
+ //       </div>
+ //       <Footer />
+ //     </main>
+ //   );
+ // }
+ // useGLTF.preload("/models/final.glb");
+var _c, _c1, _c2, _c3, _c4, _c5;
 __turbopack_context__.k.register(_c, "DashboardAnimation");
 __turbopack_context__.k.register(_c1, "Car");
 __turbopack_context__.k.register(_c2, "ScrollCameraAnimation");
 __turbopack_context__.k.register(_c3, "FlickerLights");
 __turbopack_context__.k.register(_c4, "Home");
+__turbopack_context__.k.register(_c5, "ScrollCanvasWrapper");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

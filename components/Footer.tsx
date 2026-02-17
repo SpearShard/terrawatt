@@ -88,11 +88,11 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#E5E7EB] p-4 sm:p-6 md:p-[5vw] text-gray-800 ">
-      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6 sm:gap-8">
+    <footer className="bg-[#E5E7EB] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ">
+      <div className="relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8">
         
         {/* Logo */}
-        <div className="relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center">
+        <div className=" relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center">
           <Image
             src="/tblack.svg"
             alt="Teraawatt Logo"
@@ -102,7 +102,7 @@ export default function Footer() {
         </div>
 
         {/* Links */}
-        <div className="flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0">
+        <div className="flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0 lg:bg-[blue] lg:align-middle">
           <Link href="/privacy-policy" className="hover:text-green-600 transition">
             Privacy Policy
           </Link>
@@ -137,44 +137,52 @@ export default function Footer() {
 
             {/* Dropdown Menu */}
             {isComplianceOpen && (
-              <div
-                className="absolute right-0 mt-3 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-3 z-50"
-                onMouseEnter={openDropdown}
-                onMouseLeave={closeDropdownWithDelay}
-              >
-                <Link
-                  href="/dcs"
-                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
-                  onClick={closeDropdownImmediately}
-                >
-                  Data and Security Compliance
-                </Link>
+  <div
+    className="absolute right-0 bottom-full mb-3 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-3 z-50"
+    onMouseEnter={openDropdown}
+    onMouseLeave={closeDropdownWithDelay}
+  >
+    {/* ▼ Triangle Pointer */}
+    <div className="absolute -bottom-2 right-6 w-0 h-0 
+      border-l-8 border-l-transparent
+      border-r-8 border-r-transparent
+      border-t-8 border-t-white"
+    />
 
-                <Link
-                  href="/isc"
-                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
-                  onClick={closeDropdownImmediately}
-                >
-                  Industry-Specific Compliance
-                </Link>
+    <Link
+      href="/dcs"
+      className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+      onClick={closeDropdownImmediately}
+    >
+      Data and Security Compliance
+    </Link>
 
-                <Link
-                  href="/pgc"
-                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
-                  onClick={closeDropdownImmediately}
-                >
-                  Payment Gateway Compliance
-                </Link>
+    <Link
+      href="/isc"
+      className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+      onClick={closeDropdownImmediately}
+    >
+      Industry-Specific Compliance
+    </Link>
 
-                <Link
-                  href="/cgln"
-                  className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
-                  onClick={closeDropdownImmediately}
-                >
-                  Corporate Governance and Legal Notice
-                </Link>
-              </div>
-            )}
+    <Link
+      href="/pgc"
+      className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+      onClick={closeDropdownImmediately}
+    >
+      Payment Gateway Compliance
+    </Link>
+
+    <Link
+      href="/cgln"
+      className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+      onClick={closeDropdownImmediately}
+    >
+      Corporate Governance and Legal Notice
+    </Link>
+  </div>
+)}
+
           </div>
         </div>
       </div>
@@ -184,7 +192,7 @@ export default function Footer() {
 
       {/* Bottom Row */}
       <div className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-600 gap-2">
-        <div>© 2025 Teraawatt. All rights reserved.</div>
+        <div>© 2026 Teraawatt. All rights reserved.</div>
         <div>Hyderabad, Telangana • info@teraawatt.com</div>
       </div>
     </footer>

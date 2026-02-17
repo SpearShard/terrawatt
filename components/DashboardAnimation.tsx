@@ -218,7 +218,7 @@ export default function DashboardAnimation({
   /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
     const video = document.createElement("video");
-    video.src = "/dashsmaller/newdashvid.mp4";
+    video.src = "/dashsmaller/out.mp4";
     video.muted = true;
     video.loop = false;
     video.playsInline = true;
@@ -320,6 +320,7 @@ scrollRef.current = Math.max(
     // Smooth scroll progress (adjust 12–15 for feel — higher = snappier but still smooth)
     const lerpFactor = Math.min(delta * 12, 1);
     smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * lerpFactor;
+    
 
     // Direct scrubbing: set exact frame based on scroll
     const targetTime = smoothScrollRef.current * video.duration;

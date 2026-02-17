@@ -233,7 +233,7 @@ export default function InvestorsPage() {
     const fg = videoRef.current;
     const bg = bgVideoRef.current;
 
-    fg.src = "/investwebp/invest.mp4";
+    fg.src = "/investwebp/investor.mp4";
     fg.muted = true;
     fg.playsInline = true;
     fg.preload = "auto";
@@ -290,7 +290,7 @@ export default function InvestorsPage() {
         return;
       }
 
-      const speed = isMobile ? 8 : 18;
+      const speed = isMobile ? 1 : 12;
       smoothProgressRef.current +=
         (rawProgressRef.current - smoothProgressRef.current) *
         Math.min(delta * speed, 1);

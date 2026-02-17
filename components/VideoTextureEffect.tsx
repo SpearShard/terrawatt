@@ -346,7 +346,7 @@ export default function VideoTextureEffect({
       return texture;
     };
 
-    const videoTexture = createVideoTexture("/winshieldvideo.mp4");
+    const videoTexture = createVideoTexture("/windshieldvideo.mp4");
 
     /* ---------------- APPLY TO MESH ---------------- */
 
