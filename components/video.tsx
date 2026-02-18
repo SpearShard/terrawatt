@@ -35,6 +35,19 @@ export default function Video() {
     const bg = bgVideoRef.current;
     if (!fg || !bg) return;
 
+    // Check if we need to wake (already loaded?)
+    const wake = async (video: HTMLVideoElement) => {
+      try {
+        await video.play();
+        video.pause();
+        video.currentTime = 0;
+      } catch (e) {
+        // Autoplay blocked or not ready, try silencing to be safe
+        video.currentTime = 0.1;
+        setTimeout(() => (video.currentTime = 0), 200);
+      }
+    };
+
     const setup = (video: HTMLVideoElement, src: string) => {
       video.src = src;
       video.muted = true;
@@ -42,6 +55,9 @@ export default function Video() {
       video.preload = "auto";
       video.crossOrigin = "anonymous";
       video.load();
+
+      // Try to wake it when data loads
+      video.addEventListener("loadeddata", () => wake(video), { once: true });
     };
 
     setup(bg, "/iphoneframes/whitetickets.mp4");
@@ -54,7 +70,7 @@ export default function Video() {
       }
     };
 
-    // 🔥 THIS is what you were missing
+    if (fg.readyState >= 1) onReady();
     fg.addEventListener("loadedmetadata", onReady);
 
     return () => {
