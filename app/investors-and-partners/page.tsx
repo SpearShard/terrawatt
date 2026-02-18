@@ -233,12 +233,17 @@ export default function InvestorsPage() {
     const fg = videoRef.current;
     const bg = bgVideoRef.current;
 
-    fg.src = "/investwebp/out.mp4";
+    // Pick the right video based on viewport
+    const src = isMobile
+      ? "/investwebp/potrait_edited.mp4"
+      : "/investwebp/out.mp4";
+
+    fg.src = src;
     fg.muted = true;
     fg.playsInline = true;
     fg.preload = "auto";
 
-    bg.src = "/investwebp/invest.mp4";
+    bg.src = src;
     bg.muted = true;
     bg.playsInline = true;
     bg.loop = true;
@@ -246,6 +251,8 @@ export default function InvestorsPage() {
 
     fg.load();
     bg.load();
+
+    setReady(false); // reset while new video loads
 
     const wake = async () => {
       try {
@@ -269,7 +276,11 @@ export default function InvestorsPage() {
     };
 
     fg.addEventListener("loadeddata", wake, { once: true });
-  }, []);
+
+    return () => {
+      fg.removeEventListener("loadeddata", wake);
+    };
+  }, [isMobile]); // re-run when mobile/desktop switches
 
   /* ---------------- SCRUB LOOP ---------------- */
   useEffect(() => {
@@ -307,6 +318,19 @@ export default function InvestorsPage() {
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
   }, [isMobile, ready]);
+
+  /* ---------------- VIDEO EVENT LISTENER ---------------- */
+  useEffect(() => {
+    if (!ready) return;
+    const handler = () => {
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.play();
+      }
+    };
+    window.addEventListener('triggerVideoJump', handler);
+    return () => window.removeEventListener('triggerVideoJump', handler);
+  }, [ready]);
 
   /* ---------------- SCROLLTRIGGER ---------------- */
   useEffect(() => {
@@ -358,12 +382,12 @@ export default function InvestorsPage() {
             </div>
           </div>
 
-          
+
         </div>
       </div>
 
       <div className="relative">
-        <Footer/>
+        <Footer />
       </div>
     </>
   );
@@ -384,7 +408,7 @@ export default function InvestorsPage() {
 
 
 
-// Optimized version 
+// Optimized version
 
 // "use client";
 
