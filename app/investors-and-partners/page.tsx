@@ -233,7 +233,7 @@ export default function InvestorsPage() {
     const fg = videoRef.current;
     const bg = bgVideoRef.current;
 
-    fg.src = "/investwebp/investor.mp4";
+    fg.src = "/investwebp/out.mp4";
     fg.muted = true;
     fg.playsInline = true;
     fg.preload = "auto";

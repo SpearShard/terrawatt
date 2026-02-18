@@ -102,7 +102,7 @@ export default function Footer() {
         </div>
 
         {/* Links */}
-        <div className="flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0 lg:bg-[blue] lg:align-middle">
+        <div className="flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0 lg:align-middle">
           <Link href="/privacy-policy" className="hover:text-green-600 transition">
             Privacy Policy
           </Link>
