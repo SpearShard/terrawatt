@@ -26,8 +26,8 @@
 
 //   const FG_TOTAL_FRAMES = 480;
 //   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
-//   const START_BG_AT_FRAME = 250;
-//   const targetProgress = 180 / FG_FRAME_MAX;
+//   const START_BG_AT_FRAME = 251;
+//   const targetProgress = 326 / FG_FRAME_MAX;
 
 //   /* ---------------- VIDEO SETUP ---------------- */
 //   useEffect(() => {
@@ -61,7 +61,7 @@
 //     };
 
 //     setup(bg, "/iphoneframes/whitetickets.mp4");
-//     setup(fg, "/iphoneframes/out.mp4");
+//     setup(fg, "/iphoneframes/scrub_frames.mp4");
 
 //     const onReady = () => {
 //       if (!(window as any).__VIDEO_READY__) {
@@ -70,8 +70,25 @@
 //       }
 //     };
 
-//     if (fg.readyState >= 1) onReady();
-//     fg.addEventListener("loadedmetadata", onReady);
+//     let fgReady = false;
+// let bgReady = false;
+
+// const checkReady = () => {
+//   if (fgReady && bgReady && !(window as any).__VIDEO_READY__) {
+//     (window as any).__VIDEO_READY__ = true;
+//     window.dispatchEvent(new Event("videoReady"));
+//   }
+// };
+
+// fg.addEventListener("loadedmetadata", () => {
+//   fgReady = true;
+//   checkReady();
+// });
+
+// bg.addEventListener("loadedmetadata", () => {
+//   bgReady = true;
+//   checkReady();
+// });
 
 //     return () => {
 //       fg.removeEventListener("loadedmetadata", onReady);
@@ -184,6 +201,8 @@
 
 //     scrollTriggerRef.current = st;
 
+//     window.dispatchEvent(new Event("videoScrollReady"));
+
 //     return () => st.kill();
 //   }, []);
 
@@ -276,6 +295,13 @@
 
 
 
+
+
+
+
+
+
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -287,44 +313,37 @@ import ScrollingCoin from "./ScrollingCoin";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Video() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const bgVideoRef = useRef<HTMLVideoElement | null>(null);
+  const fgVideoRef = useRef<HTMLVideoElement | null>(null);
 
-  const bgVideoRef = useRef<HTMLVideoElement>(null);
-  const fgVideoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    (window as any).__VIDEO_READY__ = false;
-  }, []);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const scrollProgressRef = useRef(0);
   const rawProgressRef = useRef(0);
   const smoothProgressRef = useRef(0);
 
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  /* ---------------- CONFIG ---------------- */
 
   const FG_TOTAL_FRAMES = 480;
   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
   const START_BG_AT_FRAME = 251;
-  const targetProgress = 326 / FG_FRAME_MAX;
+  const TARGET_FRAME = 326;
+  const targetProgress = TARGET_FRAME / FG_FRAME_MAX;
+
+  const FPS = 30;
+  const FRAME_TIME = 1 / FPS;
+
+  /* ---------------- GLOBAL READY FLAG ---------------- */
+  useEffect(() => {
+    (window as any).__VIDEO_READY__ = false;
+  }, []);
 
   /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
     const fg = fgVideoRef.current;
     const bg = bgVideoRef.current;
     if (!fg || !bg) return;
-
-    // Check if we need to wake (already loaded?)
-    const wake = async (video: HTMLVideoElement) => {
-      try {
-        await video.play();
-        video.pause();
-        video.currentTime = 0;
-      } catch (e) {
-        // Autoplay blocked or not ready, try silencing to be safe
-        video.currentTime = 0.1;
-        setTimeout(() => (video.currentTime = 0), 200);
-      }
-    };
 
     const setup = (video: HTMLVideoElement, src: string) => {
       video.src = src;
@@ -334,63 +353,90 @@ export default function Video() {
       video.crossOrigin = "anonymous";
       video.load();
 
-      // Try to wake it when data loads
-      video.addEventListener("loadeddata", () => wake(video), { once: true });
+      // Safari / iOS decode stability trick
+      video.addEventListener(
+        "loadeddata",
+        async () => {
+          try {
+            video.playbackRate = 0.00001;
+            await video.play();
+          } catch {}
+        },
+        { once: true }
+      );
     };
 
     setup(bg, "/iphoneframes/whitetickets.mp4");
     setup(fg, "/iphoneframes/scrub_ultra_android.mp4");
+  
 
-    const onReady = () => {
-      if (!(window as any).__VIDEO_READY__) {
+    /* ----- READY DETECTION ----- */
+
+    let fgReady = false;
+    let bgReady = false;
+
+    const checkReady = () => {
+      if (fgReady && bgReady && !(window as any).__VIDEO_READY__) {
         (window as any).__VIDEO_READY__ = true;
         window.dispatchEvent(new Event("videoReady"));
       }
     };
 
-    let fgReady = false;
-let bgReady = false;
+    fg.addEventListener("loadedmetadata", () => {
+      fgReady = true;
+      checkReady();
+    });
 
-const checkReady = () => {
-  if (fgReady && bgReady && !(window as any).__VIDEO_READY__) {
-    (window as any).__VIDEO_READY__ = true;
-    window.dispatchEvent(new Event("videoReady"));
-  }
-};
-
-fg.addEventListener("loadedmetadata", () => {
-  fgReady = true;
-  checkReady();
-});
-
-bg.addEventListener("loadedmetadata", () => {
-  bgReady = true;
-  checkReady();
-});
-
-    return () => {
-      fg.removeEventListener("loadedmetadata", onReady);
-    };
+    bg.addEventListener("loadedmetadata", () => {
+      bgReady = true;
+      checkReady();
+    });
   }, []);
 
-
-  /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */
+  /* ---------------- SEEK ENGINE ---------------- */
   useEffect(() => {
-    const bgVideo = bgVideoRef.current;
     const fgVideo = fgVideoRef.current;
-    if (!bgVideo || !fgVideo) return;
+    const bgVideo = bgVideoRef.current;
+    if (!fgVideo || !bgVideo) return;
+
+    const fgSeeking = { current: false };
+    const bgSeeking = { current: false };
+
+    const seekVideo = (
+      video: HTMLVideoElement,
+      targetTime: number,
+      flag: { current: boolean }
+    ) => {
+      if (flag.current) return;
+
+      const snapped = Math.round(targetTime / FRAME_TIME) * FRAME_TIME;
+      const diff = Math.abs(video.currentTime - snapped);
+      if (diff < FRAME_TIME * 0.5) return;
+
+      flag.current = true;
+
+      const done = () => {
+        flag.current = false;
+        video.removeEventListener("seeked", done);
+      };
+
+      video.addEventListener("seeked", done);
+
+      const v = video as HTMLVideoElement & { fastSeek?: (t: number) => void };
+      if (v.fastSeek) v.fastSeek(snapped);
+      else video.currentTime = snapped;
+    };
 
     let raf = 0;
     let lastTime = performance.now();
     let lastRender = 0;
 
-    // cache durations once
     let fgDuration = 0;
     let bgDuration = 0;
 
     const animate = (time: number) => {
-      // hard cap ~60fps
-      if (time - lastRender < 33) {
+      // mobile safe seek rate (~25fps)
+      if (time - lastRender < 40) {
         raf = requestAnimationFrame(animate);
         return;
       }
@@ -414,7 +460,7 @@ bg.addEventListener("loadedmetadata", () => {
         return;
       }
 
-      // physically-smooth damping (better than lerp)
+      // exponential smoothing
       const damping = 1 - Math.exp(-delta * 18);
       smoothProgressRef.current +=
         (rawProgressRef.current - smoothProgressRef.current) * damping;
@@ -423,12 +469,7 @@ bg.addEventListener("loadedmetadata", () => {
 
       /* ---------- FOREGROUND ---------- */
       const fgTargetTime = smooth * fgDuration;
-      const fgDiff = Math.abs(fgVideo.currentTime - fgTargetTime);
-
-      // only seek if meaningful (~1 frame @30fps)
-      if (fgDiff > 0.03) {
-        fgVideo.currentTime = fgTargetTime;
-      }
+      seekVideo(fgVideo, fgTargetTime, fgSeeking);
 
       /* ---------- BACKGROUND ---------- */
       const currentFgFrame = smooth * FG_FRAME_MAX;
@@ -439,17 +480,12 @@ bg.addEventListener("loadedmetadata", () => {
           (FG_FRAME_MAX - START_BG_AT_FRAME);
 
         const bgTargetTime = bgProgress * bgDuration;
-        const bgDiff = Math.abs(bgVideo.currentTime - bgTargetTime);
-
-        if (bgDiff > 0.03) {
-          bgVideo.currentTime = bgTargetTime;
-        }
-      } else if (bgVideo.currentTime > 0.03) {
+        seekVideo(bgVideo, bgTargetTime, bgSeeking);
+      } else if (bgVideo.currentTime > FRAME_TIME) {
         bgVideo.currentTime = 0;
       }
 
       scrollProgressRef.current = smooth;
-
       raf = requestAnimationFrame(animate);
     };
 
@@ -474,11 +510,10 @@ bg.addEventListener("loadedmetadata", () => {
       },
       onRefresh: (self) => {
         rawProgressRef.current = self.progress;
-      },
+      }
     });
 
     scrollTriggerRef.current = st;
-
     window.dispatchEvent(new Event("videoScrollReady"));
 
     return () => st.kill();
@@ -500,11 +535,8 @@ bg.addEventListener("loadedmetadata", () => {
     };
 
     const handler = () => {
-      // If video is ready, jump immediately
-      if ((window as any).__VIDEO_READY__) {
-        jump();
-      } else {
-        // Otherwise wait for ready event (handled in page.tsx mostly, but safety here)
+      if ((window as any).__VIDEO_READY__) jump();
+      else {
         const onReady = () => {
           jump();
           window.removeEventListener("videoReady", onReady);
@@ -515,47 +547,63 @@ bg.addEventListener("loadedmetadata", () => {
 
     window.addEventListener("triggerVideoJump", handler);
 
-    // Initial check in case it's pending
     if ((window as any).__TERAAMART_PENDING__) {
       handler();
       (window as any).__TERAAMART_PENDING__ = false;
     }
 
-    return () => {
-      window.removeEventListener("triggerVideoJump", handler);
-    };
+    return () => window.removeEventListener("triggerVideoJump", handler);
   }, []);
-
 
   /* ---------------- JSX ---------------- */
   return (
     <div ref={containerRef} className="relative w-full bg-black">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-        {/* BACKGROUND */}
+
         <video
           ref={bgVideoRef}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ pointerEvents: "none" }}
+          style={{
+            pointerEvents: "none",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            willChange: "transform"
+          }}
           playsInline
           muted
         />
 
-        {/* FOREGROUND */}
         <video
           ref={fgVideoRef}
           className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
-          style={{ imageRendering: "crisp-edges" }}
+          style={{
+            imageRendering: "crisp-edges",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            willChange: "transform"
+          }}
           playsInline
           muted
         />
 
-        {/* 3D COIN */}
         <div className="absolute inset-0 z-20 pointer-events-none">
           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
             <ScrollingCoin progressRef={scrollProgressRef} />
           </Canvas>
         </div>
+
       </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
