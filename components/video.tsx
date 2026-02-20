@@ -339,7 +339,7 @@ export default function Video() {
     };
 
     setup(bg, "/iphoneframes/whitetickets.mp4");
-    setup(fg, "/iphoneframes/scrub.mp4");
+    setup(fg, "/iphoneframes/scrubandroid.mp4");
 
     const onReady = () => {
       if (!(window as any).__VIDEO_READY__) {

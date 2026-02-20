@@ -1272,6 +1272,10 @@
     background-color: #fff;
   }
 
+  .bg-\[yellow\] {
+    background-color: #ff0;
+  }
+
   .bg-black {
     background-color: var(--color-black);
   }
