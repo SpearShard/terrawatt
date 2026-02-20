@@ -400,7 +400,28 @@ export default function Navbar() {
 
   /* ---------------- route syncing ---------------- */
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+  //   if (stored) {
+  //     setActive(stored);
+  //     localStorage.removeItem(ACTIVE_NAV_KEY);
+  //     return;
+  //   }
+
+  //   if (pathname === "/") {
+  //     const action = localStorage.getItem("TW_action");
+
+  //     if (action === "go_charge") setActive("TeraaCharge");
+  //     else if (action === "go_mart") setActive("TeraaMart");
+  //     else setActive("Pulse");
+  //   } else if (pathname.includes("investors")) setActive("Investors & Partners");
+  //   else if (pathname.includes("insights")) setActive("Insights");
+  //   else if (pathname.includes("connect")) setActive("Connect");
+  // }, [pathname]);
+
+useEffect(() => {
+  // ⭐ Only read scroll-based active tab when on home page
+  if (pathname === "/") {
     const stored = localStorage.getItem(ACTIVE_NAV_KEY);
     if (stored) {
       setActive(stored);
@@ -408,16 +429,23 @@ export default function Navbar() {
       return;
     }
 
-    if (pathname === "/") {
-      const action = localStorage.getItem("TW_action");
+    const action = localStorage.getItem("TW_action");
 
-      if (action === "go_charge") setActive("TeraaCharge");
-      else if (action === "go_mart") setActive("TeraaMart");
-      else setActive("Pulse");
-    } else if (pathname.includes("investors")) setActive("Investors & Partners");
-    else if (pathname.includes("insights")) setActive("Insights");
-    else if (pathname.includes("connect")) setActive("Connect");
-  }, [pathname]);
+    if (action === "go_charge") setActive("TeraaCharge");
+    else if (action === "go_mart") setActive("TeraaMart");
+    else setActive("Pulse");
+
+    return;
+  }
+
+  // ⭐ For other routes, use route matching ONLY
+  if (pathname.includes("investors")) setActive("Investors & Partners");
+  else if (pathname.includes("insights")) setActive("Insights");
+  else if (pathname.includes("connect")) setActive("Connect");
+
+}, [pathname]);
+
+
 
   useEffect(() => {
     if (pathname !== "/") return;
@@ -549,6 +577,7 @@ export default function Navbar() {
               {!item.isButton && active === item.name && (
                 <motion.div
                   layoutId="navbar-indicator"
+                  transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
                   className="absolute left-0 right-0 h-[2px] bg-red-500"
                 />
               )}

@@ -16,7 +16,7 @@ const products = [
     label: "Infrastructure",
     titleImage: "/teraacharge.png",
     description:
-      "Access the fastest and most reliable EV charging network. Real-time availability, seamless sessions, and high-speed delivery — wherever you go.",
+      "Access the fastest and most reliable EV charging network. Real-time availability, seamless sessions, and high-speed delivery. Real-time data \n Ultra-fast charging \n 24/7 Support ",
     image: "/About/teraacharge.jpg",
     accentColor: "#22D3EE",
     href: "/app",
@@ -27,7 +27,7 @@ const products = [
     label: "Rewards",
     titleImage: "/teraacoins.png",
     description:
-      "Turn every kilometer into digital currency. Earn Teraa Coins for every sustainable mile and redeem them for charging credits or exclusive products.",
+      "Turn every charge into rewards. Earn coins as you power up, drive smart, and stay active. Redeem for exclusive EV benefits and services. Reward on every charge Redeem for EV perks Instant in-app tracking ",
     image: "/About/teraacoins.png",
     accentColor: "#FFD700",
     href: "/coins",
@@ -38,7 +38,7 @@ const products = [
     label: "Payments",
     titleImage: "/teraavouchers.png",
     description:
-      "Flexible prepaid solutions for individuals and fleets. Gift sustainable mobility or manage corporate expenses with ease.",
+      "Power that makes a thoughtful gift. TeraaVouchers make EV charging simple, shareable, and always useful. Easy to purchase Send to anyone Hassle-free redemption ",
     image: "/About/teraavoucher.png",
     accentColor: "#05DF72",
     href: "/vouchers",
@@ -73,7 +73,7 @@ export default function About() {
             scrollTrigger: {
               trigger: row,
               start: "top 85%",
-              toggleActions: "play none none none",
+              once: true, // Only animate once and stay visible
             },
           }
         );
@@ -166,11 +166,11 @@ export default function About() {
           Ready to start?
         </p>
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-10">
-          Join the movement.
+          The smarter way to drive electric starts here.
         </h2>
         <Link href="/connect">
           <button className="px-10 py-4 bg-white text-black font-bold rounded-full hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all duration-300 text-sm tracking-wide">
-            Connect with Us
+            Join TeraaWatt
           </button>
         </Link>
       </section>

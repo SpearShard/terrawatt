@@ -333,22 +333,39 @@ export default function InvestorsPage() {
   }, [ready]);
 
   /* ---------------- SCROLLTRIGGER ---------------- */
-  useEffect(() => {
-    if (!containerRef.current || !ready) return;
+  const localScrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
-    ScrollTrigger.getAll().forEach(st => st.kill());
+useEffect(() => {
+  if (!containerRef.current || !ready) return;
 
-    const st = ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: "top top",
-      end: `+=${scrollDistanceRef.current}px`,
-      pin: true,
-      anticipatePin: 1,
-      onUpdate: self => (rawProgressRef.current = self.progress),
-    });
+  // Kill ONLY the trigger created by this component (if exists)
+  if (localScrollTriggerRef.current) {
+    localScrollTriggerRef.current.kill();
+    localScrollTriggerRef.current = null;
+  }
 
-    return () => st.kill();
-  }, [ready]);
+  // Create new trigger
+  const st = ScrollTrigger.create({
+    trigger: containerRef.current,
+    start: "top top",
+    end: `+=${scrollDistanceRef.current}px`,
+    pin: true,
+    anticipatePin: 1,
+    onUpdate: self => {
+      rawProgressRef.current = self.progress;
+    },
+  });
+
+  // Store reference
+  localScrollTriggerRef.current = st;
+
+  // Cleanup only this trigger
+  return () => {
+    st.kill();
+    localScrollTriggerRef.current = null;
+  };
+
+}, [ready]);
 
   /* ---------------- JSX ---------------- */
   return (

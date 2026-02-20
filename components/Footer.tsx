@@ -88,13 +88,13 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#E5E7EB] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ">
+    <footer className="bg-[#FFFFFF] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ">
       <div className="relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8">
         
         {/* Logo */}
         <div className=" relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center">
           <Image
-            src="/tblack.svg"
+            src="/terlogo.png"
             alt="Teraawatt Logo"
             fill
             className="object-contain"

@@ -278,17 +278,7 @@ function Navbar() {
     _s();
     const navRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
-    // Derive the correct active tab synchronously from the pathname
-    // so it's correct on first render (fixes production hydration mismatch)
-    const getActiveFromPathname = (path)=>{
-        if (path.includes("investors")) return "Investors & Partners";
-        if (path.includes("insights")) return "Insights";
-        if (path.includes("connect")) return "Connect";
-        return "Pulse"; // home — TeraaCharge/TeraaMart are set via click/localStorage
-    };
-    const [active, setActive] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
-        "Navbar.useState": ()=>getActiveFromPathname(pathname)
-    }["Navbar.useState"]);
+    const [active, setActive] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("Pulse");
     const [isScrolled, setIsScrolled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     /* ---------------- body lock ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -361,23 +351,42 @@ function Navbar() {
             })["Navbar.useEffect"];
         }
     }["Navbar.useEffect"], []);
-    /* ---------------- route syncing ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ---------------- route syncing ---------------- */ // useEffect(() => {
+    //   const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+    //   if (stored) {
+    //     setActive(stored);
+    //     localStorage.removeItem(ACTIVE_NAV_KEY);
+    //     return;
+    //   }
+    //   if (pathname === "/") {
+    //     const action = localStorage.getItem("TW_action");
+    //     if (action === "go_charge") setActive("TeraaCharge");
+    //     else if (action === "go_mart") setActive("TeraaMart");
+    //     else setActive("Pulse");
+    //   } else if (pathname.includes("investors")) setActive("Investors & Partners");
+    //   else if (pathname.includes("insights")) setActive("Insights");
+    //   else if (pathname.includes("connect")) setActive("Connect");
+    // }, [pathname]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
-            // On mount/reload: only handle cross-page navigation via TW_action
-            // (e.g. user clicked TeraaCharge from Investors page → navigated to home)
-            // TW_ACTIVE_NAV is NOT read here — it's written continuously by page.tsx
-            // as the user scrolls, so reading it on mount would restore a stale scroll position.
+            // ⭐ Only read scroll-based active tab when on home page
             if (pathname === "/") {
-                const action = localStorage.getItem("TW_action");
-                if (action) {
-                    localStorage.removeItem("TW_action"); // consume once, don't persist across reloads
-                    if (action === "go_charge") setActive("TeraaCharge");
-                    else if (action === "go_mart") setActive("TeraaMart");
+                const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+                if (stored) {
+                    setActive(stored);
+                    localStorage.removeItem(ACTIVE_NAV_KEY);
+                    return;
                 }
-            // No action = reload or direct visit → stay as "Pulse" (set by useState initializer)
-            } else {
-                setActive(getActiveFromPathname(pathname));
+                const action = localStorage.getItem("TW_action");
+                if (action === "go_charge") setActive("TeraaCharge");
+                else if (action === "go_mart") setActive("TeraaMart");
+                else setActive("Pulse");
+                return;
             }
+            // ⭐ For other routes, use route matching ONLY
+            if (pathname.includes("investors")) setActive("Investors & Partners");
+            else if (pathname.includes("insights")) setActive("Insights");
+            else if (pathname.includes("connect")) setActive("Connect");
         }
     }["Navbar.useEffect"], [
         pathname
@@ -415,7 +424,7 @@ function Navbar() {
             if (name === "TeraaMart") {
                 setActive(name);
                 if (onHome) {
-                    // Dispatch custom event to reset video on the target page
+                    // (window as any).__TERAAMART_PENDING__ = true;
                     window.dispatchEvent(new Event("triggerVideoJump"));
                 } else {
                     localStorage.setItem("TW_action", "go_mart");
@@ -478,12 +487,12 @@ function Navbar() {
                             className: "p-[1vw] mr-[1vw]"
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 501,
+                            lineNumber: 521,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 500,
+                        lineNumber: 520,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -496,32 +505,32 @@ function Navbar() {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 516,
+                                    lineNumber: 536,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 520,
+                                    lineNumber: 540,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 524,
+                                    lineNumber: 544,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 515,
+                            lineNumber: 535,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 511,
+                        lineNumber: 531,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -541,7 +550,7 @@ function Navbar() {
                                         className: `relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 543,
+                                        lineNumber: 563,
                                         columnNumber: 17
                                     }, this) : item.isButton ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                         src: "/Contact_page/connect1.svg",
@@ -550,32 +559,37 @@ function Navbar() {
                                         height: 48
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 552,
+                                        lineNumber: 572,
                                         columnNumber: 17
                                     }, this) : item.name,
                                     !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                         layoutId: "navbar-indicator",
+                                        transition: {
+                                            type: "tween",
+                                            duration: 0.25,
+                                            ease: "easeOut"
+                                        },
                                         className: "absolute left-0 right-0 h-[2px] bg-red-500"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 558,
+                                        lineNumber: 578,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, item.name, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 534,
+                                lineNumber: 554,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 532,
+                        lineNumber: 552,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 498,
+                lineNumber: 518,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -625,7 +639,7 @@ function Navbar() {
                                             children: !item.isButton ? item.name : "Connect"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 597,
+                                            lineNumber: 618,
                                             columnNumber: 21
                                         }, this),
                                         !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -633,43 +647,43 @@ function Navbar() {
                                             className: "absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 605,
+                                            lineNumber: 626,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 593,
+                                    lineNumber: 614,
                                     columnNumber: 19
                                 }, this)
                             }, item.name, false, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 586,
+                                lineNumber: 607,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 578,
+                        lineNumber: 599,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 571,
+                    lineNumber: 592,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 569,
+                lineNumber: 590,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 491,
+        lineNumber: 511,
         columnNumber: 5
     }, this);
 }
-_s(Navbar, "U3yBxsPwAVM5iFJk+rInM4282Xs=", false, function() {
+_s(Navbar, "0lRvTdPAAjxhxEz1oSQtLYlWAkc=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"]
     ];
@@ -766,7 +780,7 @@ function Footer() {
         setIsComplianceOpen(false);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
-        className: "bg-[#E5E7EB] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ",
+        className: "bg-[#FFFFFF] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8",
@@ -774,7 +788,7 @@ function Footer() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: " relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: "/tblack.svg",
+                            src: "/terlogo.png",
                             alt: "Teraawatt Logo",
                             fill: true,
                             className: "object-contain"
@@ -1257,12 +1271,16 @@ function InvestorsPage() {
     }["InvestorsPage.useEffect"], [
         ready
     ]);
-    /* ---------------- SCROLLTRIGGER ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ---------------- SCROLLTRIGGER ---------------- */ const localScrollTriggerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
             if (!containerRef.current || !ready) return;
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].getAll().forEach({
-                "InvestorsPage.useEffect": (st)=>st.kill()
-            }["InvestorsPage.useEffect"]);
+            // Kill ONLY the trigger created by this component (if exists)
+            if (localScrollTriggerRef.current) {
+                localScrollTriggerRef.current.kill();
+                localScrollTriggerRef.current = null;
+            }
+            // Create new trigger
             const st = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
                 trigger: containerRef.current,
                 start: "top top",
@@ -1270,11 +1288,19 @@ function InvestorsPage() {
                 pin: true,
                 anticipatePin: 1,
                 onUpdate: {
-                    "InvestorsPage.useEffect.st": (self)=>rawProgressRef.current = self.progress
+                    "InvestorsPage.useEffect.st": (self)=>{
+                        rawProgressRef.current = self.progress;
+                    }
                 }["InvestorsPage.useEffect.st"]
             });
+            // Store reference
+            localScrollTriggerRef.current = st;
+            // Cleanup only this trigger
             return ({
-                "InvestorsPage.useEffect": ()=>st.kill()
+                "InvestorsPage.useEffect": ()=>{
+                    st.kill();
+                    localScrollTriggerRef.current = null;
+                }
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], [
@@ -1284,7 +1310,7 @@ function InvestorsPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 356,
+                lineNumber: 373,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1302,20 +1328,20 @@ function InvestorsPage() {
                                 className: "w-screen h-screen object-cover blur-2xl opacity-70"
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 361,
+                                lineNumber: 378,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "inset-0 bg-black/40"
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 369,
+                                lineNumber: 386,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 360,
+                        lineNumber: 377,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1332,40 +1358,40 @@ function InvestorsPage() {
                                     playsInline: true
                                 }, void 0, false, {
                                     fileName: "[project]/app/investors-and-partners/page.tsx",
-                                    lineNumber: 376,
+                                    lineNumber: 393,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 375,
+                                lineNumber: 392,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 374,
+                            lineNumber: 391,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 373,
+                        lineNumber: 390,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 358,
+                lineNumber: 375,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "relative",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/investors-and-partners/page.tsx",
-                    lineNumber: 390,
+                    lineNumber: 407,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 389,
+                lineNumber: 406,
                 columnNumber: 7
             }, this)
         ]
@@ -1512,7 +1538,7 @@ function InvestorsPage() {
  //     </>
  //   );
  // }
-_s(InvestorsPage, "Q0Yt5Yu8Nzeb2ZUvmRSUYEjUA8M=");
+_s(InvestorsPage, "MP2KKMUkwCWQ/aK47rFQ/sBSD3I=");
 _c = InvestorsPage;
 var _c;
 __turbopack_context__.k.register(_c, "InvestorsPage");
