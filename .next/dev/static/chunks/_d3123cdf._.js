@@ -801,7 +801,7 @@ function About() {
                 className: "pt-32 pb-20 text-center px-6",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-xs bg-[yellow] font-mono tracking-[0.5em] text-gray-500 uppercase mb-8",
+                        className: "text-xs bg-[aquamarine] font-mono tracking-[0.5em] text-gray-500 uppercase mb-8",
                         children: "The Ecosystem"
                     }, void 0, false, {
                         fileName: "[project]/components/About.tsx",
@@ -1766,7 +1766,7 @@ function Video() {
                 }
             }["Video.useEffect.setup"];
             setup(bg, "/iphoneframes/whitetickets.mp4");
-            setup(fg, "/iphoneframes/scrubandroid.mp4");
+            setup(fg, "/iphoneframes/scrubandroid1.mp4");
             const onReady = {
                 "Video.useEffect.onReady": ()=>{
                     if (!window.__VIDEO_READY__) {
