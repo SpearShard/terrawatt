@@ -1766,7 +1766,7 @@ function Video() {
                 }
             }["Video.useEffect.setup"];
             setup(bg, "/iphoneframes/whitetickets.mp4");
-            setup(fg, "/iphoneframes/scrub.webm");
+            setup(fg, "/iphoneframes/scrub.mp4");
             const onReady = {
                 "Video.useEffect.onReady": ()=>{
                     if (!window.__VIDEO_READY__) {
