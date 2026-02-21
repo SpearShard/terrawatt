@@ -67,7 +67,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll"
+import dynamic from "next/dynamic";
+
+const SmoothScroll = dynamic(
+  () => import("@/components/SmoothScroll"),
+  { ssr: false }
+);
 
 
 const geistSans = Geist({
