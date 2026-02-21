@@ -67,12 +67,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import dynamic from "next/dynamic";
-
-const SmoothScroll = dynamic(
-  () => import("@/components/SmoothScroll"),
-  { ssr: false }
-);
+import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 
 
 const geistSans = Geist({
@@ -124,7 +119,7 @@ export default function RootLayout({
         />
 
 
-        <SmoothScroll />
+        <SmoothScrollProvider />
         {children}
 
 

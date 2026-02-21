@@ -536,6 +536,7 @@ function Car({
   const { scene } = useGLTF("/models/final.glb");
   const [ready, setReady] = useState(false);
 
+
   const memoizedScene = useMemo(() => scene, []);
 
   // wire lights immediately (no visuals yet)
@@ -640,6 +641,11 @@ function FlickerLights({ rearLightsRef }: { rearLightsRef: React.MutableRefObjec
 }
 
 export default function Home() {
+
+  
+  
+
+
   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
   const progressRef = useRef(0); // 👈 add this line
@@ -740,6 +746,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+
     if (!ready || isMobile) return;
 
     requestAnimationFrame(() => {
