@@ -854,7 +854,7 @@ function Footer() {
                                         onMouseLeave: closeDropdownWithDelay,
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "absolute -bottom-2 right-6 w-0 h-0    border-l-8 border-l-transparent   border-r-8 border-r-transparent   border-t-8 border-t-white"
+                                                className: "absolute -bottom-2 left-6 md:left-auto md:right-6 w-0 h-0    border-l-8 border-l-transparent   border-r-8 border-r-transparent   border-t-8 border-t-white"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
                                                 lineNumber: 146,
@@ -1172,7 +1172,7 @@ function InvestorsPage() {
             const fg = videoRef.current;
             const bg = bgVideoRef.current;
             // Pick the right video based on viewport
-            const src = isMobile ? "/investwebp/potrait_edited.mp4" : "/investwebp/out.mp4";
+            const src = isMobile ? "/investwebp/investor_ultra_android.mp4" : "/investwebp/out.mp4";
             fg.src = src;
             fg.muted = true;
             fg.playsInline = true;

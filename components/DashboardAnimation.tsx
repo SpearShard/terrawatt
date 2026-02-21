@@ -218,7 +218,7 @@ export default function DashboardAnimation({
   /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
     const video = document.createElement("video");
-    video.src = "/dashsmaller/out.mp4";
+    video.src = "/dashsmaller/dash_ultra_android_HQ.mp4";
     video.muted = true;
     video.loop = false;
     video.playsInline = true;

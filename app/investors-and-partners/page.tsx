@@ -235,7 +235,7 @@ export default function InvestorsPage() {
 
     // Pick the right video based on viewport
     const src = isMobile
-      ? "/investwebp/potrait_edited.mp4"
+      ? "/investwebp/investor_ultra_android.mp4"
       : "/investwebp/out.mp4";
 
     fg.src = src;

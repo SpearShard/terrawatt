@@ -143,11 +143,11 @@ export default function Footer() {
     onMouseLeave={closeDropdownWithDelay}
   >
     {/* ▼ Triangle Pointer */}
-    <div className="absolute -bottom-2 right-6 w-0 h-0 
-      border-l-8 border-l-transparent
-      border-r-8 border-r-transparent
-      border-t-8 border-t-white"
-    />
+    <div className="absolute -bottom-2 left-6 md:left-auto md:right-6 w-0 h-0 
+  border-l-8 border-l-transparent
+  border-r-8 border-r-transparent
+  border-t-8 border-t-white"
+/>
 
     <Link
       href="/dcs"
