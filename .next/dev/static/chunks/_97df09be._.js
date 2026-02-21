@@ -2,256 +2,6 @@
 "[project]/components/Navbar.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { useState, useRef, useEffect, useCallback } from "react";
-// import { usePathname } from "next/navigation";
-// import { motion, AnimatePresence } from "framer-motion";
-// import gsap from "gsap";
-// const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV";
-// export default function Navbar() {
-//   const navRef = useRef<HTMLDivElement>(null);
-//   const pathname = usePathname();
-//   const [active, setActive] = useState("Pulse");
-//   const [isScrolled, setIsScrolled] = useState(false);
-//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-//   /* ---------------- body lock ---------------- */
-//   useEffect(() => {
-//     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
-//     return () => {
-//       document.body.style.overflow = "auto";
-//     };
-//   }, [isMobileMenuOpen]);
-//   /* ---------------- scroll bg ---------------- */
-//   useEffect(() => {
-//     const onScroll = () => setIsScrolled(window.scrollY > 20);
-//     window.addEventListener("scroll", onScroll);
-//     return () => window.removeEventListener("scroll", onScroll);
-//   }, []);
-//   /* -------- desktop hide / reveal -------- */
-//   useEffect(() => {
-//     if (!navRef.current || window.innerWidth < 768) return;
-//     const nav = navRef.current;
-//     let lastScroll = window.scrollY;
-//     const onScroll = () => {
-//       const current = window.scrollY;
-//       if (current > lastScroll && current > 80) {
-//         gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
-//       }
-//       lastScroll = current;
-//     };
-//     const show = () =>
-//       gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
-//     const topZone = document.createElement("div");
-//     Object.assign(topZone.style, {
-//       position: "fixed",
-//       top: "0",
-//       left: "0",
-//       width: "100%",
-//       height: "20px",
-//       zIndex: "40",
-//     });
-//     document.body.appendChild(topZone);
-//     window.addEventListener("scroll", onScroll);
-//     nav.addEventListener("mouseenter", show);
-//     topZone.addEventListener("mouseenter", show);
-//     return () => {
-//       window.removeEventListener("scroll", onScroll);
-//       nav.removeEventListener("mouseenter", show);
-//       topZone.remove();
-//     };
-//   }, []);
-//   /* ---------------- route syncing ---------------- */
-//   useEffect(() => {
-//     const stored = localStorage.getItem(ACTIVE_NAV_KEY);
-//     if (stored) {
-//       setActive(stored);
-//       localStorage.removeItem(ACTIVE_NAV_KEY);
-//       return;
-//     }
-//     if (pathname === "/") {
-//       const action = localStorage.getItem("TW_action");
-//       if (action === "go_charge") setActive("TeraaCharge");
-//       else if (action === "go_mart") setActive("TeraaMart");
-//       else setActive("Pulse");
-//     } else if (pathname.includes("investors")) setActive("Investors & Partners");
-//     else if (pathname.includes("insights")) setActive("Insights");
-//     else if (pathname.includes("connect")) setActive("Connect");
-//   }, [pathname]);
-//   useEffect(() => {
-//     if (pathname !== "/") return;
-//     const sync = () => {
-//       const v = localStorage.getItem(ACTIVE_NAV_KEY);
-//       if (v) setActive(v);
-//     };
-//     window.addEventListener("storage", sync);
-//     return () => window.removeEventListener("storage", sync);
-//   }, [pathname]);
-//   /* ---------------- navigation ---------------- */
-//   const handleNavigation = useCallback((name: string) => {
-//     setIsMobileMenuOpen(false);
-//     const onHome = window.location.pathname === "/";
-//     if (name === "TeraaCharge") {
-//       setActive(name);
-//       if (onHome) window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-//       else {
-//         localStorage.setItem("TW_action", "go_charge");
-//         window.location.href = "/";
-//       }
-//       return true;
-//     }
-//     if (name === "TeraaMart") {
-//       setActive(name);
-//       if (onHome) window.dispatchEvent(new Event("triggerVideoJump"));
-//       else {
-//         localStorage.setItem("TW_action", "go_mart");
-//         window.location.href = "/";
-//       }
-//       return true;
-//     }
-//     setActive(name);
-//     return false;
-//   }, []);
-//   const navItems = [
-//     { name: "Pulse", href: "/" },
-//     { name: "TeraaCharge", href: "/", image: "/teraacharge.png", w: 90, h: 28 },
-//     { name: "TeraaMart", href: "/", image: "/teraamartlogo.png", w: 80, h: 26 },
-//     { name: "Investors & Partners", href: "/investors-and-partners" },
-//     { name: "Insights", href: "/insights" },
-//     { name: "Connect", href: "/connect", isButton: true },
-//   ];
-//   return (
-//     <nav
-//       ref={navRef}
-//       className={`fixed top-0 left-0 w-full z-50 transition-all ${
-//         isScrolled || isMobileMenuOpen
-//           ? "bg-black/90 backdrop-blur-xl shadow-lg"
-//           : "py-6 bg-transparent"
-//       }`}
-//     >
-//       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:px-10">
-//         <Link href="/" onClick={() => handleNavigation("Pulse")}>
-//           <Image
-//             src="/teraawatt.svg"
-//             alt="logo"
-//             width={125}
-//             height={45}
-//             className="p-[1vw] mr-[1vw]"
-//           />
-//         </Link>
-//         {/* hamburger */}
-//         <button
-//           className="md:hidden relative z-50 w-10 h-10 flex items-center justify-center"
-//           onClick={() => setIsMobileMenuOpen((v) => !v)}
-//         >
-//           <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
-//             <span
-//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
-//                 isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""
-//               }`}
-//             />
-//             <span
-//               className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${
-//                 isMobileMenuOpen ? "opacity-0" : ""
-//               }`}
-//             />
-//             <span
-//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
-//                 isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""
-//               }`}
-//             />
-//           </div>
-//         </button>
-//         {/* desktop */}
-//         <div className="hidden md:flex space-x-8 text-white">
-//           {navItems.map((item) => (
-//             <Link
-//               key={item.name}
-//               href={item.href}
-//               onClick={(e) => {
-//                 if (handleNavigation(item.name)) e.preventDefault();
-//               }}
-//               className={`relative ${active === item.name ? "opacity-100" : "opacity-60"}`}
-//             >
-//               {item.image ? (
-//                 <Image
-//                   src={item.image}
-//                   alt={item.name}
-//                   width={item.w}
-//                   height={item.h}
-//                   className={`relative top-[6%] ${
-//                     active === item.name ? "opacity-100" : "opacity-90"
-//                   }`}
-//                 />
-//               ) : item.isButton ? (
-//                 <Image src="/Contact_page/connect1.svg" alt="connect" width={70} height={48} />
-//               ) : (
-//                 item.name
-//               )}
-//               {!item.isButton && active === item.name && (
-//                 <motion.div
-//                   layoutId="navbar-indicator"
-//                   className="absolute left-0 right-0 h-[2px] bg-red-500"
-//                 />
-//               )}
-//             </Link>
-//           ))}
-//         </div>
-//       </div>
-//       {/* mobile menu */}
-//       <AnimatePresence>
-//         {isMobileMenuOpen && (
-//           <motion.div
-//             initial={{ opacity: 0 }}
-//             animate={{ opacity: 1 }}
-//             exit={{ opacity: 0 }}
-//             transition={{ duration: 0.25 }}
-//             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
-//           >
-//             <motion.div
-//               initial={{ y: 20, opacity: 0 }}
-//               animate={{ y: 0, opacity: 1 }}
-//               exit={{ y: 20, opacity: 0 }}
-//               transition={{ type: "spring", stiffness: 120, damping: 18 }}
-//               className="w-full px-6 space-y-3"
-//             >
-//               {navItems.map((item) => (
-//                 <Link
-//                   key={item.name}
-//                   href={item.href}
-//                   onClick={(e) => {
-//                     if (handleNavigation(item.name)) e.preventDefault();
-//                   }}
-//                 >
-//                   <div
-//                     className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
-//                       active === item.name ? "bg-white/5" : "hover:bg-white/5"
-//                     }`}
-//                   >
-//                     <span
-//                       className={`text-lg font-medium tracking-wide ${
-//                         active === item.name ? "text-white" : "text-neutral-400"
-//                       }`}
-//                     >
-//                       {!item.isButton ? item.name : "Connect"}
-//                     </span>
-//                     {!item.isButton && active === item.name && (
-//                       <motion.div
-//                         layoutId="mobile-indicator"
-//                         className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
-//                       />
-//                     )}
-//                   </div>
-//                 </Link>
-//               ))}
-//             </motion.div>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-//     </nav>
-//   );
-// }
 __turbopack_context__.s([
     "default",
     ()=>Navbar
@@ -487,12 +237,12 @@ function Navbar() {
                             className: "p-[1vw] mr-[1vw]"
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 521,
+                            lineNumber: 202,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 520,
+                        lineNumber: 201,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -505,32 +255,32 @@ function Navbar() {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 536,
+                                    lineNumber: 217,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 540,
+                                    lineNumber: 221,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 544,
+                                    lineNumber: 225,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 535,
+                            lineNumber: 216,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 531,
+                        lineNumber: 212,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -550,7 +300,7 @@ function Navbar() {
                                         className: `relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 563,
+                                        lineNumber: 244,
                                         columnNumber: 17
                                     }, this) : item.isButton ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                         src: "/Contact_page/connect1.svg",
@@ -559,7 +309,7 @@ function Navbar() {
                                         height: 48
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 572,
+                                        lineNumber: 253,
                                         columnNumber: 17
                                     }, this) : item.name,
                                     !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -572,24 +322,24 @@ function Navbar() {
                                         className: "absolute left-0 right-0 h-[2px] bg-red-500"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 578,
+                                        lineNumber: 259,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, item.name, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 554,
+                                lineNumber: 235,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 552,
+                        lineNumber: 233,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 518,
+                lineNumber: 199,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -639,7 +389,7 @@ function Navbar() {
                                             children: !item.isButton ? item.name : "Connect"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 618,
+                                            lineNumber: 299,
                                             columnNumber: 21
                                         }, this),
                                         !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -647,39 +397,39 @@ function Navbar() {
                                             className: "absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 626,
+                                            lineNumber: 307,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 614,
+                                    lineNumber: 295,
                                     columnNumber: 19
                                 }, this)
                             }, item.name, false, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 607,
+                                lineNumber: 288,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 599,
+                        lineNumber: 280,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 592,
+                    lineNumber: 273,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 590,
+                lineNumber: 271,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 511,
+        lineNumber: 192,
         columnNumber: 5
     }, this);
 }
