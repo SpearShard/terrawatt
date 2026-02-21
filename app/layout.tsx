@@ -96,7 +96,7 @@ export default function RootLayout({
     <head>
       <link
         rel="preload"
-        href="/models/lastwala.glb"
+        href="/models/final.glb"
         as="fetch"
         type="model/gltf-binary"
         crossOrigin="anonymous"

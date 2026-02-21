@@ -515,9 +515,7 @@ export default function InvestorsPage() {
         </div>
       </div>
 
-      <div className="relative">
-        <Footer />
-      </div>
+      
     </>
   );
 }
