@@ -1,11 +1,49 @@
+// "use client";
+
+// import { useEffect } from "react";
+// import Lenis from "@studio-freight/lenis";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// export default function SmoothScroll() {
+//   useEffect(() => {
+//     const lenis = new Lenis({
+//       duration: 1.1,
+//       smoothWheel: true,
+//     });
+
+//     lenis.on("scroll", ScrollTrigger.update);
+
+//     gsap.ticker.add((time) => {
+//       lenis.raf(time * 1000);
+//     });
+
+//     gsap.ticker.lagSmoothing(0);
+
+//     return () => lenis.destroy();
+//   }, []);
+
+//   return null;
+// }
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useEffect } from "react";
 import Lenis from "@studio-freight/lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { gsap, ScrollTrigger } from "../app/lib/gsap";
 
 export default function SmoothScroll() {
   useEffect(() => {
@@ -16,13 +54,17 @@ export default function SmoothScroll() {
 
     lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const raf = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
 
+    gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    return () => lenis.destroy();
+    return () => {
+      gsap.ticker.remove(raf);   // ⭐ important cleanup
+      lenis.destroy();
+    };
   }, []);
 
   return null;

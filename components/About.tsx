@@ -3,11 +3,10 @@
 import React, { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {gsap, ScrollTrigger} from "../app/lib/gsap"
 import { ArrowUpRight } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger);
+// gsap.registerPlugin(ScrollTrigger);
 
 const products = [
   {

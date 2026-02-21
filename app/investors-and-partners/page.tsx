@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "../lib/gsap";
 import Footer from "@/components/Footer";
 
-gsap.registerPlugin(ScrollTrigger);
+// gsap.registerPlugin(ScrollTrigger);
 
 export default function InvestorsPage() {
   const containerRef = useRef<HTMLDivElement>(null);

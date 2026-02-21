@@ -522,7 +522,7 @@ const DashboardAnimation = dynamic(
   { ssr: false }
 );
 
-gsap.registerPlugin(ScrollTrigger);
+// gsap.registerPlugin(ScrollTrigger);
 
 function Car({
   rearLightsRef,
