@@ -5,7 +5,6 @@
 // import gsap from "gsap";
 // import { ScrollTrigger } from "gsap/ScrollTrigger";
 // import Footer from "@/components/Footer";
-// import CRFInvestor from "@/components/CFRInvestor";
 
 // gsap.registerPlugin(ScrollTrigger);
 
@@ -253,7 +252,6 @@ import Navbar from "@/components/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Footer from "@/components/Footer";
-import CRFInvestor from "@/components/CFRInvestor";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -262,14 +260,46 @@ export default function InvestorsPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const bgVideoRef = useRef<HTMLVideoElement>(null);
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frameImagesRef = useRef<HTMLImageElement[]>([]);
+
   const rawProgressRef = useRef(0);
   const smoothProgressRef = useRef(0);
   const scrollDistanceRef = useRef(0);
 
   const [isMobile, setIsMobile] = useState(false);
   const [ready, setReady] = useState(false);
+  const [framesReady, setFramesReady] = useState(false);
 
-  const TOTAL_FRAMES = 516;
+  const TOTAL_FRAMES = 312;
+
+  const drawFrame = (index: number) => {
+    const canvas = canvasRef.current;
+    const img = frameImagesRef.current[index];
+    if (!canvas || !img) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+
+    // match canvas to visible size (no layout change)
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    // behave exactly like object-contain (keeps portrait shape)
+    const scale = Math.min(width / img.width, height / img.height);
+    const x = (width - img.width * scale) / 2;
+    const y = (height - img.height * scale) / 2;
+
+    ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+  };
 
   /* ---------------- MOBILE ---------------- */
   useEffect(() => {
@@ -294,27 +324,22 @@ export default function InvestorsPage() {
   /* ---------------- VIDEO HARD WAKE ---------------- */
   useEffect(() => {
     if (isMobile) return;
-    if (!videoRef.current || !bgVideoRef.current) return;
+    if(!videoRef.current) return;
 
     const fg = videoRef.current;
-    const bg = bgVideoRef.current;
 
     // Pick the right video based on viewport
-    const src = "/investwebp/out.mp4";
+    const src = isMobile
+      ? "/investwebp/investor_ultra_android.mp4"
+      : "/investwebp/out.mp4";
 
     fg.src = src;
     fg.muted = true;
     fg.playsInline = true;
     fg.preload = "auto";
 
-    bg.src = src;
-    bg.muted = true;
-    bg.playsInline = true;
-    bg.loop = true;
-    bg.preload = "auto";
-
+    
     fg.load();
-    bg.load();
 
     setReady(false); // reset while new video loads
 
@@ -324,16 +349,10 @@ export default function InvestorsPage() {
         fg.pause();
         fg.currentTime = 0;
 
-        await bg.play();
-        bg.pause();
-        bg.currentTime = 0;
+        
       } catch {
         fg.currentTime = 0.01;
-        bg.currentTime = 0.01;
-        setTimeout(() => {
-          fg.currentTime = 0;
-          bg.currentTime = 0;
-        }, 200);
+        
       }
 
       setReady(true); // 🔥 now safe to scrub
@@ -345,6 +364,32 @@ export default function InvestorsPage() {
       fg.removeEventListener("loadeddata", wake);
     };
   }, [isMobile]); // re-run when mobile/desktop switches
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const images: HTMLImageElement[] = [];
+    let loaded = 0;
+
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const img = new Image();
+      img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
+
+      img.onload = () => {
+        loaded++;
+
+        if (loaded === TOTAL_FRAMES) {
+          drawFrame(0);
+          setFramesReady(true);      // ⭐ VERY IMPORTANT
+          ScrollTrigger.refresh();   // ⭐ VERY IMPORTANT
+        }
+      };
+
+      images.push(img);
+    }
+
+    frameImagesRef.current = images;
+  }, [isMobile]);
 
   /* ---------------- SCRUB LOOP ---------------- */
   useEffect(() => {
@@ -394,13 +439,15 @@ export default function InvestorsPage() {
     };
     window.addEventListener('triggerVideoJump', handler);
     return () => window.removeEventListener('triggerVideoJump', handler);
-  }, [ready]);
+  }, [ready, framesReady, isMobile]);
 
   /* ---------------- SCROLLTRIGGER ---------------- */
   const localScrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current || !ready) return;
+    if (!containerRef.current) return;
+    if (!isMobile && !ready) return;
+    if (isMobile && !framesReady) return;
 
     // Kill ONLY the trigger created by this component (if exists)
     if (localScrollTriggerRef.current) {
@@ -417,6 +464,11 @@ export default function InvestorsPage() {
       anticipatePin: 1,
       onUpdate: self => {
         rawProgressRef.current = self.progress;
+
+        if (isMobile) {
+          const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+          drawFrame(frame);
+        }
       },
     });
 
@@ -429,7 +481,7 @@ export default function InvestorsPage() {
       localScrollTriggerRef.current = null;
     };
 
-  }, [ready]);
+  }, [ready, framesReady, isMobile]);
 
   /* ---------------- JSX ---------------- */
   return (
@@ -443,12 +495,19 @@ export default function InvestorsPage() {
         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
           <div className="sticky top-0 h-screen flex items-center justify-center">
             <div className="w-full h-full flex items-center justify-center">
-              <CRFInvestor
-                videoSrc="/investwebp/out.mp4"
-                framePath="/investwebp/potraitinvestframes/frame_"
-                frameCount={312}
-                progressRef={smoothProgressRef}
-              />
+              {isMobile ? (
+                <canvas
+                  ref={canvasRef}
+                  className="w-full h-full"
+                />
+              ) : (
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-contain lg:object-fill sm:object-cover"
+                  muted
+                  playsInline
+                />
+              )}
             </div>
           </div>
 
@@ -462,19 +521,3 @@ export default function InvestorsPage() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -505,10 +505,6 @@
     right: calc(var(--spacing) * 5);
   }
 
-  .right-6 {
-    right: calc(var(--spacing) * 6);
-  }
-
   .right-\[-5\%\] {
     right: -5%;
   }
@@ -691,10 +687,6 @@
     margin-bottom: calc(var(--spacing) * 20);
   }
 
-  .mb-24 {
-    margin-bottom: calc(var(--spacing) * 24);
-  }
-
   .mb-32 {
     margin-bottom: calc(var(--spacing) * 32);
   }
@@ -821,6 +813,10 @@
     height: 60vh;
   }
 
+  .h-\[100vh\] {
+    height: 100vh;
+  }
+
   .h-\[250vh\] {
     height: 250vh;
   }
@@ -923,6 +919,14 @@
 
   .w-\[40vw\] {
     width: 40vw;
+  }
+
+  .w-\[100\] {
+    width: 100px;
+  }
+
+  .w-\[100vw\] {
+    width: 100vw;
   }
 
   .w-\[400px\] {
@@ -1053,10 +1057,6 @@
 
   .flex-col {
     flex-direction: column;
-  }
-
-  .flex-row-reverse {
-    flex-direction: row-reverse;
   }
 
   .flex-wrap {
@@ -1290,28 +1290,8 @@
     background-color: #fff;
   }
 
-  .bg-\[aquamarine\] {
-    background-color: #7fffd4;
-  }
-
-  .bg-\[magenta\] {
-    background-color: #f0f;
-  }
-
-  .bg-\[purple\] {
-    background-color: purple;
-  }
-
-  .bg-\[red\] {
-    background-color: red;
-  }
-
-  .bg-\[white\] {
-    background-color: #fff;
-  }
-
-  .bg-\[yellow\] {
-    background-color: #ff0;
+  .bg-\[blue\] {
+    background-color: #00f;
   }
 
   .bg-black {
@@ -1766,6 +1746,14 @@
 
   .object-cover {
     object-fit: cover;
+  }
+
+  .object-fill {
+    object-fit: fill;
+  }
+
+  .object-center {
+    object-position: center;
   }
 
   .object-left {

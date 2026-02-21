@@ -87,7 +87,7 @@ export default function About() {
 
       {/* ── HEADER ── */}
       <section className="pt-32 pb-20 text-center px-6">
-        <p className="text-xs bg-[white] font-mono tracking-[0.5em] text-gray-500 uppercase mb-8">
+        <p className="text-xs bg-[blue] font-mono tracking-[0.5em] text-gray-500 uppercase mb-8">
           The Ecosystem
         </p>
         <div className="relative w-full max-w-3xl mx-auto aspect-[16/4]">

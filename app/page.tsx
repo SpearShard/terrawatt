@@ -740,7 +740,7 @@ if (!pulseReadyLocalRef.current) return;
   }, []);
 
   useEffect(() => {
-  if (!ready) return;
+  if (!ready || isMobile) return;
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {

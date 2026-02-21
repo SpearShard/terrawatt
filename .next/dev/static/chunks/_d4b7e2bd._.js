@@ -987,8 +987,9 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //   const smoothProgressRef = useRef(0);
 //   const scrollDistanceRef = useRef(0);
 //   const [isMobile, setIsMobile] = useState(false);
+//   const [ready, setReady] = useState(false);
 //   const TOTAL_FRAMES = 516;
-//   /* ---------------- MOBILE DETECTION ---------------- */
+//   /* ---------------- MOBILE ---------------- */
 //   useEffect(() => {
 //     const check = () => setIsMobile(window.innerWidth < 640);
 //     check();
@@ -1005,39 +1006,56 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //     scrollDistanceRef.current = calc();
 //     ScrollTrigger.refresh();
 //   }, []);
-//   /* ---------------- VIDEO SETUP + WAKE ---------------- */
-//   /* ---------------- VIDEO SETUP + HARD WAKE ---------------- */
-// useEffect(() => {
-//   if (!videoRef.current || !bgVideoRef.current) return;
-//   const wake = async (video: HTMLVideoElement) => {
-//     video.muted = true;
-//     video.playsInline = true;
-//     video.preload = "auto";
-//     try {
-//       await video.play();   // 🔥 forces decode
-//       video.pause();        // stop immediately
-//       video.currentTime = 0;
-//     } catch {
-//       // autoplay blocked? fallback
-//       video.currentTime = 0.01;
-//       setTimeout(() => (video.currentTime = 0), 200);
-//     }
-//   };
-//   const fg = videoRef.current;
-//   fg.src = "/investwebp/invest.mp4";
-//   fg.load();
-//   wake(fg);
-//   const bg = bgVideoRef.current;
-//   bg.src = "/investwebp/invest.mp4";
-//   bg.loop = true;
-//   bg.load();
-//   wake(bg);
-// }, []);
+//   /* ---------------- VIDEO HARD WAKE ---------------- */
+//   useEffect(() => {
+//     if (!videoRef.current || !bgVideoRef.current) return;
+//     const fg = videoRef.current;
+//     const bg = bgVideoRef.current;
+//     // Pick the right video based on viewport
+//     const src = isMobile
+//       ? "/investwebp/investor_ultra_android.mp4"
+//       : "/investwebp/out.mp4";
+//     fg.src = src;
+//     fg.muted = true;
+//     fg.playsInline = true;
+//     fg.preload = "auto";
+//     bg.src = src;
+//     bg.muted = true;
+//     bg.playsInline = true;
+//     bg.loop = true;
+//     bg.preload = "auto";
+//     fg.load();
+//     bg.load();
+//     setReady(false); // reset while new video loads
+//     const wake = async () => {
+//       try {
+//         await fg.play();
+//         fg.pause();
+//         fg.currentTime = 0;
+//         await bg.play();
+//         bg.pause();
+//         bg.currentTime = 0;
+//       } catch {
+//         fg.currentTime = 0.01;
+//         bg.currentTime = 0.01;
+//         setTimeout(() => {
+//           fg.currentTime = 0;
+//           bg.currentTime = 0;
+//         }, 200);
+//       }
+//       setReady(true); // 🔥 now safe to scrub
+//     };
+//     fg.addEventListener("loadeddata", wake, { once: true });
+//     return () => {
+//       fg.removeEventListener("loadeddata", wake);
+//     };
+//   }, [isMobile]); // re-run when mobile/desktop switches
 //   /* ---------------- SCRUB LOOP ---------------- */
 //   useEffect(() => {
+//     if (!ready) return;
 //     const video = videoRef.current;
 //     if (!video) return;
-//     let raf: number;
+//     let raf = 0;
 //     let last = performance.now();
 //     const animate = (time: number) => {
 //       const delta = Math.min((time - last) / 1000, 0.1);
@@ -1046,7 +1064,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //         raf = requestAnimationFrame(animate);
 //         return;
 //       }
-//       const speed = isMobile ? 8 : 18;
+//       const speed = isMobile ? 1 : 12;
 //       smoothProgressRef.current +=
 //         (rawProgressRef.current - smoothProgressRef.current) *
 //         Math.min(delta * speed, 1);
@@ -1058,27 +1076,53 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //     };
 //     raf = requestAnimationFrame(animate);
 //     return () => cancelAnimationFrame(raf);
-//   }, [isMobile]);
-//   /* ---------------- SCROLLTRIGGER ---------------- */
+//   }, [isMobile, ready]);
+//   /* ---------------- VIDEO EVENT LISTENER ---------------- */
 //   useEffect(() => {
-//     if (!containerRef.current) return;
-//     ScrollTrigger.getAll().forEach(st => st.kill());
-//     const st = ScrollTrigger.create({
-//       trigger: containerRef.current,
-//       start: "top top",
-//       end: `+=${scrollDistanceRef.current}px`,
-//       pin: true,
-//       anticipatePin: 1,
-//       onUpdate: self => (rawProgressRef.current = self.progress),
-//     });
-//     return () => st.kill();
-//   }, []);
+//     if (!ready) return;
+//     const handler = () => {
+//       if (videoRef.current) {
+//         videoRef.current.currentTime = 0;
+//         videoRef.current.play();
+//       }
+//     };
+//     window.addEventListener('triggerVideoJump', handler);
+//     return () => window.removeEventListener('triggerVideoJump', handler);
+//   }, [ready]);
+//   /* ---------------- SCROLLTRIGGER ---------------- */
+//   const localScrollTriggerRef = useRef<ScrollTrigger | null>(null);
+// useEffect(() => {
+//   if (!containerRef.current || !ready) return;
+//   // Kill ONLY the trigger created by this component (if exists)
+//   if (localScrollTriggerRef.current) {
+//     localScrollTriggerRef.current.kill();
+//     localScrollTriggerRef.current = null;
+//   }
+//   // Create new trigger
+//   const st = ScrollTrigger.create({
+//     trigger: containerRef.current,
+//     start: "top top",
+//     end: `+=${scrollDistanceRef.current}px`,
+//     pin: true,
+//     anticipatePin: 1,
+//     onUpdate: self => {
+//       rawProgressRef.current = self.progress;
+//     },
+//   });
+//   // Store reference
+//   localScrollTriggerRef.current = st;
+//   // Cleanup only this trigger
+//   return () => {
+//     st.kill();
+//     localScrollTriggerRef.current = null;
+//   };
+// }, [ready]);
 //   /* ---------------- JSX ---------------- */
 //   return (
 //     <>
 //       <Navbar />
 //       <div className="relative w-full min-h-screen bg-black overflow-hidden">
-//         {/* MOBILE BLURRED BACKGROUND */}
+//         {/* MOBILE BLUR */}
 //         <div className="fixed inset-0 z-0 sm:hidden">
 //           <video
 //             ref={bgVideoRef}
@@ -1088,21 +1132,20 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //             playsInline
 //             className="w-screen h-screen object-cover blur-2xl opacity-70"
 //           />
-//           <div className="absolute inset-0 bg-black/40" />
+//           <div className="inset-0 bg-black/40" />
 //         </div>
 //         {/* FOREGROUND */}
 //         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
 //           <div className="sticky top-0 h-screen flex items-center justify-center">
-//             <div className="w-full h-full max-h-screen flex items-center justify-center">
+//             <div className="w-full h-full flex items-center justify-center">
 //               <video
 //                 ref={videoRef}
-//                 className="w-full h-full object-contain sm:object-cover"
+//                 className="w-full h-full object-contain lg:object-fill sm:object-cover"
 //                 muted
 //                 playsInline
 //               />
 //             </div>
 //           </div>
-//           <div style={{ height: `${scrollDistanceRef.current}px` }} />
 //         </div>
 //       </div>
 //       <div className="relative">
@@ -1135,12 +1178,35 @@ function InvestorsPage() {
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const videoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const bgVideoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const frameImagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])([]);
     const rawProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const scrollDistanceRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const [isMobile, setIsMobile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [ready, setReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const TOTAL_FRAMES = 516;
+    const [framesReady, setFramesReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const TOTAL_FRAMES = 312;
+    const drawFrame = (index)=>{
+        const canvas = canvasRef.current;
+        const img = frameImagesRef.current[index];
+        if (!canvas || !img) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        const dpr = window.devicePixelRatio || 1;
+        // match canvas to visible size (no layout change)
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        // behave exactly like object-contain (keeps portrait shape)
+        const scale = Math.min(width / img.width, height / img.height);
+        const x = (width - img.width * scale) / 2;
+        const y = (height - img.height * scale) / 2;
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    };
     /* ---------------- MOBILE ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
             const check = {
@@ -1168,22 +1234,16 @@ function InvestorsPage() {
     }["InvestorsPage.useEffect"], []);
     /* ---------------- VIDEO HARD WAKE ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
-            if (!videoRef.current || !bgVideoRef.current) return;
+            if (isMobile) return;
+            if (!videoRef.current) return;
             const fg = videoRef.current;
-            const bg = bgVideoRef.current;
             // Pick the right video based on viewport
             const src = isMobile ? "/investwebp/investor_ultra_android.mp4" : "/investwebp/out.mp4";
             fg.src = src;
             fg.muted = true;
             fg.playsInline = true;
             fg.preload = "auto";
-            bg.src = src;
-            bg.muted = true;
-            bg.playsInline = true;
-            bg.loop = true;
-            bg.preload = "auto";
             fg.load();
-            bg.load();
             setReady(false); // reset while new video loads
             const wake = {
                 "InvestorsPage.useEffect.wake": async ()=>{
@@ -1191,18 +1251,8 @@ function InvestorsPage() {
                         await fg.play();
                         fg.pause();
                         fg.currentTime = 0;
-                        await bg.play();
-                        bg.pause();
-                        bg.currentTime = 0;
                     } catch  {
                         fg.currentTime = 0.01;
-                        bg.currentTime = 0.01;
-                        setTimeout({
-                            "InvestorsPage.useEffect.wake": ()=>{
-                                fg.currentTime = 0;
-                                bg.currentTime = 0;
-                            }
-                        }["InvestorsPage.useEffect.wake"], 200);
                     }
                     setReady(true); // 🔥 now safe to scrub
                 }
@@ -1219,9 +1269,34 @@ function InvestorsPage() {
     }["InvestorsPage.useEffect"], [
         isMobile
     ]); // re-run when mobile/desktop switches
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "InvestorsPage.useEffect": ()=>{
+            if (!isMobile) return;
+            const images = [];
+            let loaded = 0;
+            for(let i = 1; i <= TOTAL_FRAMES; i++){
+                const img = new Image();
+                img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
+                img.onload = ({
+                    "InvestorsPage.useEffect": ()=>{
+                        loaded++;
+                        if (loaded === TOTAL_FRAMES) {
+                            drawFrame(0);
+                            setFramesReady(true); // ⭐ VERY IMPORTANT
+                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh(); // ⭐ VERY IMPORTANT
+                        }
+                    }
+                })["InvestorsPage.useEffect"];
+                images.push(img);
+            }
+            frameImagesRef.current = images;
+        }
+    }["InvestorsPage.useEffect"], [
+        isMobile
+    ]);
     /* ---------------- SCRUB LOOP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
-            if (!ready) return;
+            if (!ready || isMobile) return;
             const video = videoRef.current;
             if (!video) return;
             let raf = 0;
@@ -1269,12 +1344,16 @@ function InvestorsPage() {
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], [
-        ready
+        ready,
+        framesReady,
+        isMobile
     ]);
     /* ---------------- SCROLLTRIGGER ---------------- */ const localScrollTriggerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
-            if (!containerRef.current || !ready) return;
+            if (!containerRef.current) return;
+            if (!isMobile && !ready) return;
+            if (isMobile && !framesReady) return;
             // Kill ONLY the trigger created by this component (if exists)
             if (localScrollTriggerRef.current) {
                 localScrollTriggerRef.current.kill();
@@ -1290,6 +1369,10 @@ function InvestorsPage() {
                 onUpdate: {
                     "InvestorsPage.useEffect.st": (self)=>{
                         rawProgressRef.current = self.progress;
+                        if (isMobile) {
+                            const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+                            drawFrame(frame);
+                        }
                     }
                 }["InvestorsPage.useEffect.st"]
             });
@@ -1304,241 +1387,79 @@ function InvestorsPage() {
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], [
-        ready
+        ready,
+        framesReady,
+        isMobile
     ]);
     /* ---------------- JSX ---------------- */ return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 373,
+                lineNumber: 489,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "relative w-full min-h-screen bg-black overflow-hidden",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "fixed inset-0 z-0 sm:hidden",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
-                                ref: bgVideoRef,
-                                autoPlay: true,
-                                muted: true,
-                                loop: true,
-                                playsInline: true,
-                                className: "w-screen h-screen object-cover blur-2xl opacity-70"
-                            }, void 0, false, {
-                                fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 378,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "inset-0 bg-black/40"
-                            }, void 0, false, {
-                                fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 386,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 377,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        ref: containerRef,
-                        className: "relative z-10 w-full overflow-hidden",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    ref: containerRef,
+                    className: "relative z-10 w-full overflow-hidden",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "sticky top-0 h-screen flex items-center justify-center",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "sticky top-0 h-screen flex items-center justify-center",
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "w-full h-full flex items-center justify-center",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
-                                    ref: videoRef,
-                                    className: "w-full h-full object-contain lg:object-fill sm:object-cover",
-                                    muted: true,
-                                    playsInline: true
-                                }, void 0, false, {
-                                    fileName: "[project]/app/investors-and-partners/page.tsx",
-                                    lineNumber: 393,
-                                    columnNumber: 15
-                                }, this)
+                            className: "w-full h-full flex items-center justify-center",
+                            children: isMobile ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
+                                ref: canvasRef,
+                                className: "w-full h-full"
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 392,
-                                columnNumber: 13
+                                lineNumber: 499,
+                                columnNumber: 17
+                            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
+                                ref: videoRef,
+                                className: "w-full h-full object-contain lg:object-fill sm:object-cover",
+                                muted: true,
+                                playsInline: true
+                            }, void 0, false, {
+                                fileName: "[project]/app/investors-and-partners/page.tsx",
+                                lineNumber: 504,
+                                columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 391,
-                            columnNumber: 11
+                            lineNumber: 497,
+                            columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 390,
-                        columnNumber: 9
+                        lineNumber: 496,
+                        columnNumber: 11
                     }, this)
-                ]
-            }, void 0, true, {
+                }, void 0, false, {
+                    fileName: "[project]/app/investors-and-partners/page.tsx",
+                    lineNumber: 495,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 375,
+                lineNumber: 491,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "relative",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/investors-and-partners/page.tsx",
-                    lineNumber: 407,
+                    lineNumber: 519,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 406,
+                lineNumber: 518,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
-} // Optimized version
- // "use client";
- // import { useEffect, useRef, useState } from "react";
- // import Navbar from "@/components/Navbar";
- // import gsap from "gsap";
- // import { ScrollTrigger } from "gsap/ScrollTrigger";
- // import Footer from "@/components/Footer";
- // gsap.registerPlugin(ScrollTrigger);
- // export default function InvestorsPage() {
- //   const containerRef = useRef<HTMLDivElement>(null);
- //   const videoRef = useRef<HTMLVideoElement>(null);
- //   const bgVideoRef = useRef<HTMLVideoElement>(null);
- //   const rawProgressRef = useRef(0);
- //   const smoothProgressRef = useRef(0);
- //   const scrollDistanceRef = useRef(0);
- //   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
- //   const [isMobile, setIsMobile] = useState(false);
- //   /* ---------------- MOBILE DETECTION ---------------- */
- //   useEffect(() => {
- //     const check = () => setIsMobile(window.innerWidth < 640);
- //     check();
- //     window.addEventListener("resize", check);
- //     return () => window.removeEventListener("resize", check);
- //   }, []);
- //   /* ---------------- SCROLL DISTANCE ---------------- */
- //   useEffect(() => {
- //     const calc = () => {
- //       if (window.innerWidth < 640) return 1000;
- //       if (window.innerWidth < 1024) return 2000;
- //       return 3000;
- //     };
- //     const update = () => {
- //       scrollDistanceRef.current = calc();
- //       ScrollTrigger.refresh();
- //     };
- //     update();
- //     window.addEventListener("resize", update);
- //     return () => window.removeEventListener("resize", update);
- //   }, []);
- //   /* ---------------- VIDEO SETUP ---------------- */
- //   useEffect(() => {
- //     if (!videoRef.current || !bgVideoRef.current) return;
- //     const fg = videoRef.current;
- //     fg.src = "/investwebp/invest.mp4";
- //     fg.muted = true;
- //     fg.playsInline = true;
- //     fg.preload = "auto";
- //     fg.load();
- //     // Safari warmup
- //     fg.currentTime = 0.01;
- //     setTimeout(() => (fg.currentTime = 0), 200);
- //     const bg = bgVideoRef.current;
- //     bg.src = "/investwebp/invest.mp4";
- //   }, []);
- //   /* ---------------- SCRUB LOOP ---------------- */
- //   useEffect(() => {
- //     const video = videoRef.current;
- //     if (!video) return;
- //     let raf = 0;
- //     let lastTime = performance.now();
- //     let lastRender = 0;
- //     let duration = 0;
- //     const animate = (time: number) => {
- //       // cap ~60fps
- //       if (time - lastRender < 16) {
- //         raf = requestAnimationFrame(animate);
- //         return;
- //       }
- //       lastRender = time;
- //       const delta = Math.min((time - lastTime) / 1000, 0.1);
- //       lastTime = time;
- //       if (!duration && video.duration) duration = video.duration;
- //       if (!duration) {
- //         raf = requestAnimationFrame(animate);
- //         return;
- //       }
- //       // exponential smoothing
- //       const damping = 1 - Math.exp(-delta * (isMobile ? 8 : 18));
- //       smoothProgressRef.current +=
- //         (rawProgressRef.current - smoothProgressRef.current) * damping;
- //       const target = smoothProgressRef.current * duration;
- //       const diff = Math.abs(video.currentTime - target);
- //       // avoid micro seeks
- //       if (diff > 0.03) {
- //         video.currentTime = target;
- //       }
- //       raf = requestAnimationFrame(animate);
- //     };
- //     raf = requestAnimationFrame(animate);
- //     return () => cancelAnimationFrame(raf);
- //   }, [isMobile]);
- //   /* ---------------- SCROLLTRIGGER ---------------- */
- //   useEffect(() => {
- //     if (!containerRef.current) return;
- //     scrollTriggerRef.current?.kill();
- //     const st = ScrollTrigger.create({
- //       trigger: containerRef.current,
- //       start: "top top",
- //       end: `+=${scrollDistanceRef.current}px`,
- //       pin: true,
- //       anticipatePin: 1,
- //       onUpdate: (self) => {
- //         rawProgressRef.current = self.progress;
- //       },
- //     });
- //     scrollTriggerRef.current = st;
- //     return () => st.kill();
- //   }, []);
- //   /* ---------------- JSX ---------------- */
- //   return (
- //     <>
- //       <Navbar />
- //       <div className="relative w-full min-h-screen bg-black overflow-hidden">
- //         {/* MOBILE BLUR BG */}
- //         <div className="fixed inset-0 z-0 sm:hidden">
- //           <video
- //             ref={bgVideoRef}
- //             autoPlay
- //             muted
- //             loop
- //             playsInline
- //             className="w-screen h-screen object-cover blur-2xl opacity-70"
- //           />
- //           <div className="absolute inset-0 bg-black/40" />
- //         </div>
- //         {/* FOREGROUND */}
- //         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
- //           <div className="sticky top-0 h-screen flex items-center justify-center">
- //             <video
- //               ref={videoRef}
- //               className="w-full h-full object-contain sm:object-cover"
- //               muted
- //               playsInline
- //             />
- //           </div>
- //           <div style={{ height: `${scrollDistanceRef.current}px` }} />
- //         </div>
- //       </div>
- //       <Footer />
- //     </>
- //   );
- // }
-_s(InvestorsPage, "MP2KKMUkwCWQ/aK47rFQ/sBSD3I=");
+}
+_s(InvestorsPage, "aK6/plhNs+cnQCjbLrjWSm4zJi4=");
 _c = InvestorsPage;
 var _c;
 __turbopack_context__.k.register(_c, "InvestorsPage");
