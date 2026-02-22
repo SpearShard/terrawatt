@@ -337,7 +337,7 @@
 //     fg.playsInline = true;
 //     fg.preload = "auto";
 
-    
+
 //     fg.load();
 
 //     setReady(false); // reset while new video loads
@@ -348,10 +348,10 @@
 //         fg.pause();
 //         fg.currentTime = 0;
 
-        
+
 //       } catch {
 //         fg.currentTime = 0.01;
-        
+
 //       }
 
 //       setReady(true); // 🔥 now safe to scrub
@@ -549,6 +549,7 @@ export default function InvestorsPage() {
   const rawProgressRef = useRef(0);
   const smoothProgressRef = useRef(0);
   const scrollDistanceRef = useRef(0);
+  const mobileRafRunningRef = useRef(false);
 
   const [isMobile, setIsMobile] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
@@ -587,43 +588,43 @@ export default function InvestorsPage() {
   }, []);
 
   const loadFrame = (index: number) => {
-  if (frameCache.current.has(index)) return;
+    if (frameCache.current.has(index)) return;
 
-  const img = new Image();
-  img.src = `/investwebp/potraitinvestframes/frame_${String(index+1).padStart(4, "0")}.webp`;
+    const img = new Image();
+    img.src = `/investwebp/potraitinvestframes/frame_${String(index + 1).padStart(4, "0")}.webp`;
 
-  img.onload = () => {
-  frameCache.current.set(index, img);
+    img.onload = () => {
+      frameCache.current.set(index, img);
 
-  // ⭐ if this is the frame we need right now, redraw
-  const currentFrame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
-  if (index === currentFrame || (currentFrame === 0 && index === 0)) {
-    drawFrame(index);
-  }
-};
-};
+      // ⭐ if this is the frame we need right now, redraw
+      const currentFrame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
+      if (index === currentFrame || (currentFrame === 0 && index === 0)) {
+        drawFrame(index);
+      }
+    };
+  };
 
-const preloadNearbyFrames = (center: number) => {
-  const BUFFER_AHEAD = 12;
-  const BUFFER_BEHIND = 6;
+  const preloadNearbyFrames = (center: number) => {
+    const BUFFER_AHEAD = 12;
+    const BUFFER_BEHIND = 6;
 
-  const start = Math.max(0, center - BUFFER_BEHIND);
-  const end = Math.min(TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
+    const start = Math.max(0, center - BUFFER_BEHIND);
+    const end = Math.min(TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
 
-  for (let i = start; i <= end; i++) {
-    loadFrame(i);
-  }
-};
-
-const cleanupFarFrames = (center: number) => {
-  const MAX_DISTANCE = 50; // how far frames can stay in memory
-
-  frameCache.current.forEach((_, key) => {
-    if (Math.abs(key - center) > MAX_DISTANCE) {
-      frameCache.current.delete(key);
+    for (let i = start; i <= end; i++) {
+      loadFrame(i);
     }
-  });
-};
+  };
+
+  const cleanupFarFrames = (center: number) => {
+    const MAX_DISTANCE = 50; // how far frames can stay in memory
+
+    frameCache.current.forEach((_, key) => {
+      if (Math.abs(key - center) > MAX_DISTANCE) {
+        frameCache.current.delete(key);
+      }
+    });
+  };
 
   /* ------------------------------------------------ */
   /* CANVAS DRAW */
@@ -640,8 +641,13 @@ const cleanupFarFrames = (center: number) => {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
 
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
+    const newW = width * dpr;
+    const newH = height * dpr;
+
+    if (canvas.width !== newW || canvas.height !== newH) {
+      canvas.width = newW;
+      canvas.height = newH;
+    }
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
@@ -712,10 +718,10 @@ const cleanupFarFrames = (center: number) => {
     const wake = async () => {
       try {
         video.currentTime = 0.01;
-        await video.play().catch(() => {});
+        await video.play().catch(() => { });
         video.pause();
         video.currentTime = 0;
-      } catch {}
+      } catch { }
       setVideoReady(true);
     };
 
@@ -761,6 +767,54 @@ const cleanupFarFrames = (center: number) => {
     return () => cancelAnimationFrame(raf);
   }, [videoReady, isMobile]);
 
+  useEffect(() => {
+  if (!isMobile || !framesReady || mobileRafRunningRef.current) return;
+  mobileRafRunningRef.current = true;
+
+  smoothProgressRef.current = rawProgressRef.current;
+
+  let raf = 0;
+  let last = performance.now();
+  let lastFrame = -1;
+  let cleanupCounter = 0;
+
+  const animate = (time: number) => {
+    const delta = Math.min((time - last) / 1000, 0.1);
+    last = time;
+
+    const speed = 8;
+    smoothProgressRef.current +=
+      (rawProgressRef.current - smoothProgressRef.current) *
+      Math.min(delta * speed, 1);
+
+    const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
+
+    const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
+
+    if (frame !== lastFrame) {
+      preloadNearbyFrames(frame);
+
+      cleanupCounter++;
+      if (cleanupCounter > 10) {
+        cleanupFarFrames(frame);
+        cleanupCounter = 0;
+      }
+
+      drawFrame(frame);
+      lastFrame = frame;
+    }
+
+    raf = requestAnimationFrame(animate);
+  };
+
+  raf = requestAnimationFrame(animate);
+
+  return () => {
+    cancelAnimationFrame(raf);
+    mobileRafRunningRef.current = false;
+  };
+}, [isMobile, framesReady]);
+
   /* ------------------------------------------------ */
   /* SCROLLTRIGGER */
   /* ------------------------------------------------ */
@@ -779,13 +833,6 @@ const cleanupFarFrames = (center: number) => {
       anticipatePin: 1,
       onUpdate: (self) => {
         rawProgressRef.current = self.progress;
-
-        if (isMobile) {
-          const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
-          preloadNearbyFrames(frame);
-          cleanupFarFrames(frame);
-          drawFrame(frame);
-        }
       },
     });
 
@@ -793,22 +840,30 @@ const cleanupFarFrames = (center: number) => {
   }, [isMobile, framesReady, videoReady]);
 
   useEffect(() => {
-  if (!isMobile) return;
+    if (!isMobile) return;
 
-  loadFrame(0);                 // load first frame only
+    loadFrame(0);                 // load first frame only
 
-  const checkReady = () => {
-    if (frameCache.current.has(0)) {
-      drawFrame(0);
-      setFramesReady(true);
+    const checkReady = () => {
+      if (frameCache.current.has(0)) {
+        drawFrame(0);
+        setFramesReady(true);
+        ScrollTrigger.refresh();
+      } else {
+        requestAnimationFrame(checkReady);
+      }
+    };
+
+    checkReady();
+  }, [isMobile]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
       ScrollTrigger.refresh();
-    } else {
-      requestAnimationFrame(checkReady);
-    }
-  };
+    }, 100);
 
-  checkReady();
-}, [isMobile]);
+    return () => clearTimeout(t);
+  }, []);
 
   /* ------------------------------------------------ */
   /* UI */
