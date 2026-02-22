@@ -1,3 +1,5 @@
 {
+  "/insights/page": "app/insights/page.js",
+  "/investors-and-partners/page": "app/investors-and-partners/page.js",
   "/page": "app/page.js"
 }

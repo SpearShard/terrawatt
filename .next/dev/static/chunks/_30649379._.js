@@ -701,10 +701,9 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 // "use client";
 // import { useEffect, useRef, useState } from "react";
 // import Navbar from "@/components/Navbar";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import { gsap, ScrollTrigger } from "../lib/gsap";
 // import Footer from "@/components/Footer";
-// gsap.registerPlugin(ScrollTrigger);
+// // gsap.registerPlugin(ScrollTrigger);
 // export default function InvestorsPage() {
 //   const containerRef = useRef<HTMLDivElement>(null);
 //   const videoRef = useRef<HTMLVideoElement>(null);
@@ -1119,7 +1118,7 @@ function InvestorsPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 489,
+                lineNumber: 488,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1136,7 +1135,7 @@ function InvestorsPage() {
                                 className: "w-full h-full"
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 499,
+                                lineNumber: 498,
                                 columnNumber: 17
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
                                 ref: videoRef,
@@ -1145,27 +1144,27 @@ function InvestorsPage() {
                                 playsInline: true
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 504,
+                                lineNumber: 503,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 497,
+                            lineNumber: 496,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 496,
+                        lineNumber: 495,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/investors-and-partners/page.tsx",
-                    lineNumber: 495,
+                    lineNumber: 494,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 491,
+                lineNumber: 490,
                 columnNumber: 7
             }, this)
         ]
