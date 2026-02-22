@@ -1153,6 +1153,217 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //     </>
 //   );
 // }
+// "use client";
+// import { useEffect, useRef, useState } from "react";
+// import Navbar from "@/components/Navbar";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import Footer from "@/components/Footer";
+// gsap.registerPlugin(ScrollTrigger);
+// export default function InvestorsPage() {
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const videoRef = useRef<HTMLVideoElement>(null);
+//   const bgVideoRef = useRef<HTMLVideoElement>(null);
+//   const canvasRef = useRef<HTMLCanvasElement>(null);
+//   const frameImagesRef = useRef<HTMLImageElement[]>([]);
+//   const rawProgressRef = useRef(0);
+//   const smoothProgressRef = useRef(0);
+//   const scrollDistanceRef = useRef(0);
+//   const [isMobile, setIsMobile] = useState(false);
+//   const [ready, setReady] = useState(false);
+//   const [framesReady, setFramesReady] = useState(false);
+//   const TOTAL_FRAMES = 312;
+//   const drawFrame = (index: number) => {
+//     const canvas = canvasRef.current;
+//     const img = frameImagesRef.current[index];
+//     if (!canvas || !img) return;
+//     const ctx = canvas.getContext("2d");
+//     if (!ctx) return;
+//     const dpr = window.devicePixelRatio || 1;
+//     // match canvas to visible size (no layout change)
+//     const width = canvas.clientWidth;
+//     const height = canvas.clientHeight;
+//     canvas.width = width * dpr;
+//     canvas.height = height * dpr;
+//     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+//     ctx.clearRect(0, 0, width, height);
+//     // behave exactly like object-contain (keeps portrait shape)
+//     const scale = Math.min(width / img.width, height / img.height);
+//     const x = (width - img.width * scale) / 2;
+//     const y = (height - img.height * scale) / 2;
+//     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+//   };
+//   /* ---------------- MOBILE ---------------- */
+//   useEffect(() => {
+//     const check = () => setIsMobile(window.innerWidth < 640);
+//     check();
+//     window.addEventListener("resize", check);
+//     return () => window.removeEventListener("resize", check);
+//   }, []);
+//   /* ---------------- SCROLL DISTANCE ---------------- */
+//   useEffect(() => {
+//     const calc = () => {
+//       if (window.innerWidth < 640) return TOTAL_FRAMES * 2;
+//       if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
+//       return TOTAL_FRAMES * 6;
+//     };
+//     scrollDistanceRef.current = calc();
+//     ScrollTrigger.refresh();
+//   }, []);
+//   /* ---------------- VIDEO HARD WAKE ---------------- */
+//   useEffect(() => {
+//     if (isMobile) return;
+//     if(!videoRef.current) return;
+//     const fg = videoRef.current;
+//     // Pick the right video based on viewport
+//     const src = isMobile
+//       ? "/investwebp/investor_high_scrubbed.mp4"
+//       : "/investwebp/investor_high_scrubbed.mp4";
+//     fg.src = src;
+//     fg.muted = true;
+//     fg.playsInline = true;
+//     fg.preload = "auto";
+//     fg.load();
+//     setReady(false); // reset while new video loads
+//     const wake = async () => {
+//       try {
+//         await fg.play();
+//         fg.pause();
+//         fg.currentTime = 0;
+//       } catch {
+//         fg.currentTime = 0.01;
+//       }
+//       setReady(true); // 🔥 now safe to scrub
+//     };
+//     fg.addEventListener("loadeddata", wake, { once: true });
+//     return () => {
+//       fg.removeEventListener("loadeddata", wake);
+//     };
+//   }, [isMobile]); // re-run when mobile/desktop switches
+//   useEffect(() => {
+//     if (!isMobile) return;
+//     const images: HTMLImageElement[] = [];
+//     let loaded = 0;
+//     for (let i = 1; i <= TOTAL_FRAMES; i++) {
+//       const img = new Image();
+//       img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
+//       img.onload = () => {
+//         loaded++;
+//         if (loaded === TOTAL_FRAMES) {
+//           drawFrame(0);
+//           setFramesReady(true);      // ⭐ VERY IMPORTANT
+//           ScrollTrigger.refresh();   // ⭐ VERY IMPORTANT
+//         }
+//       };
+//       images.push(img);
+//     }
+//     frameImagesRef.current = images;
+//   }, [isMobile]);
+//   /* ---------------- SCRUB LOOP ---------------- */
+//   useEffect(() => {
+//     if (!ready || isMobile) return;
+//     const video = videoRef.current;
+//     if (!video) return;
+//     let raf = 0;
+//     let last = performance.now();
+//     const animate = (time: number) => {
+//       const delta = Math.min((time - last) / 1000, 0.1);
+//       last = time;
+//       if (!video.duration || isNaN(video.duration)) {
+//         raf = requestAnimationFrame(animate);
+//         return;
+//       }
+//       const speed = isMobile ? 1 : 12;
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current - smoothProgressRef.current) *
+//         Math.min(delta * speed, 1);
+//       const target = smoothProgressRef.current * video.duration;
+//       if (Math.abs(video.currentTime - target) > 0.015) {
+//         video.currentTime = target;
+//       }
+//       raf = requestAnimationFrame(animate);
+//     };
+//     raf = requestAnimationFrame(animate);
+//     return () => cancelAnimationFrame(raf);
+//   }, [isMobile, ready]);
+//   /* ---------------- VIDEO EVENT LISTENER ---------------- */
+//   useEffect(() => {
+//     if (!ready) return;
+//     const handler = () => {
+//       if (videoRef.current) {
+//         videoRef.current.currentTime = 0;
+//         videoRef.current.play();
+//       }
+//     };
+//     window.addEventListener('triggerVideoJump', handler);
+//     return () => window.removeEventListener('triggerVideoJump', handler);
+//   }, [ready, framesReady, isMobile]);
+//   /* ---------------- SCROLLTRIGGER ---------------- */
+//   const localScrollTriggerRef = useRef<ScrollTrigger | null>(null);
+//   useEffect(() => {
+//     if (!containerRef.current) return;
+//     if (!isMobile && !ready) return;
+//     if (isMobile && !framesReady) return;
+//     // Kill ONLY the trigger created by this component (if exists)
+//     if (localScrollTriggerRef.current) {
+//       localScrollTriggerRef.current.kill();
+//       localScrollTriggerRef.current = null;
+//     }
+//     // Create new trigger
+//     const st = ScrollTrigger.create({
+//       trigger: containerRef.current,
+//       start: "top top",
+//       end: `+=${scrollDistanceRef.current}px`,
+//       pin: true,
+//       anticipatePin: 1,
+//       onUpdate: self => {
+//         rawProgressRef.current = self.progress;
+//         if (isMobile) {
+//           const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+//           drawFrame(frame);
+//         }
+//       },
+//     });
+//     // Store reference
+//     localScrollTriggerRef.current = st;
+//     // Cleanup only this trigger
+//     return () => {
+//       st.kill();
+//       localScrollTriggerRef.current = null;
+//     };
+//   }, [ready, framesReady, isMobile]);
+//   /* ---------------- JSX ---------------- */
+//   return (
+//     <>
+//       <Navbar />
+//       <div className="relative w-full min-h-screen bg-black overflow-hidden">
+//         {/* FOREGROUND */}
+//         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
+//           <div className="sticky top-0 h-screen flex items-center justify-center">
+//             <div className="w-full h-full flex items-center justify-center">
+//               {isMobile ? (
+//                 <canvas
+//                   ref={canvasRef}
+//                   className="w-full h-full"
+//                 />
+//               ) : (
+//                 <video
+//                   ref={videoRef}
+//                   className="w-full h-full object-contain lg:object-fill sm:object-cover"
+//                   muted
+//                   playsInline
+//                 />
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <div className="relative">
+//          <Footer />
+//      </div>
+//     </>
+//   );
+// }
 __turbopack_context__.s([
     "default",
     ()=>InvestorsPage
@@ -1176,37 +1387,18 @@ function InvestorsPage() {
     _s();
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const videoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const bgVideoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    const frameImagesRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])([]);
+    // const frameImagesRef = useRef<HTMLImageElement[]>([]);
+    const frameCache = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Map());
+    const scrollTriggerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const rawProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const scrollDistanceRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const [isMobile, setIsMobile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [ready, setReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [videoReady, setVideoReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [framesReady, setFramesReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const TOTAL_FRAMES = 312;
-    const drawFrame = (index)=>{
-        const canvas = canvasRef.current;
-        const img = frameImagesRef.current[index];
-        if (!canvas || !img) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-        const dpr = window.devicePixelRatio || 1;
-        // match canvas to visible size (no layout change)
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, width, height);
-        // behave exactly like object-contain (keeps portrait shape)
-        const scale = Math.min(width / img.width, height / img.height);
-        const x = (width - img.width * scale) / 2;
-        const y = (height - img.height * scale) / 2;
-        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-    };
-    /* ---------------- MOBILE ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ------------------------------------------------ */ /* MOBILE DETECTION */ /* ------------------------------------------------ */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
             const check = {
                 "InvestorsPage.useEffect.check": ()=>setIsMobile(window.innerWidth < 640)
@@ -1218,7 +1410,7 @@ function InvestorsPage() {
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], []);
-    /* ---------------- SCROLL DISTANCE ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ------------------------------------------------ */ /* SCROLL DISTANCE (RESPONSIVE) */ /* ------------------------------------------------ */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
             const calc = {
                 "InvestorsPage.useEffect.calc": ()=>{
@@ -1227,75 +1419,140 @@ function InvestorsPage() {
                     return TOTAL_FRAMES * 6;
                 }
             }["InvestorsPage.useEffect.calc"];
-            scrollDistanceRef.current = calc();
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+            const update = {
+                "InvestorsPage.useEffect.update": ()=>{
+                    scrollDistanceRef.current = calc();
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+                }
+            }["InvestorsPage.useEffect.update"];
+            update();
+            window.addEventListener("resize", update);
+            return ({
+                "InvestorsPage.useEffect": ()=>window.removeEventListener("resize", update)
+            })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], []);
-    /* ---------------- VIDEO HARD WAKE ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    const loadFrame = (index)=>{
+        if (frameCache.current.has(index)) return;
+        const img = new Image();
+        img.src = `/investwebp/potraitinvestframes/frame_${String(index + 1).padStart(4, "0")}.webp`;
+        img.onload = ()=>{
+            frameCache.current.set(index, img);
+            // ⭐ if this is the frame we need right now, redraw
+            const currentFrame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
+            if (index === currentFrame || currentFrame === 0 && index === 0) {
+                drawFrame(index);
+            }
+        };
+    };
+    const preloadNearbyFrames = (center)=>{
+        const BUFFER_AHEAD = 12;
+        const BUFFER_BEHIND = 6;
+        const start = Math.max(0, center - BUFFER_BEHIND);
+        const end = Math.min(TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
+        for(let i = start; i <= end; i++){
+            loadFrame(i);
+        }
+    };
+    const cleanupFarFrames = (center)=>{
+        const MAX_DISTANCE = 50; // how far frames can stay in memory
+        frameCache.current.forEach((_, key)=>{
+            if (Math.abs(key - center) > MAX_DISTANCE) {
+                frameCache.current.delete(key);
+            }
+        });
+    };
+    /* ------------------------------------------------ */ /* CANVAS DRAW */ /* ------------------------------------------------ */ const drawFrame = (index)=>{
+        const canvas = canvasRef.current;
+        const img = frameCache.current.get(index);
+        if (!canvas || !img) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        const dpr = window.devicePixelRatio || 1;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        const scale = Math.min(width / img.width, height / img.height);
+        const x = (width - img.width * scale) / 2;
+        const y = (height - img.height * scale) / 2;
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    };
+    /* ------------------------------------------------ */ /* MOBILE FRAME PRELOAD */ /* ------------------------------------------------ */ // useEffect(() => {
+    //   if (!isMobile) return;
+    //   const images: HTMLImageElement[] = [];
+    //   let loaded = 0;
+    //   for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    //     const img = new Image();
+    //     img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
+    //     img.onload = img.onerror = () => {
+    //       loaded++;
+    //       if (loaded === TOTAL_FRAMES) {
+    //         frameImagesRef.current = images;
+    //         drawFrame(0);
+    //         setFramesReady(true);
+    //         ScrollTrigger.refresh();
+    //       }
+    //     };
+    //     images.push(img);
+    //   }
+    // }, [isMobile]);
+    /* ------------------------------------------------ */ /* REDRAW CANVAS ON RESIZE */ /* ------------------------------------------------ */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "InvestorsPage.useEffect": ()=>{
+            if (!isMobile || !framesReady) return;
+            const redraw = {
+                "InvestorsPage.useEffect.redraw": ()=>{
+                    const frame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
+                    drawFrame(frame);
+                }
+            }["InvestorsPage.useEffect.redraw"];
+            window.addEventListener("resize", redraw);
+            return ({
+                "InvestorsPage.useEffect": ()=>window.removeEventListener("resize", redraw)
+            })["InvestorsPage.useEffect"];
+        }
+    }["InvestorsPage.useEffect"], [
+        isMobile,
+        framesReady
+    ]);
+    /* ------------------------------------------------ */ /* VIDEO LOAD + HARD WAKE (DESKTOP) */ /* ------------------------------------------------ */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
             if (isMobile) return;
-            if (!videoRef.current) return;
-            const fg = videoRef.current;
-            // Pick the right video based on viewport
-            const src = isMobile ? "/investwebp/investor_ultra_android.mp4" : "/investwebp/out.mp4";
-            fg.src = src;
-            fg.muted = true;
-            fg.playsInline = true;
-            fg.preload = "auto";
-            fg.load();
-            setReady(false); // reset while new video loads
+            const video = videoRef.current;
+            if (!video) return;
+            video.src = "/investwebp/investor_high_scrubbed.mp4";
+            video.muted = true;
+            video.playsInline = true;
+            video.preload = "auto";
+            video.load();
             const wake = {
                 "InvestorsPage.useEffect.wake": async ()=>{
                     try {
-                        await fg.play();
-                        fg.pause();
-                        fg.currentTime = 0;
-                    } catch  {
-                        fg.currentTime = 0.01;
-                    }
-                    setReady(true); // 🔥 now safe to scrub
+                        video.currentTime = 0.01;
+                        await video.play().catch({
+                            "InvestorsPage.useEffect.wake": ()=>{}
+                        }["InvestorsPage.useEffect.wake"]);
+                        video.pause();
+                        video.currentTime = 0;
+                    } catch  {}
+                    setVideoReady(true);
                 }
             }["InvestorsPage.useEffect.wake"];
-            fg.addEventListener("loadeddata", wake, {
+            video.addEventListener("loadeddata", wake, {
                 once: true
             });
             return ({
-                "InvestorsPage.useEffect": ()=>{
-                    fg.removeEventListener("loadeddata", wake);
-                }
+                "InvestorsPage.useEffect": ()=>video.removeEventListener("loadeddata", wake)
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], [
         isMobile
-    ]); // re-run when mobile/desktop switches
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "InvestorsPage.useEffect": ()=>{
-            if (!isMobile) return;
-            const images = [];
-            let loaded = 0;
-            for(let i = 1; i <= TOTAL_FRAMES; i++){
-                const img = new Image();
-                img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
-                img.onload = ({
-                    "InvestorsPage.useEffect": ()=>{
-                        loaded++;
-                        if (loaded === TOTAL_FRAMES) {
-                            drawFrame(0);
-                            setFramesReady(true); // ⭐ VERY IMPORTANT
-                            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh(); // ⭐ VERY IMPORTANT
-                        }
-                    }
-                })["InvestorsPage.useEffect"];
-                images.push(img);
-            }
-            frameImagesRef.current = images;
-        }
-    }["InvestorsPage.useEffect"], [
-        isMobile
     ]);
-    /* ---------------- SCRUB LOOP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ------------------------------------------------ */ /* VIDEO SCRUB LOOP */ /* ------------------------------------------------ */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
-            if (!ready || isMobile) return;
+            if (!videoReady || isMobile) return;
             const video = videoRef.current;
             if (!video) return;
             let raf = 0;
@@ -1304,14 +1561,14 @@ function InvestorsPage() {
                 "InvestorsPage.useEffect.animate": (time)=>{
                     const delta = Math.min((time - last) / 1000, 0.1);
                     last = time;
-                    if (!video.duration || isNaN(video.duration)) {
+                    if (!video.duration) {
                         raf = requestAnimationFrame(animate);
                         return;
                     }
-                    const speed = isMobile ? 1 : 12;
+                    const speed = 6; // smoother than 12
                     smoothProgressRef.current += (rawProgressRef.current - smoothProgressRef.current) * Math.min(delta * speed, 1);
                     const target = smoothProgressRef.current * video.duration;
-                    if (Math.abs(video.currentTime - target) > 0.015) {
+                    if (Math.abs(video.currentTime - target) > 0.01) {
                         video.currentTime = target;
                     }
                     raf = requestAnimationFrame(animate);
@@ -1323,78 +1580,67 @@ function InvestorsPage() {
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], [
-        isMobile,
-        ready
-    ]);
-    /* ---------------- VIDEO EVENT LISTENER ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "InvestorsPage.useEffect": ()=>{
-            if (!ready) return;
-            const handler = {
-                "InvestorsPage.useEffect.handler": ()=>{
-                    if (videoRef.current) {
-                        videoRef.current.currentTime = 0;
-                        videoRef.current.play();
-                    }
-                }
-            }["InvestorsPage.useEffect.handler"];
-            window.addEventListener('triggerVideoJump', handler);
-            return ({
-                "InvestorsPage.useEffect": ()=>window.removeEventListener('triggerVideoJump', handler)
-            })["InvestorsPage.useEffect"];
-        }
-    }["InvestorsPage.useEffect"], [
-        ready,
-        framesReady,
+        videoReady,
         isMobile
     ]);
-    /* ---------------- SCROLLTRIGGER ---------------- */ const localScrollTriggerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    /* ------------------------------------------------ */ /* SCROLLTRIGGER */ /* ------------------------------------------------ */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "InvestorsPage.useEffect": ()=>{
             if (!containerRef.current) return;
-            if (!isMobile && !ready) return;
             if (isMobile && !framesReady) return;
-            // Kill ONLY the trigger created by this component (if exists)
-            if (localScrollTriggerRef.current) {
-                localScrollTriggerRef.current.kill();
-                localScrollTriggerRef.current = null;
-            }
-            // Create new trigger
-            const st = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
+            if (!isMobile && !videoReady) return;
+            scrollTriggerRef.current?.kill();
+            scrollTriggerRef.current = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].create({
                 trigger: containerRef.current,
                 start: "top top",
                 end: `+=${scrollDistanceRef.current}px`,
                 pin: true,
                 anticipatePin: 1,
                 onUpdate: {
-                    "InvestorsPage.useEffect.st": (self)=>{
+                    "InvestorsPage.useEffect": (self)=>{
                         rawProgressRef.current = self.progress;
                         if (isMobile) {
                             const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+                            preloadNearbyFrames(frame);
+                            cleanupFarFrames(frame);
                             drawFrame(frame);
                         }
                     }
-                }["InvestorsPage.useEffect.st"]
+                }["InvestorsPage.useEffect"]
             });
-            // Store reference
-            localScrollTriggerRef.current = st;
-            // Cleanup only this trigger
             return ({
-                "InvestorsPage.useEffect": ()=>{
-                    st.kill();
-                    localScrollTriggerRef.current = null;
-                }
+                "InvestorsPage.useEffect": ()=>scrollTriggerRef.current?.kill()
             })["InvestorsPage.useEffect"];
         }
     }["InvestorsPage.useEffect"], [
-        ready,
+        isMobile,
         framesReady,
+        videoReady
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "InvestorsPage.useEffect": ()=>{
+            if (!isMobile) return;
+            loadFrame(0); // load first frame only
+            const checkReady = {
+                "InvestorsPage.useEffect.checkReady": ()=>{
+                    if (frameCache.current.has(0)) {
+                        drawFrame(0);
+                        setFramesReady(true);
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$ScrollTrigger$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollTrigger"].refresh();
+                    } else {
+                        requestAnimationFrame(checkReady);
+                    }
+                }
+            }["InvestorsPage.useEffect.checkReady"];
+            checkReady();
+        }
+    }["InvestorsPage.useEffect"], [
         isMobile
     ]);
-    /* ---------------- JSX ---------------- */ return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+    /* ------------------------------------------------ */ /* UI */ /* ------------------------------------------------ */ return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 488,
+                lineNumber: 818,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1411,7 +1657,7 @@ function InvestorsPage() {
                                 className: "w-full h-full"
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 498,
+                                lineNumber: 825,
                                 columnNumber: 17
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
                                 ref: videoRef,
@@ -1420,45 +1666,38 @@ function InvestorsPage() {
                                 playsInline: true
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 503,
+                                lineNumber: 827,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 496,
+                            lineNumber: 823,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 495,
+                        lineNumber: 822,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/investors-and-partners/page.tsx",
-                    lineNumber: 494,
+                    lineNumber: 821,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 490,
+                lineNumber: 820,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "relative",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                    fileName: "[project]/app/investors-and-partners/page.tsx",
-                    lineNumber: 518,
-                    columnNumber: 10
-                }, this)
-            }, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 517,
+                lineNumber: 839,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
-_s(InvestorsPage, "aK6/plhNs+cnQCjbLrjWSm4zJi4=");
+_s(InvestorsPage, "W6C7drTjwLvwWrDjot9q/+HhcgA=");
 _c = InvestorsPage;
 var _c;
 __turbopack_context__.k.register(_c, "InvestorsPage");
