@@ -354,8 +354,8 @@ export default function Video() {
   };
 
   const preloadNearbyFrames = (center: number) => {
-    const AHEAD = 12;
-    const BEHIND = 6;
+    const AHEAD = 40;
+    const BEHIND = 20;
 
     for (let i = Math.max(0, center - BEHIND); i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD); i++) {
       loadFrame(i);
@@ -363,7 +363,7 @@ export default function Video() {
   };
 
   const cleanupFarFrames = (center: number) => {
-    const MAX_DISTANCE = 50;
+    const MAX_DISTANCE = 140;
 
     frameCache.current.forEach((_, key) => {
       if (Math.abs(key - center) > MAX_DISTANCE) {
