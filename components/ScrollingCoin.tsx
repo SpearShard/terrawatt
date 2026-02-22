@@ -121,12 +121,14 @@ export default function VideoCoin({
 
   const CONFIG = {
     appearAt: 0,
-    disappearAt: 0.18,
+    disappearAt: 0.32,
+    fadeStart: 0.30,
+    fadeEnd:0.32,
 
     darkenEnd: 0.03,
 
     start: { z: 2.47, x: 0, y: -0.02, scale: 3.8 },
-    end: { z: 0.01, x: 0.20, y: 0.41, scale: 6.2 },
+    end: { z: 0.01, x: 0.15, y: 0.38, scale: 5.5 },
 
     /* ---- rotation phases ---- */
     freeSpinStart: 0.03,
@@ -171,12 +173,13 @@ export default function VideoCoin({
 
     if (!g || materialsRef.current.length === 0) return;
 
-    if (p < CONFIG.appearAt) {
-      g.visible = false;
-      return;
-    }
+    // ---------- VISIBILITY CONTROL ----------
+if (p < CONFIG.appearAt || p > CONFIG.fadeEnd) {
+  g.visible = false;
+  return;
+}
 
-    g.visible = true;
+g.visible = true;
 
     const t = THREE.MathUtils.clamp(
       (p - CONFIG.appearAt) /
@@ -245,9 +248,44 @@ export default function VideoCoin({
       });
     }
 
-    if (p > CONFIG.disappearAt) {
-      g.visible = false;
+    // if (p > CONFIG.disappearAt) {
+    //   g.visible = false;
+    // }
+
+    // ---------- FADE OUT ----------
+// ---------- FADE OUT / RESTORE ----------
+if (p >= CONFIG.fadeStart) {
+
+  const fadeT = THREE.MathUtils.clamp(
+    (p - CONFIG.fadeStart) / (CONFIG.fadeEnd - CONFIG.fadeStart),
+    0,
+    1
+  );
+
+  const opacity = 1 - fadeT;
+
+  materialsRef.current.forEach((m) => {
+    if ("opacity" in m) {
+      m.transparent = true;
+      m.opacity = opacity;
     }
+  });
+
+  if (p >= CONFIG.fadeEnd) {
+    g.visible = false;
+  }
+
+} else {
+  // ⭐ RESTORE FULL OPACITY WHEN SCROLLING BACK
+  materialsRef.current.forEach((m) => {
+    if ("opacity" in m) {
+      m.transparent = false;
+      m.opacity = 1;
+    }
+  });
+
+  g.visible = true;
+}
   });
 
   return (
