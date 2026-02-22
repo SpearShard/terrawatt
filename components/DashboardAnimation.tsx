@@ -477,7 +477,7 @@ export default function DashboardAnimation({
 
     const loader = new THREE.TextureLoader();
     loader.load(
-      `/dashframes/frame_${String(index + 1).padStart(4, "0")}.webp`,
+      `/dashsmaller/dashframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.generateMipmaps = false;
