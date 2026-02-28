@@ -589,12 +589,16 @@ export default function DashboardAnimation({
 
   /* ================= CONFIG ================= */
 
-  const TOTAL_FRAMES = 1461; // change if needed
-  const PRELOAD_AHEAD = 65;
-  const PRELOAD_BEHIND = 56;
-  const CLEANUP_DISTANCE = 180;
+  const TOTAL_FRAMES = 1461;
+
+  const PRELOAD_AHEAD = 30;
+  const PRELOAD_BEHIND = 15;
+  const CLEANUP_DISTANCE = 90;
+  const MAX_FRAME_STEP = 25; // prevents insane jumps
 
   const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
+  const loadingSet = useRef<Set<number>>(new Set());
+  const lastFrameRef = useRef(0);
 
   /* ================= SCROLL ================= */
 
@@ -648,16 +652,27 @@ export default function DashboardAnimation({
   const textureLoader = new THREE.TextureLoader();
 
   const loadFrame = (index: number) => {
-    if (frameCache.current.has(index)) return;
+    if (
+      frameCache.current.has(index) ||
+      loadingSet.current.has(index)
+    )
+      return;
+
+    loadingSet.current.add(index);
 
     textureLoader.load(
-      `/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      `/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(
+        5,
+        "0"
+      )}.webp`,
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.generateMipmaps = false;
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
+
         frameCache.current.set(index, texture);
+        loadingSet.current.delete(index);
       }
     );
   };
@@ -708,22 +723,39 @@ export default function DashboardAnimation({
       (scrollRef.current - smoothScrollRef.current) * lerpFactor;
 
     const progress = smoothScrollRef.current;
-    const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
+    let targetFrame = Math.floor(progress * (TOTAL_FRAMES - 1));
 
-    preloadNearbyFrames(frame);
-    cleanupFarFrames(frame);
+    // 🔥 Limit massive frame jumps
+    const diff = targetFrame - lastFrameRef.current;
 
-    const texture = frameCache.current.get(frame);
+    if (Math.abs(diff) > MAX_FRAME_STEP) {
+      targetFrame =
+        lastFrameRef.current +
+        Math.sign(diff) * MAX_FRAME_STEP;
+    }
+
+    preloadNearbyFrames(targetFrame);
+    cleanupFarFrames(targetFrame);
+
+    let texture = frameCache.current.get(targetFrame);
+
+    // Fallback to last loaded frame
+    if (!texture) {
+      texture = frameCache.current.get(lastFrameRef.current);
+    } else {
+      lastFrameRef.current = targetFrame;
+    }
+
     if (!texture) return;
 
     const mat = plane.material as THREE.MeshBasicMaterial;
+
     if (mat.map !== texture) {
       mat.map = texture;
       mat.needsUpdate = true;
     }
 
     progressRef.current = progress;
-    (window as any).__SCROLL_PROGRESS__ = progress;
   });
 
   /* Load first frame immediately */

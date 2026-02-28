@@ -820,11 +820,14 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     _s();
     const uiGroup = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Group"]());
     const planeRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    /* ================= CONFIG ================= */ const TOTAL_FRAMES = 1461; // change if needed
-    const PRELOAD_AHEAD = 65;
-    const PRELOAD_BEHIND = 56;
-    const CLEANUP_DISTANCE = 180;
+    /* ================= CONFIG ================= */ const TOTAL_FRAMES = 1461;
+    const PRELOAD_AHEAD = 30;
+    const PRELOAD_BEHIND = 15;
+    const CLEANUP_DISTANCE = 90;
+    const MAX_FRAME_STEP = 25; // prevents insane jumps
     const frameCache = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Map());
+    const loadingSet = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Set());
+    const lastFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     /* ================= SCROLL ================= */ const scrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const smoothScrollRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const rafRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
@@ -862,13 +865,15 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     }["DashboardAnimation.useEffect"], []);
     /* ================= FRAME LOADER ================= */ const textureLoader = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextureLoader"]();
     const loadFrame = (index)=>{
-        if (frameCache.current.has(index)) return;
+        if (frameCache.current.has(index) || loadingSet.current.has(index)) return;
+        loadingSet.current.add(index);
         textureLoader.load(`/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`, (texture)=>{
             texture.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
             texture.generateMipmaps = false;
             texture.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
             texture.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
             frameCache.current.set(index, texture);
+            loadingSet.current.delete(index);
         });
     };
     const preloadNearbyFrames = (center)=>{
@@ -907,10 +912,21 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
             const lerpFactor = Math.min(delta * 12, 1);
             smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * lerpFactor;
             const progress = smoothScrollRef.current;
-            const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
-            preloadNearbyFrames(frame);
-            cleanupFarFrames(frame);
-            const texture = frameCache.current.get(frame);
+            let targetFrame = Math.floor(progress * (TOTAL_FRAMES - 1));
+            // 🔥 Limit massive frame jumps
+            const diff = targetFrame - lastFrameRef.current;
+            if (Math.abs(diff) > MAX_FRAME_STEP) {
+                targetFrame = lastFrameRef.current + Math.sign(diff) * MAX_FRAME_STEP;
+            }
+            preloadNearbyFrames(targetFrame);
+            cleanupFarFrames(targetFrame);
+            let texture = frameCache.current.get(targetFrame);
+            // Fallback to last loaded frame
+            if (!texture) {
+                texture = frameCache.current.get(lastFrameRef.current);
+            } else {
+                lastFrameRef.current = targetFrame;
+            }
             if (!texture) return;
             const mat = plane.material;
             if (mat.map !== texture) {
@@ -918,7 +934,6 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 mat.needsUpdate = true;
             }
             progressRef.current = progress;
-            window.__SCROLL_PROGRESS__ = progress;
         }
     }["DashboardAnimation.useFrame"]);
     /* Load first frame immediately */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -956,17 +971,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 metalness: 0.1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 741,
+                                lineNumber: 773,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/DashboardAnimation.tsx",
-                            lineNumber: 740,
+                            lineNumber: 772,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 739,
+                        lineNumber: 771,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -983,20 +998,20 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 750,
+                                lineNumber: 782,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 color: "#000"
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 751,
+                                lineNumber: 783,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 749,
+                        lineNumber: 781,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -1014,26 +1029,26 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 755,
+                                lineNumber: 787,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 toneMapped: false
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 756,
+                                lineNumber: 788,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 754,
+                        lineNumber: 786,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 738,
+                lineNumber: 770,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1041,17 +1056,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 dashboardRef: dashboardRef
             }, void 0, false, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 760,
+                lineNumber: 792,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/DashboardAnimation.tsx",
-        lineNumber: 737,
+        lineNumber: 769,
         columnNumber: 5
     }, this);
 }
-_s(DashboardAnimation, "P2GVm9x/NvAsPXsAIBhOG/4G9bo=", false, function() {
+_s(DashboardAnimation, "UKW9QEsTnxsVJa8baThaWjyfIqg=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"]
     ];
