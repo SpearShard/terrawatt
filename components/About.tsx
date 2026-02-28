@@ -110,15 +110,15 @@ export default function About() {
 
       {/* ── HEADER ── */}
       <section className="pt-32 pb-20 text-center px-6">
-        <p className="text-xs bg-[blue] font-mono tracking-[0.5em] text-gray-500 uppercase mb-8">
+        <p className="text-xs font-mono tracking-[0.5em] text-gray-500 uppercase mb-8">
           The Ecosystem
         </p>
         {/* Main Statement */}
         <h1 className="text-4xl md:text-6xl font-semibold leading-tight mb-8">
-          The future of mobility isn’t just electric.
+          The future of mobility isn&apos;t just electric.
           <br />
           <span className="text-blue-500">
-            It’s intelligently connected.
+            It&apos;s intelligently connected.
           </span>
         </h1>
 
