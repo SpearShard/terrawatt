@@ -358,15 +358,15 @@ export default function InsightsPage() {
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 leading-tight">
-                Stories for a Smarter
+              <h1 className="text-4xl lg:text-[3vw] sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 leading-tight">
+                Inside the Future of Electric Mobility
                 <br />
-                <span className="text-white">Electric Journey</span>
+                <span className="text-white">Infrastructure, innovation, and insights powering what&apos;s next.</span>
               </h1>
 
               <p className="text-cyan-100/80 text-base md:text-xl max-w-3xl mx-auto font-light">
-                Discover the latest innovations, expert insights, and inspiring
-                stories shaping the future of electric mobility
+               At Teraawatt, we&apos;re creating India&apos;s most trusted EV ecosystem — uniting technology, convenience, and sustainability. 
+Our mission is to make every charge smarter, every drive cleaner, and every user's experience seamless. Because the future of mobility deserves more than just power, it deserves purpose. 
               </p>
             </div>
 

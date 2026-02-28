@@ -14,9 +14,15 @@ const products = [
     num: "01",
     label: "Infrastructure",
     titleImage: "/teraacharge.png",
-    description:
-      "Access the fastest and most reliable EV charging network. Real-time availability, seamless sessions, and high-speed delivery. Real-time data \n Ultra-fast charging \n 24/7 Support ",
-    image: "/About/teraacharge.jpg",
+    description: {
+  text: "Access the fastest and most reliable EV charging network. Real-time availability, seamless sessions, and high-speed delivery.",
+  features: [
+    "Real-time data",
+    "Ultra-fast charging",
+    "24/7 Support",
+  ],
+},
+    image: "/About/about1.jpg",
     accentColor: "#22D3EE",
     href: "/app",
   },
@@ -25,9 +31,15 @@ const products = [
     num: "02",
     label: "Rewards",
     titleImage: "/teraacoins.png",
-    description:
-      "Turn every charge into rewards. Earn coins as you power up, drive smart, and stay active. Redeem for exclusive EV benefits and services. Reward on every charge Redeem for EV perks Instant in-app tracking ",
-    image: "/About/teraacoins.png",
+    description: {
+  text: "Turn every charge into rewards. Earn coins as you power up, drive smart, and stay active. Redeem for exclusive EV benefits and services.",
+  features: [
+    "Reward on every charge",
+    "Redeem for EV perks",
+    "Instant in-app tracking",
+  ],
+},
+    image: "/About/about2.jpg",
     accentColor: "#FFD700",
     href: "/coins",
   },
@@ -36,9 +48,15 @@ const products = [
     num: "03",
     label: "Payments",
     titleImage: "/teraavouchers.png",
-    description:
-      "Power that makes a thoughtful gift. TeraaVouchers make EV charging simple, shareable, and always useful. Easy to purchase Send to anyone Hassle-free redemption ",
-    image: "/About/teraavoucher.png",
+    description: {
+  text: "Power that makes a thoughtful gift. TeraaVouchers make EV charging simple, shareable, and always useful.",
+  features: [
+    "Easy to purchase",
+    "Send to anyone",
+    "Hassle-free redemption",
+  ],
+},
+    image: "/About/about4.jpg",
     accentColor: "#05DF72",
     href: "/vouchers",
   },
@@ -47,9 +65,15 @@ const products = [
     num: "04",
     label: "Marketplace",
     titleImage: "/teraamartlogo.png",
-    description:
-      "A curated collection of premium EV accessories and home charging solutions. Every product quality-verified for your peace of mind.",
-    image: "/About/teraamart.png",
+    description: {
+  text: "The marketplace for modern EV owners. Discover trusted accessories, smart add-ons, and performance essentials built for electric mobility.",
+  features: [
+    "Trusted EV brands",
+    "Smart add-ons",
+    "Secure transactions",
+  ],
+},
+    image: "/About/about3.jpg",
     accentColor: "#00BFFF",
     href: "/mart",
   },
@@ -88,6 +112,25 @@ export default function About() {
       <section className="pt-32 pb-20 text-center px-6">
         <p className="text-xs bg-[blue] font-mono tracking-[0.5em] text-gray-500 uppercase mb-8">
           The Ecosystem
+        </p>
+        {/* Main Statement */}
+        <h1 className="text-4xl md:text-6xl font-semibold leading-tight mb-8">
+          The future of mobility isn’t just electric.
+          <br />
+          <span className="text-blue-500">
+            It’s intelligently connected.
+          </span>
+        </h1>
+
+        {/* Supporting Text */}
+        <p className="text-lg md:text-xl text-neutral-300 leading-relaxed mb-6">
+          Real transformation begins when everything around your EV works in harmony.
+        </p>
+
+        <p className="text-lg md:text-xl text-neutral-300 leading-relaxed">
+          TeraaWatt connects the systems that power your journey — from intelligent 
+          trip planning to seamless charging and beyond — creating a smarter, 
+          more dependable electric experience.
         </p>
         <div className="relative w-full max-w-3xl mx-auto aspect-[16/4]">
           <Image src="/teraawattart.svg" alt="Teraawatt" fill className="object-contain" priority />
@@ -139,16 +182,32 @@ export default function About() {
                     />
                   </div>
 
-                  <p className="text-gray-400 text-lg leading-relaxed font-light">
-                    {p.description}
-                  </p>
+                  <div>
+  {/* Main Paragraph */}
+  <p className="text-gray-400 text-lg leading-relaxed font-light mb-6">
+    {p.description.text}
+  </p>
 
-                  <Link href={p.href}>
-                    <button className="mt-2 flex items-center gap-3 text-white text-sm font-semibold tracking-wide group w-fit border-b border-white/20 pb-1 hover:border-white transition-colors duration-300">
-                      Learn more
-                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </button>
-                  </Link>
+  {/* Feature Bullets */}
+  {p.description.features && (
+    <ul className="space-y-3">
+      {p.description.features.map((feature, index) => (
+        <li
+          key={index}
+          className="flex items-center gap-3 text-gray-500 text-base"
+        >
+          <span
+            className="h-2 w-2 rounded-full"
+            style={{ backgroundColor: p.accentColor }}
+          />
+          {feature}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+
+                  
                 </div>
               </div>
 

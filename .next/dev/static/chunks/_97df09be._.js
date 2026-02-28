@@ -1310,9 +1310,9 @@ function InsightsPage() {
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                            className: "text-4xl sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 leading-tight",
+                                            className: "text-4xl lg:text-[3vw] sm:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 leading-tight",
                                             children: [
-                                                "Stories for a Smarter",
+                                                "Inside the Future of Electric Mobility",
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                     fileName: "[project]/app/insights/page.tsx",
                                                     lineNumber: 363,
@@ -1320,7 +1320,7 @@ function InsightsPage() {
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     className: "text-white",
-                                                    children: "Electric Journey"
+                                                    children: "Infrastructure, innovation, and insights powering what's next."
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/insights/page.tsx",
                                                     lineNumber: 364,
@@ -1334,7 +1334,7 @@ function InsightsPage() {
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                             className: "text-cyan-100/80 text-base md:text-xl max-w-3xl mx-auto font-light",
-                                            children: "Discover the latest innovations, expert insights, and inspiring stories shaping the future of electric mobility"
+                                            children: "At Teraawatt, we're creating India's most trusted EV ecosystem — uniting technology, convenience, and sustainability. Our mission is to make every charge smarter, every drive cleaner, and every user's experience seamless. Because the future of mobility deserves more than just power, it deserves purpose."
                                         }, void 0, false, {
                                             fileName: "[project]/app/insights/page.tsx",
                                             lineNumber: 367,

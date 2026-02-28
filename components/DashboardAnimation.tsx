@@ -444,7 +444,7 @@ export default function DashboardAnimation({
   useEffect(() => {
     if (isMobile) return;
     const video = document.createElement("video");
-    video.src = "/dashsmaller/dash_ultra_android_HQ.mp4";
+    video.src = "/dashsmaller/scrubbed_dash.mp4";
     video.muted = true;
     video.loop = false;
     video.playsInline = true;
