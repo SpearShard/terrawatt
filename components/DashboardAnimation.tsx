@@ -34,8 +34,8 @@ export default function DashboardAnimation({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
 
-  // const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
-  // const MOBILE_TOTAL_FRAMES = 1461; 
+  const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
+  const MOBILE_TOTAL_FRAMES = 1461; 
 
   /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
@@ -69,45 +69,45 @@ export default function DashboardAnimation({
     };
   }, [isMobile]);
 
-  // const loadFrame = (index: number) => {
-  //   if (frameCache.current.has(index)) return;
+  const loadFrame = (index: number) => {
+    if (frameCache.current.has(index)) return;
 
-  //   const loader = new THREE.TextureLoader();
-  //   loader.load(
-  //     `/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
-  //     (texture) => {
-  //       texture.colorSpace = THREE.SRGBColorSpace;
-  //       texture.generateMipmaps = false;
-  //       texture.minFilter = THREE.LinearFilter;
-  //       texture.magFilter = THREE.LinearFilter;
-  //       frameCache.current.set(index, texture);
-  //     }
-  //   );
-  // };
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      `/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        frameCache.current.set(index, texture);
+      }
+    );
+  };
 
-  // const preloadNearbyFrames = (center: number) => {
-  //   const AHEAD = 40;
-  //   const BEHIND = 20;
+  const preloadNearbyFrames = (center: number) => {
+    const AHEAD = 40;
+    const BEHIND = 20;
 
-  //   for (
-  //     let i = Math.max(0, center - BEHIND);
-  //     i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD);
-  //     i++
-  //   ) {
-  //     loadFrame(i);
-  //   }
-  // };
+    for (
+      let i = Math.max(0, center - BEHIND);
+      i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD);
+      i++
+    ) {
+      loadFrame(i);
+    }
+  };
 
-  // const cleanupFarFrames = (center: number) => {
-  //   const MAX_DISTANCE = 140;
+  const cleanupFarFrames = (center: number) => {
+    const MAX_DISTANCE = 140;
 
-  //   frameCache.current.forEach((tex, key) => {
-  //     if (Math.abs(key - center) > MAX_DISTANCE) {
-  //       tex.dispose();
-  //       frameCache.current.delete(key);
-  //     }
-  //   });
-  // };
+    frameCache.current.forEach((tex, key) => {
+      if (Math.abs(key - center) > MAX_DISTANCE) {
+        tex.dispose();
+        frameCache.current.delete(key);
+      }
+    });
+  };
 
   /* ---------------- SCROLL TRACKING ---------------- */
   useEffect(() => {
@@ -185,24 +185,24 @@ export default function DashboardAnimation({
     const progress = smoothScrollRef.current;
 
     /* ================= MOBILE = FRAME SCRUB ================= */
-    // if (isMobile) {
-    //   const frame = Math.floor(progress * (MOBILE_TOTAL_FRAMES - 1));
+    if (isMobile) {
+      const frame = Math.floor(progress * (MOBILE_TOTAL_FRAMES - 1));
 
-    //   preloadNearbyFrames(frame);
-    //   cleanupFarFrames(frame);
+      preloadNearbyFrames(frame);
+      cleanupFarFrames(frame);
 
-    //   const texture = frameCache.current.get(frame);
-    //   if (!texture) return;
+      const texture = frameCache.current.get(frame);
+      if (!texture) return;
 
-    //   const mat = plane.material as THREE.MeshBasicMaterial;
-    //   if (mat.map !== texture) {
-    //     mat.map = texture;
-    //     mat.needsUpdate = true;
-    //   }
-    // }
+      const mat = plane.material as THREE.MeshBasicMaterial;
+      if (mat.map !== texture) {
+        mat.map = texture;
+        mat.needsUpdate = true;
+      }
+    }
 
     /* ================= DESKTOP = VIDEO SCRUB ================= */
-    
+    else{
       const video = videoRef.current;
       const texture = videoTextureRef.current;
       if (!video || !texture || !video.duration) return;
@@ -220,15 +220,15 @@ export default function DashboardAnimation({
         mat.needsUpdate = true;
       }
     
-
+    }
     progressRef.current = progress;
     (window as any).__SCROLL_PROGRESS__ = progress;
   });
 
-//   useEffect(() => {
-//   if (!isMobile) return;
-//   loadFrame(0);
-// }, [isMobile]);
+  useEffect(() => {
+  if (!isMobile) return;
+  loadFrame(0);
+}, [isMobile]);
 
   return (
     <group ref={uiGroup}>

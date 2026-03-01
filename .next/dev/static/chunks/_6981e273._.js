@@ -420,8 +420,8 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     // Video
     const videoRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const videoTextureRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
-    // const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
-    // const MOBILE_TOTAL_FRAMES = 1461; 
+    const frameCache = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Map());
+    const MOBILE_TOTAL_FRAMES = 1461;
     /* ---------------- VIDEO SETUP ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
             // if (isMobile) return;
@@ -453,40 +453,33 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     }["DashboardAnimation.useEffect"], [
         isMobile
     ]);
-    // const loadFrame = (index: number) => {
-    //   if (frameCache.current.has(index)) return;
-    //   const loader = new THREE.TextureLoader();
-    //   loader.load(
-    //     `/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
-    //     (texture) => {
-    //       texture.colorSpace = THREE.SRGBColorSpace;
-    //       texture.generateMipmaps = false;
-    //       texture.minFilter = THREE.LinearFilter;
-    //       texture.magFilter = THREE.LinearFilter;
-    //       frameCache.current.set(index, texture);
-    //     }
-    //   );
-    // };
-    // const preloadNearbyFrames = (center: number) => {
-    //   const AHEAD = 40;
-    //   const BEHIND = 20;
-    //   for (
-    //     let i = Math.max(0, center - BEHIND);
-    //     i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD);
-    //     i++
-    //   ) {
-    //     loadFrame(i);
-    //   }
-    // };
-    // const cleanupFarFrames = (center: number) => {
-    //   const MAX_DISTANCE = 140;
-    //   frameCache.current.forEach((tex, key) => {
-    //     if (Math.abs(key - center) > MAX_DISTANCE) {
-    //       tex.dispose();
-    //       frameCache.current.delete(key);
-    //     }
-    //   });
-    // };
+    const loadFrame = (index)=>{
+        if (frameCache.current.has(index)) return;
+        const loader = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextureLoader"]();
+        loader.load(`/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`, (texture)=>{
+            texture.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
+            texture.generateMipmaps = false;
+            texture.minFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            texture.magFilter = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["LinearFilter"];
+            frameCache.current.set(index, texture);
+        });
+    };
+    const preloadNearbyFrames = (center)=>{
+        const AHEAD = 40;
+        const BEHIND = 20;
+        for(let i = Math.max(0, center - BEHIND); i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD); i++){
+            loadFrame(i);
+        }
+    };
+    const cleanupFarFrames = (center)=>{
+        const MAX_DISTANCE = 140;
+        frameCache.current.forEach((tex, key)=>{
+            if (Math.abs(key - center) > MAX_DISTANCE) {
+                tex.dispose();
+                frameCache.current.delete(key);
+            }
+        });
+    };
     /* ---------------- SCROLL TRACKING ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
             let ticking = false;
@@ -546,39 +539,44 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
             const lerpFactor = Math.min(delta * 12, 1);
             smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * lerpFactor;
             const progress = smoothScrollRef.current;
-            /* ================= MOBILE = FRAME SCRUB ================= */ // if (isMobile) {
-            //   const frame = Math.floor(progress * (MOBILE_TOTAL_FRAMES - 1));
-            //   preloadNearbyFrames(frame);
-            //   cleanupFarFrames(frame);
-            //   const texture = frameCache.current.get(frame);
-            //   if (!texture) return;
-            //   const mat = plane.material as THREE.MeshBasicMaterial;
-            //   if (mat.map !== texture) {
-            //     mat.map = texture;
-            //     mat.needsUpdate = true;
-            //   }
-            // }
-            /* ================= DESKTOP = VIDEO SCRUB ================= */ const video = videoRef.current;
-            const texture = videoTextureRef.current;
-            if (!video || !texture || !video.duration) return;
-            const targetTime = progress * video.duration;
-            if (Math.abs(video.currentTime - targetTime) > 0.016) {
-                video.currentTime = targetTime;
-            }
-            texture.needsUpdate = true;
-            const mat = plane.material;
-            if (mat.map !== texture) {
-                mat.map = texture;
-                mat.needsUpdate = true;
+            /* ================= MOBILE = FRAME SCRUB ================= */ if (isMobile) {
+                const frame = Math.floor(progress * (MOBILE_TOTAL_FRAMES - 1));
+                preloadNearbyFrames(frame);
+                cleanupFarFrames(frame);
+                const texture = frameCache.current.get(frame);
+                if (!texture) return;
+                const mat = plane.material;
+                if (mat.map !== texture) {
+                    mat.map = texture;
+                    mat.needsUpdate = true;
+                }
+            } else {
+                const video = videoRef.current;
+                const texture = videoTextureRef.current;
+                if (!video || !texture || !video.duration) return;
+                const targetTime = progress * video.duration;
+                if (Math.abs(video.currentTime - targetTime) > 0.016) {
+                    video.currentTime = targetTime;
+                }
+                texture.needsUpdate = true;
+                const mat = plane.material;
+                if (mat.map !== texture) {
+                    mat.map = texture;
+                    mat.needsUpdate = true;
+                }
             }
             progressRef.current = progress;
             window.__SCROLL_PROGRESS__ = progress;
         }
     }["DashboardAnimation.useFrame"]);
-    //   useEffect(() => {
-    //   if (!isMobile) return;
-    //   loadFrame(0);
-    // }, [isMobile]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "DashboardAnimation.useEffect": ()=>{
+            if (!isMobile) return;
+            loadFrame(0);
+        }
+    }["DashboardAnimation.useEffect"], [
+        isMobile
+    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("group", {
         ref: uiGroup,
         children: [
@@ -1009,7 +1007,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
  //     </group>
  //   );
  // }
-_s(DashboardAnimation, "p6TUCL3RqnarwKzAtD8xXzNK3O0=", false, function() {
+_s(DashboardAnimation, "1nXhkrN+PRMjzsgLT5V9hh0xAVc=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"]
     ];
