@@ -344,32 +344,25 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
   }, [slug]);
 
   const handleShare = async () => {
-    if (!blog) return;
+  if (!blog) return;
 
-    const url = window.location.href;
+  const url = window.location.href;
 
-    // Detect Apple desktop (MacBooks / iMacs)
-    const isAppleDesktop =
-      typeof navigator !== "undefined" &&
-      /Macintosh|Mac OS X/.test(navigator.userAgent);
-
-    try {
-      // Use native share ONLY on mobile devices
-      if (navigator.share && !isAppleDesktop) {
-        await navigator.share({
-          title: blog.title,
-          text: blog.shortDescription,
-          url,
-        });
-      } else {
-        // Fallback: always copy ONLY the URL
-        await navigator.clipboard.writeText(url);
-        alert("Link copied to clipboard!");
-      }
-    } catch (err) {
-      console.error("Share failed:", err);
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: blog.title,
+        text: blog.shortDescription,
+        url,
+      });
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert("Link copied to clipboard!");
     }
-  };
+  } catch (err) {
+    console.error("Share failed:", err);
+  }
+};
 
 
 
@@ -488,9 +481,9 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
           </header>
 
           {/* Sequential Reveal Image Stack */}
-{sortedImages?.length ? (
-  <ImageRevealStack images={sortedImages} />
-) : null}
+          {sortedImages?.length ? (
+            <ImageRevealStack images={sortedImages} />
+          ) : null}
 
           {/* Content Area */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -535,8 +528,8 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
                 "
                 dangerouslySetInnerHTML={{
                   __html: (blog.content || blog.shortDescription)
-  .replace(/\\n/g, "<br/>")
-  .replace(/\n/g, "<br/>"),
+                    .replace(/\\n/g, "<br/>")
+                    .replace(/\n/g, "<br/>"),
                 }}
               />
 
@@ -563,8 +556,8 @@ function ImageRevealStack({ images }: { images: BlogImage[] }) {
     if (!images?.length) return;
 
     const interval = setInterval(() => {
-  setVisibleIndex((prev) => (prev + 1) % images.length);
-}, 2500);
+      setVisibleIndex((prev) => (prev + 1) % images.length);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, [images]);

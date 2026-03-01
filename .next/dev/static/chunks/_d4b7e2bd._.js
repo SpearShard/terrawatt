@@ -1527,7 +1527,7 @@ function InvestorsPage() {
             if (isMobile) return;
             const video = videoRef.current;
             if (!video) return;
-            video.src = "/investwebp/investor_high_scrubbed.mp4";
+            video.src = "/investwebp/invescrub.webm";
             video.muted = true;
             video.playsInline = true;
             video.preload = "auto";
@@ -1749,7 +1749,244 @@ function InvestorsPage() {
             }, this)
         ]
     }, void 0, true);
-}
+} // "use client";
+ // import { useEffect, useRef, useState } from "react";
+ // import Navbar from "@/components/Navbar";
+ // import gsap from "gsap";
+ // import { ScrollTrigger } from "gsap/ScrollTrigger";
+ // import Footer from "@/components/Footer";
+ // gsap.registerPlugin(ScrollTrigger);
+ // export default function InvestorsPage() {
+ //   const containerRef = useRef<HTMLDivElement>(null);
+ //   const canvasRef = useRef<HTMLCanvasElement>(null);
+ //   const videoRef = useRef<HTMLVideoElement>(null);
+ //   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+ //   const rawProgressRef = useRef(0);
+ //   const smoothProgressRef = useRef(0);
+ //   const scrollDistanceRef = useRef(0);
+ //   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
+ //   const [isMobile, setIsMobile] = useState(false);
+ //   const [videoReady, setVideoReady] = useState(false);
+ //   const [framesReady, setFramesReady] = useState(false);
+ //   const TOTAL_FRAMES = 312;
+ //   /* ---------------- MOBILE DETECTION ---------------- */
+ //   useEffect(() => {
+ //     const check = () => setIsMobile(window.innerWidth < 640);
+ //     check();
+ //     window.addEventListener("resize", check);
+ //     return () => window.removeEventListener("resize", check);
+ //   }, []);
+ //   /* ---------------- SCROLL DISTANCE ---------------- */
+ //   useEffect(() => {
+ //     const update = () => {
+ //       scrollDistanceRef.current = window.innerHeight * 6;
+ //       ScrollTrigger.refresh();
+ //     };
+ //     update();
+ //     window.addEventListener("resize", update);
+ //     return () => window.removeEventListener("resize", update);
+ //   }, []);
+ //   /* ========================================================= */
+ //   /* ===================== MOBILE FRAMES ===================== */
+ //   /* ========================================================= */
+ //   const loadFrame = (index: number) => {
+ //     if (frameCache.current.has(index)) return;
+ //     const img = new Image();
+ //     img.src = `/investwebp/potraitinvestframes/frame_${String(
+ //       index + 1
+ //     ).padStart(4, "0")}.webp`;
+ //     img.onload = () => {
+ //       frameCache.current.set(index, img);
+ //       if (index === 0) {
+ //         drawFrame(0);
+ //         setFramesReady(true);
+ //       }
+ //     };
+ //   };
+ //   const preloadNearby = (center: number) => {
+ //     const AHEAD = 12;
+ //     const BEHIND = 6;
+ //     for (
+ //       let i = Math.max(0, center - BEHIND);
+ //       i <= Math.min(TOTAL_FRAMES - 1, center + AHEAD);
+ //       i++
+ //     ) {
+ //       loadFrame(i);
+ //     }
+ //   };
+ //   const cleanupFar = (center: number) => {
+ //     const MAX_DISTANCE = 50;
+ //     frameCache.current.forEach((_, key) => {
+ //       if (Math.abs(key - center) > MAX_DISTANCE) {
+ //         frameCache.current.delete(key);
+ //       }
+ //     });
+ //   };
+ //   const drawFrame = (index: number) => {
+ //     const canvas = canvasRef.current;
+ //     const img = frameCache.current.get(index);
+ //     if (!canvas || !img) return;
+ //     const ctx = canvas.getContext("2d");
+ //     if (!ctx) return;
+ //     const dpr = window.devicePixelRatio || 1;
+ //     const width = canvas.clientWidth;
+ //     const height = canvas.clientHeight;
+ //     canvas.width = width * dpr;
+ //     canvas.height = height * dpr;
+ //     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+ //     ctx.clearRect(0, 0, width, height);
+ //     const scale = Math.min(width / img.width, height / img.height);
+ //     const x = (width - img.width * scale) / 2;
+ //     const y = (height - img.height * scale) / 2;
+ //     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+ //   };
+ //   useEffect(() => {
+ //     if (!isMobile) return;
+ //     loadFrame(0);
+ //   }, [isMobile]);
+ //   /* ========================================================= */
+ //   /* ================= DESKTOP VIDEO SCRUB =================== */
+ //   /* ========================================================= */
+ //   useEffect(() => {
+ //     if (isMobile) return;
+ //     const video = videoRef.current;
+ //     if (!video) return;
+ //     video.src = "/investwebp/investor_high_scrubbed.mp4";
+ //     video.muted = true;
+ //     video.playsInline = true;
+ //     video.preload = "auto";
+ //     const wake = async () => {
+ //       try {
+ //         video.currentTime = 0.01;
+ //         await video.play().catch(() => {});
+ //         video.pause();
+ //         video.currentTime = 0;
+ //       } catch {}
+ //       setVideoReady(true);
+ //     };
+ //     video.addEventListener("loadeddata", wake, { once: true });
+ //     return () => {
+ //       video.removeEventListener("loadeddata", wake);
+ //     };
+ //   }, [isMobile]);
+ //   const drawVideoFrame = () => {
+ //   const canvas = canvasRef.current;
+ //   const video = videoRef.current;
+ //   if (!canvas || !video) return;
+ //   const ctx = canvas.getContext("2d");
+ //   if (!ctx) return;
+ //   const dpr = window.devicePixelRatio || 1;
+ //   const width = canvas.clientWidth;
+ //   const height = canvas.clientHeight;
+ //   canvas.width = width * dpr;
+ //   canvas.height = height * dpr;
+ //   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+ //   ctx.clearRect(0, 0, width, height);
+ //   const videoWidth = video.videoWidth;
+ //   const videoHeight = video.videoHeight;
+ //   if (!videoWidth || !videoHeight) return;
+ //   const videoAspect = videoWidth / videoHeight;
+ //   const canvasAspect = width / height;
+ //   let drawWidth;
+ //   let drawHeight;
+ //   let offsetX = 0;
+ //   let offsetY = 0;
+ //   if (videoAspect > canvasAspect) {
+ //     // Video is wider → crop left/right
+ //     drawHeight = height;
+ //     drawWidth = height * videoAspect;
+ //     offsetX = (width - drawWidth) / 2;
+ //   } else {
+ //     // Video is taller → crop top/bottom
+ //     drawWidth = width;
+ //     drawHeight = width / videoAspect;
+ //     offsetY = (height - drawHeight) / 2;
+ //   }
+ //   ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
+ // };
+ //   /* ---------------- SMOOTH LOOP ---------------- */
+ //   useEffect(() => {
+ //     if ((isMobile && !framesReady) || (!isMobile && !videoReady)) return;
+ //     let raf = 0;
+ //     let last = performance.now();
+ //     let lastSeek = 0;
+ //     let lastFrame = -1;
+ //     const animate = (time: number) => {
+ //       const delta = Math.min((time - last) / 1000, 0.1);
+ //       last = time;
+ //       const speed = 5;
+ //       smoothProgressRef.current +=
+ //         (rawProgressRef.current - smoothProgressRef.current) *
+ //         Math.min(delta * speed, 1);
+ //       const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
+ //       if (isMobile) {
+ //         const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
+ //         if (frame !== lastFrame) {
+ //           preloadNearby(frame);
+ //           cleanupFar(frame);
+ //           drawFrame(frame);
+ //           lastFrame = frame;
+ //         }
+ //       } else {
+ //         const video = videoRef.current;
+ //         if (!video || !video.duration) {
+ //           raf = requestAnimationFrame(animate);
+ //           return;
+ //         }
+ //         const target = progress * video.duration;
+ //         if (
+ //           Math.abs(video.currentTime - target) > 0.02 &&
+ //           time - lastSeek > 16
+ //         ) {
+ //           video.currentTime = target;
+ //           lastSeek = time;
+ //         }
+ //         drawVideoFrame();
+ //       }
+ //       raf = requestAnimationFrame(animate);
+ //     };
+ //     raf = requestAnimationFrame(animate);
+ //     return () => cancelAnimationFrame(raf);
+ //   }, [isMobile, videoReady, framesReady]);
+ //   /* ---------------- SCROLLTRIGGER ---------------- */
+ //   useEffect(() => {
+ //     if (
+ //       !containerRef.current ||
+ //       (isMobile && !framesReady) ||
+ //       (!isMobile && !videoReady)
+ //     )
+ //       return;
+ //     scrollTriggerRef.current?.kill();
+ //     scrollTriggerRef.current = ScrollTrigger.create({
+ //       trigger: containerRef.current,
+ //       start: "top top",
+ //       end: `+=${scrollDistanceRef.current}px`,
+ //       pin: true,
+ //       anticipatePin: 1,
+ //       onUpdate: (self) => {
+ //         rawProgressRef.current = self.progress;
+ //       },
+ //     });
+ //     return () => scrollTriggerRef.current?.kill();
+ //   }, [isMobile, framesReady, videoReady]);
+ //   /* ---------------- UI ---------------- */
+ //   return (
+ //     <>
+ //       <Navbar />
+ //       <div className="relative w-full min-h-screen bg-black overflow-hidden">
+ //         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
+ //           <div className="sticky top-0 h-screen flex items-center justify-center">
+ //             <canvas ref={canvasRef} className="w-full h-full " />
+ //             {!isMobile && (
+ //               <video ref={videoRef} className="hidden" muted playsInline />
+ //             )}
+ //           </div>
+ //         </div>
+ //       </div>
+ //       <Footer />
+ //     </>
+ //   );
+ // }
 _s(InvestorsPage, "5f/sGLr3v6cl9MfawO5qnU6Avbs=");
 _c = InvestorsPage;
 var _c;
