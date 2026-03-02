@@ -1361,6 +1361,10 @@
     background-color: #fff;
   }
 
+  .bg-\[purple\] {
+    background-color: purple;
+  }
+
   .bg-\[red\] {
     background-color: red;
   }
