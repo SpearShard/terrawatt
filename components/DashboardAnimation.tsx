@@ -86,8 +86,8 @@ export default function DashboardAnimation({
   };
 
   const preloadNearbyFrames = (center: number) => {
-    const AHEAD = 40;
-    const BEHIND = 20;
+    const AHEAD = 80;
+    const BEHIND = 50;
 
     for (
       let i = Math.max(0, center - BEHIND);
@@ -99,7 +99,7 @@ export default function DashboardAnimation({
   };
 
   const cleanupFarFrames = (center: number) => {
-    const MAX_DISTANCE = 140;
+    const MAX_DISTANCE = 200;
 
     frameCache.current.forEach((tex, key) => {
       if (Math.abs(key - center) > MAX_DISTANCE) {

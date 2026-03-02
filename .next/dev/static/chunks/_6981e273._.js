@@ -465,14 +465,14 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
         });
     };
     const preloadNearbyFrames = (center)=>{
-        const AHEAD = 40;
-        const BEHIND = 20;
+        const AHEAD = 80;
+        const BEHIND = 50;
         for(let i = Math.max(0, center - BEHIND); i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD); i++){
             loadFrame(i);
         }
     };
     const cleanupFarFrames = (center)=>{
-        const MAX_DISTANCE = 140;
+        const MAX_DISTANCE = 200;
         frameCache.current.forEach((tex, key)=>{
             if (Math.abs(key - center) > MAX_DISTANCE) {
                 tex.dispose();
