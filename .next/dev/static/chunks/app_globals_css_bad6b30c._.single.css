@@ -1277,6 +1277,10 @@
     background-color: pink;
   }
 
+  .bg-\[red\] {
+    background-color: red;
+  }
+
   .bg-black {
     background-color: var(--color-black);
   }
