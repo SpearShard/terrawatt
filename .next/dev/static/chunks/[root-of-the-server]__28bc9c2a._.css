@@ -1361,16 +1361,12 @@
     background-color: #fff;
   }
 
-  .bg-\[blue\] {
-    background-color: #00f;
-  }
-
-  .bg-\[pink\] {
-    background-color: pink;
-  }
-
   .bg-\[red\] {
     background-color: red;
+  }
+
+  .bg-\[yellow\] {
+    background-color: #ff0;
   }
 
   .bg-black {

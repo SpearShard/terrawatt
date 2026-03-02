@@ -219,7 +219,7 @@
 //         mat.map = texture;
 //         mat.needsUpdate = true;
 //       }
-    
+
 //     }
 //     progressRef.current = progress;
 //     (window as any).__SCROLL_PROGRESS__ = progress;
@@ -307,6 +307,7 @@ export default function DashboardAnimation({
   // Scroll state
   const scrollRef = useRef(0);
   const smoothScrollRef = useRef(0);
+  const lastPreloadTime = useRef(0);
   const rafRef = useRef<number | null>(null);
 
   // Video
@@ -314,11 +315,18 @@ export default function DashboardAnimation({
   const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
 
   const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
-  const MOBILE_TOTAL_FRAMES = 1461; 
+  const lastFrameRef = useRef(-1);
+  const MOBILE_TOTAL_FRAMES = 731;
+
+  useEffect(() => {
+    if (isMobile) {
+      loadFrame(0);
+    }
+  }, [isMobile]);
 
   /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
-    // if (isMobile) return;
+    if (isMobile) return;
     const video = document.createElement("video");
     video.src = "/dashsmaller/scrub.webm";
     video.muted = true;
@@ -353,7 +361,7 @@ export default function DashboardAnimation({
 
     const loader = new THREE.TextureLoader();
     loader.load(
-      `/dashsmaller/dashnewframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      `/dashsmaller/dashoptimized/frame_${String(index + 1).padStart(5, "0")}.webp`,
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.generateMipmaps = false;
@@ -365,8 +373,8 @@ export default function DashboardAnimation({
   };
 
   const preloadNearbyFrames = (center: number) => {
-    const AHEAD = 20;
-    const BEHIND = 15;
+    const AHEAD = 8;
+    const BEHIND = 5;
 
     for (
       let i = Math.max(0, center - BEHIND);
@@ -378,7 +386,7 @@ export default function DashboardAnimation({
   };
 
   const cleanupFarFrames = (center: number) => {
-    const MAX_DISTANCE = 100;
+    const MAX_DISTANCE = 40;
 
     frameCache.current.forEach((tex, key) => {
       if (Math.abs(key - center) > MAX_DISTANCE) {
@@ -467,21 +475,48 @@ export default function DashboardAnimation({
     if (isMobile) {
       const frame = Math.floor(progress * (MOBILE_TOTAL_FRAMES - 1));
 
+      if (frame !== lastFrameRef.current) {
+        lastFrameRef.current = frame;
+
+        const now = performance.now();
+        if (now - lastPreloadTime.current > 150) {
+          preloadNearbyFrames(frame);
+          cleanupFarFrames(frame);
+          lastPreloadTime.current = now;
+        }
+
+        const texture = frameCache.current.get(frame);
+        if (texture) {
+          const mat = plane.material as THREE.MeshBasicMaterial;
+          if (mat.map !== texture) {
+            mat.map = texture;
+            mat.needsUpdate = true;
+          }
+        }
+      }
+
+      // const now = performance.now();
+      // if (now - lastPreloadTime.current > 150) {
+      //   preloadNearbyFrames(frame);
+      //   cleanupFarFrames(frame);
+      //   lastPreloadTime.current = now;
+      // }
+
       // preloadNearbyFrames(frame);
       // cleanupFarFrames(frame);
 
-      const texture = frameCache.current.get(frame);
-      if (!texture) return;
+      // const texture = frameCache.current.get(frame);
+      // if (!texture) return;
 
-      const mat = plane.material as THREE.MeshBasicMaterial;
-      if (mat.map !== texture) {
-        mat.map = texture;
-        mat.needsUpdate = true;
-      }
+      // const mat = plane.material as THREE.MeshBasicMaterial;
+      // if (mat.map !== texture) {
+      //   mat.map = texture;
+      //   mat.needsUpdate = true;
+      // }
     }
 
     /* ================= DESKTOP = VIDEO SCRUB ================= */
-    else{
+    else {
       const video = videoRef.current;
       const texture = videoTextureRef.current;
       if (!video || !texture || !video.duration) return;
@@ -498,37 +533,19 @@ export default function DashboardAnimation({
         mat.map = texture;
         mat.needsUpdate = true;
       }
-    
+
     }
     progressRef.current = progress;
     (window as any).__SCROLL_PROGRESS__ = progress;
   });
 
-//   useEffect(() => {
-//   if (!isMobile) return;
-//   loadFrame(0);
-// }, [isMobile]);
+  //   useEffect(() => {
+  //   if (!isMobile) return;
+  //   loadFrame(0);
+  // }, [isMobile]);
 
 
-const lastPreloadFrame = useRef(-1);
 
-useEffect(() => {
-  if (!isMobile) return;
-
-  const interval = setInterval(() => {
-    const frame = Math.floor(
-      smoothScrollRef.current * (MOBILE_TOTAL_FRAMES - 1)
-    );
-
-    if (frame !== lastPreloadFrame.current) {
-      lastPreloadFrame.current = frame;
-      preloadNearbyFrames(frame);
-      cleanupFarFrames(frame);
-    }
-  }, 120); // runs ~8 times per second
-
-  return () => clearInterval(interval);
-}, [isMobile]);
 
   return (
     <group ref={uiGroup}>
