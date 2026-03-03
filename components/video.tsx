@@ -344,6 +344,7 @@ export default function Video() {
 
     const img = new Image();
     img.src = `/iphoneframes/androscrubframes/frame_${String(index + 1).padStart(5, "0")}.webp`;
+    
 
     img.onload = () => {
       frameCache.current.set(index, img);

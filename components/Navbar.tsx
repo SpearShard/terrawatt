@@ -519,7 +519,7 @@ export default function Navbar() {
 
         <Link href="/" onClick={() => handleNavigation("Pulse")}>
           <Image
-            src="/teraawatt.svg"
+            src="/teraawatt-white.svg"
             alt="logo"
             width={125}
             height={45}
@@ -616,18 +616,18 @@ export default function Navbar() {
                       }`}
                   >
                     <span
-                      className={`text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"
+                      className={`relative inline-block text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"
                         }`}
                     >
                       {!item.isButton ? item.name : "Connect"}
-                    </span>
 
                     {!item.isButton && active === item.name && (
-                      <motion.div
-                        layoutId="mobile-indicator"
-                        className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
-                      />
-                    )}
+  <motion.div
+    layoutId="mobile-indicator"
+    className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+  />
+)}
+                    </span>
                   </div>
                 </Link>
               ))}

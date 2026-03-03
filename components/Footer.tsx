@@ -94,7 +94,7 @@ export default function Footer() {
         {/* Logo */}
         <div className=" relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center">
           <Image
-            src="/terlogo.png"
+            src="/teraawatt-black.svg"
             alt="Teraawatt Logo"
             fill
             className="object-contain"

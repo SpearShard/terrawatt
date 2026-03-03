@@ -480,7 +480,7 @@ function Navbar() {
                         href: "/",
                         onClick: ()=>handleNavigation("Pulse"),
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: "/teraawatt.svg",
+                            src: "/teraawatt-white.svg",
                             alt: "logo",
                             width: 125,
                             height: 45,
@@ -633,25 +633,25 @@ function Navbar() {
                                 },
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: `relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active === item.name ? "bg-white/5" : "hover:bg-white/5"}`,
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: `text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"}`,
-                                            children: !item.isButton ? item.name : "Connect"
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 618,
-                                            columnNumber: 21
-                                        }, this),
-                                        !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                                            layoutId: "mobile-indicator",
-                                            className: "absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 626,
-                                            columnNumber: 23
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: `relative inline-block text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"}`,
+                                        children: [
+                                            !item.isButton ? item.name : "Connect",
+                                            !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+                                                layoutId: "mobile-indicator",
+                                                className: "absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/Navbar.tsx",
+                                                lineNumber: 625,
+                                                columnNumber: 3
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/components/Navbar.tsx",
+                                        lineNumber: 618,
+                                        columnNumber: 21
+                                    }, this)
+                                }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
                                     lineNumber: 614,
                                     columnNumber: 19
@@ -788,7 +788,7 @@ function Footer() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: " relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: "/terlogo.png",
+                            src: "/teraawatt-black.svg",
                             alt: "Teraawatt Logo",
                             fill: true,
                             className: "object-contain"

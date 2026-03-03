@@ -802,7 +802,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleChargeJump = () => {
-      const targetProgress = -0.065;
+      const targetProgress = -0.28;
 
       const scrollContainer = document.getElementById("scroll-container");
       if (!scrollContainer) return;

@@ -313,12 +313,12 @@ export default function VideoTextureEffect({
   const rafIdRef = useRef<number | null>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial | null>(null);
 
-  const TOTAL_FRAMES = 598;
+  const TOTAL_FRAMES = 821;
 
   const ACTIVE_RANGES: readonly [number, number][] = [
     [114, 330],
     [414, 478],
-    [471, 535],
+    [642, 731],
   ];
 
   useEffect(() => {
