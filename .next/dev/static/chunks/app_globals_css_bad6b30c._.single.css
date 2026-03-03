@@ -1269,6 +1269,10 @@
     background-color: #fff;
   }
 
+  .bg-\[cyan\] {
+    background-color: #0ff;
+  }
+
   .bg-\[purple\] {
     background-color: purple;
   }
