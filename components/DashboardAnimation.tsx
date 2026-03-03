@@ -644,7 +644,7 @@ export default function DashboardAnimation({
     if (isMobile) return;
 
     const video = document.createElement("video");
-    video.src = "/dashsmaller/scrub.webm";
+    video.src = "/dashsmaller/dash.mp4";
     video.muted = true;
     video.loop = false;
     video.playsInline = true;
@@ -675,7 +675,7 @@ export default function DashboardAnimation({
 
     const loader = new THREE.TextureLoader();
     loader.load(
-      `/dashsmaller/dashoptimized/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      `/dashsmaller/dashkiframes/frame_${String(index + 1).padStart(5, "0")}.webp`,
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.generateMipmaps = false;

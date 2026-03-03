@@ -332,11 +332,11 @@ export default function Video() {
 
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
-  const FG_TOTAL_FRAMES = 480;
+  const FG_TOTAL_FRAMES = 451;
   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
   const MOBILE_TOTAL_FRAMES = 720;
   const START_BG_AT_FRAME = 251;
-  const targetProgress = 326 / FG_FRAME_MAX;
+  const targetProgress = 328 / FG_FRAME_MAX;
 
 
   const loadFrame = (index: number) => {

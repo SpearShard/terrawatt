@@ -316,8 +316,8 @@ export default function VideoTextureEffect({
   const TOTAL_FRAMES = 598;
 
   const ACTIVE_RANGES: readonly [number, number][] = [
-    [79, 156],
-    [239, 372],
+    [114, 330],
+    [414, 478],
     [471, 535],
   ];
 
