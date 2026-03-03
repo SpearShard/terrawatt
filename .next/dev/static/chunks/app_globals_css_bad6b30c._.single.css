@@ -1269,20 +1269,12 @@
     background-color: #fff;
   }
 
-  .bg-\[cyan\] {
-    background-color: #0ff;
-  }
-
-  .bg-\[purple\] {
-    background-color: purple;
+  .bg-\[aquamarine\] {
+    background-color: #7fffd4;
   }
 
   .bg-\[red\] {
     background-color: red;
-  }
-
-  .bg-\[yellow\] {
-    background-color: #ff0;
   }
 
   .bg-black {

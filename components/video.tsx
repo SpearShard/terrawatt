@@ -343,7 +343,7 @@ export default function Video() {
     if (frameCache.current.has(index)) return;
 
     const img = new Image();
-    img.src = `/iphoneframes/iphone_video_frames/frame_${String(index + 1).padStart(4, "0")}.webp`;
+    img.src = `/iphoneframes/androscrubframes/frame_${String(index + 1).padStart(5, "0")}.webp`;
 
     img.onload = () => {
       frameCache.current.set(index, img);
@@ -352,7 +352,8 @@ export default function Video() {
   if (frameCache.current.has(index)) return;
 
   const img = new Image();
-  img.src = `/iphoneframes/iphone_video_frames/frame_${String(index + 1).padStart(4, "0")}.webp`;
+  img.src = `/iphoneframes/androscrubframes/frame_${String(index + 1).padStart(5, "0")}.webp`;
+  
 
   img.onload = () => {
     frameCache.current.set(index, img);
@@ -437,7 +438,8 @@ export default function Video() {
 
     setup(bg, "/iphoneframes/whitetickets.mp4");
     if (!isMobile) {
-      setup(fg, "/iphoneframes/scrub_ultra_android.mp4");
+      setup(fg, "/iphoneframes/androscrub.webm");
+    
     }
 
     const onReady = () => {
