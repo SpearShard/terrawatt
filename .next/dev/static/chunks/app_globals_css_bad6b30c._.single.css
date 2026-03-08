@@ -1269,6 +1269,10 @@
     background-color: #fff;
   }
 
+  .bg-\[green\] {
+    background-color: green;
+  }
+
   .bg-\[pink\] {
     background-color: pink;
   }
