@@ -1268,7 +1268,7 @@ function InvestorsPage() {
         "InvestorsPage.useEffect": ()=>{
             const calc = {
                 "InvestorsPage.useEffect.calc": ()=>{
-                    if (window.innerWidth < 640) return TOTAL_FRAMES * 8;
+                    if (window.innerWidth < 640) return TOTAL_FRAMES * 15;
                     if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
                     return TOTAL_FRAMES * 6;
                 }
@@ -1442,7 +1442,7 @@ function InvestorsPage() {
                 "InvestorsPage.useEffect.animate": (time)=>{
                     const delta = Math.min((time - last) / 1000, 0.1);
                     last = time;
-                    const speed = 6;
+                    const speed = 4;
                     smoothProgressRef.current += (rawProgressRef.current - smoothProgressRef.current) * Math.min(delta * speed, 1);
                     const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
                     const frame = Math.floor(progress * (TOTAL_FRAMES - 1));

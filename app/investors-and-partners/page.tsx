@@ -379,7 +379,7 @@ export default function InvestorsPage() {
 
   useEffect(() => {
     const calc = () => {
-      if (window.innerWidth < 640) return TOTAL_FRAMES * 8;
+      if (window.innerWidth < 640) return TOTAL_FRAMES * 15;
       if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
       return TOTAL_FRAMES * 6;
     };
@@ -566,7 +566,7 @@ img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")
       const delta = Math.min((time - last) / 1000, 0.1);
       last = time;
 
-      const speed = 6;
+      const speed = 4;
       smoothProgressRef.current +=
         (rawProgressRef.current - smoothProgressRef.current) *
         Math.min(delta * speed, 1);

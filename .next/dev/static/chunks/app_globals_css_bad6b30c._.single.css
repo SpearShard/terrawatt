@@ -1273,6 +1273,14 @@
     background-color: pink;
   }
 
+  .bg-\[red\] {
+    background-color: red;
+  }
+
+  .bg-\[ref\] {
+    background-color: ref;
+  }
+
   .bg-black {
     background-color: var(--color-black);
   }
