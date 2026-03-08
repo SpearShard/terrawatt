@@ -2,252 +2,6 @@
 
 // import { useEffect, useRef, useState } from "react";
 // import Navbar from "@/components/Navbar";
-// import { gsap, ScrollTrigger } from "../lib/gsap";
-// import Footer from "@/components/Footer";
-
-// // gsap.registerPlugin(ScrollTrigger);
-
-// export default function InvestorsPage() {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const videoRef = useRef<HTMLVideoElement>(null);
-//   const bgVideoRef = useRef<HTMLVideoElement>(null);
-
-//   const rawProgressRef = useRef(0);
-//   const smoothProgressRef = useRef(0);
-//   const scrollDistanceRef = useRef(0);
-
-//   const [isMobile, setIsMobile] = useState(false);
-//   const [ready, setReady] = useState(false);
-
-//   const TOTAL_FRAMES = 516;
-
-//   /* ---------------- MOBILE ---------------- */
-//   useEffect(() => {
-//     const check = () => setIsMobile(window.innerWidth < 640);
-//     check();
-//     window.addEventListener("resize", check);
-//     return () => window.removeEventListener("resize", check);
-//   }, []);
-
-//   /* ---------------- SCROLL DISTANCE ---------------- */
-//   useEffect(() => {
-//     const calc = () => {
-//       if (window.innerWidth < 640) return TOTAL_FRAMES * 2;
-//       if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
-//       return TOTAL_FRAMES * 6;
-//     };
-
-//     scrollDistanceRef.current = calc();
-//     ScrollTrigger.refresh();
-//   }, []);
-
-//   /* ---------------- VIDEO HARD WAKE ---------------- */
-//   useEffect(() => {
-//     if (!videoRef.current || !bgVideoRef.current) return;
-
-//     const fg = videoRef.current;
-//     const bg = bgVideoRef.current;
-
-//     // Pick the right video based on viewport
-//     const src = isMobile
-//       ? "/investwebp/investor_ultra_android.mp4"
-//       : "/investwebp/out.mp4";
-
-//     fg.src = src;
-//     fg.muted = true;
-//     fg.playsInline = true;
-//     fg.preload = "auto";
-
-//     bg.src = src;
-//     bg.muted = true;
-//     bg.playsInline = true;
-//     bg.loop = true;
-//     bg.preload = "auto";
-
-//     fg.load();
-//     bg.load();
-
-//     setReady(false); // reset while new video loads
-
-//     const wake = async () => {
-//       try {
-//         await fg.play();
-//         fg.pause();
-//         fg.currentTime = 0;
-
-//         await bg.play();
-//         bg.pause();
-//         bg.currentTime = 0;
-//       } catch {
-//         fg.currentTime = 0.01;
-//         bg.currentTime = 0.01;
-//         setTimeout(() => {
-//           fg.currentTime = 0;
-//           bg.currentTime = 0;
-//         }, 200);
-//       }
-
-//       setReady(true); // 🔥 now safe to scrub
-//     };
-
-//     fg.addEventListener("loadeddata", wake, { once: true });
-
-//     return () => {
-//       fg.removeEventListener("loadeddata", wake);
-//     };
-//   }, [isMobile]); // re-run when mobile/desktop switches
-
-//   /* ---------------- SCRUB LOOP ---------------- */
-//   useEffect(() => {
-//     if (!ready) return;
-
-//     const video = videoRef.current;
-//     if (!video) return;
-
-//     let raf = 0;
-//     let last = performance.now();
-
-//     const animate = (time: number) => {
-//       const delta = Math.min((time - last) / 1000, 0.1);
-//       last = time;
-
-//       if (!video.duration || isNaN(video.duration)) {
-//         raf = requestAnimationFrame(animate);
-//         return;
-//       }
-
-//       const speed = isMobile ? 1 : 12;
-//       smoothProgressRef.current +=
-//         (rawProgressRef.current - smoothProgressRef.current) *
-//         Math.min(delta * speed, 1);
-
-//       const target = smoothProgressRef.current * video.duration;
-
-//       if (Math.abs(video.currentTime - target) > 0.015) {
-//         video.currentTime = target;
-//       }
-
-//       raf = requestAnimationFrame(animate);
-//     };
-
-//     raf = requestAnimationFrame(animate);
-//     return () => cancelAnimationFrame(raf);
-//   }, [isMobile, ready]);
-
-//   /* ---------------- VIDEO EVENT LISTENER ---------------- */
-//   useEffect(() => {
-//     if (!ready) return;
-//     const handler = () => {
-//       if (videoRef.current) {
-//         videoRef.current.currentTime = 0;
-//         videoRef.current.play();
-//       }
-//     };
-//     window.addEventListener('triggerVideoJump', handler);
-//     return () => window.removeEventListener('triggerVideoJump', handler);
-//   }, [ready]);
-
-//   /* ---------------- SCROLLTRIGGER ---------------- */
-//   const localScrollTriggerRef = useRef<ScrollTrigger | null>(null);
-
-// useEffect(() => {
-//   if (!containerRef.current || !ready) return;
-
-//   // Kill ONLY the trigger created by this component (if exists)
-//   if (localScrollTriggerRef.current) {
-//     localScrollTriggerRef.current.kill();
-//     localScrollTriggerRef.current = null;
-//   }
-
-//   // Create new trigger
-//   const st = ScrollTrigger.create({
-//     trigger: containerRef.current,
-//     start: "top top",
-//     end: `+=${scrollDistanceRef.current}px`,
-//     pin: true,
-//     anticipatePin: 1,
-//     onUpdate: self => {
-//       rawProgressRef.current = self.progress;
-//     },
-//   });
-
-//   // Store reference
-//   localScrollTriggerRef.current = st;
-
-//   // Cleanup only this trigger
-//   return () => {
-//     st.kill();
-//     localScrollTriggerRef.current = null;
-//   };
-
-// }, [ready]);
-
-//   /* ---------------- JSX ---------------- */
-//   return (
-//     <>
-//       <Navbar />
-
-//       <div className="relative w-full min-h-screen bg-black overflow-hidden">
-//         {/* MOBILE BLUR */}
-//         <div className="fixed inset-0 z-0 sm:hidden">
-//           <video
-//             ref={bgVideoRef}
-//             autoPlay
-//             muted
-//             loop
-//             playsInline
-//             className="w-screen h-screen object-cover blur-2xl opacity-70"
-//           />
-//           <div className="inset-0 bg-black/40" />
-//         </div>
-
-//         {/* FOREGROUND */}
-//         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
-//           <div className="sticky top-0 h-screen flex items-center justify-center">
-//             <div className="w-full h-full flex items-center justify-center">
-//               <video
-//                 ref={videoRef}
-//                 className="w-full h-full object-contain lg:object-fill sm:object-cover"
-//                 muted
-//                 playsInline
-//               />
-//             </div>
-//           </div>
-
-
-//         </div>
-//       </div>
-
-//       <div className="relative">
-//         <Footer />
-//       </div>
-//     </>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import Navbar from "@/components/Navbar";
 // import gsap from "gsap";
 // import { ScrollTrigger } from "gsap/ScrollTrigger";
 // import Footer from "@/components/Footer";
@@ -257,50 +11,22 @@
 // export default function InvestorsPage() {
 //   const containerRef = useRef<HTMLDivElement>(null);
 //   const videoRef = useRef<HTMLVideoElement>(null);
-//   const bgVideoRef = useRef<HTMLVideoElement>(null);
-
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   const frameImagesRef = useRef<HTMLImageElement[]>([]);
+//   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
+//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
 //   const rawProgressRef = useRef(0);
 //   const smoothProgressRef = useRef(0);
 //   const scrollDistanceRef = useRef(0);
+//   const mobileRafRunningRef = useRef(false);
 
 //   const [isMobile, setIsMobile] = useState(false);
-//   const [ready, setReady] = useState(false);
+//   const [videoReady, setVideoReady] = useState(false);
 //   const [framesReady, setFramesReady] = useState(false);
 
 //   const TOTAL_FRAMES = 312;
 
-//   const drawFrame = (index: number) => {
-//     const canvas = canvasRef.current;
-//     const img = frameImagesRef.current[index];
-//     if (!canvas || !img) return;
 
-//     const ctx = canvas.getContext("2d");
-//     if (!ctx) return;
-
-//     const dpr = window.devicePixelRatio || 1;
-
-//     // match canvas to visible size (no layout change)
-//     const width = canvas.clientWidth;
-//     const height = canvas.clientHeight;
-
-//     canvas.width = width * dpr;
-//     canvas.height = height * dpr;
-
-//     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-//     ctx.clearRect(0, 0, width, height);
-
-//     // behave exactly like object-contain (keeps portrait shape)
-//     const scale = Math.min(width / img.width, height / img.height);
-//     const x = (width - img.width * scale) / 2;
-//     const y = (height - img.height * scale) / 2;
-
-//     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-//   };
-
-//   /* ---------------- MOBILE ---------------- */
 //   useEffect(() => {
 //     const check = () => setIsMobile(window.innerWidth < 640);
 //     check();
@@ -308,7 +34,7 @@
 //     return () => window.removeEventListener("resize", check);
 //   }, []);
 
-//   /* ---------------- SCROLL DISTANCE ---------------- */
+
 //   useEffect(() => {
 //     const calc = () => {
 //       if (window.innerWidth < 640) return TOTAL_FRAMES * 2;
@@ -316,84 +42,127 @@
 //       return TOTAL_FRAMES * 6;
 //     };
 
-//     scrollDistanceRef.current = calc();
-//     ScrollTrigger.refresh();
+//     const update = () => {
+//       scrollDistanceRef.current = calc();
+//       ScrollTrigger.refresh();
+//     };
+
+//     update();
+//     window.addEventListener("resize", update);
+//     return () => window.removeEventListener("resize", update);
 //   }, []);
 
-//   /* ---------------- VIDEO HARD WAKE ---------------- */
+//   const loadFrame = (index: number) => {
+//     if (frameCache.current.has(index)) return;
+
+//     const img = new Image();
+//     img.src = `/investwebp/potraitinvestframes/frame_${String(index + 1).padStart(4, "0")}.webp`;
+
+//     img.onload = () => {
+//       frameCache.current.set(index, img);
+
+//       const currentFrame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
+//       if (index === currentFrame || (currentFrame === 0 && index === 0)) {
+//         drawFrame(index);
+//       }
+//     };
+//   };
+
+//   const preloadNearbyFrames = (center: number) => {
+//     const BUFFER_AHEAD = 12;
+//     const BUFFER_BEHIND = 6;
+
+//     const start = Math.max(0, center - BUFFER_BEHIND);
+//     const end = Math.min(TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
+
+//     for (let i = start; i <= end; i++) {
+//       loadFrame(i);
+//     }
+//   };
+
+//   const cleanupFarFrames = (center: number) => {
+//     const MAX_DISTANCE = 50; 
+
+//     frameCache.current.forEach((_, key) => {
+//       if (Math.abs(key - center) > MAX_DISTANCE) {
+//         frameCache.current.delete(key);
+//       }
+//     });
+//   };
+
+
+//   const drawFrame = (index: number) => {
+//     const canvas = canvasRef.current;
+//     const img = frameCache.current.get(index);
+//     if (!canvas || !img) return;
+
+//     const ctx = canvas.getContext("2d");
+//     if (!ctx) return;
+
+//     const dpr = window.devicePixelRatio || 1;
+//     const width = canvas.clientWidth;
+//     const height = canvas.clientHeight;
+
+//     const newW = width * dpr;
+//     const newH = height * dpr;
+
+//     if (canvas.width !== newW || canvas.height !== newH) {
+//       canvas.width = newW;
+//       canvas.height = newH;
+//     }
+
+//     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+//     ctx.clearRect(0, 0, width, height);
+
+//     const scale = Math.min(width / img.width, height / img.height);
+//     const x = (width - img.width * scale) / 2;
+//     const y = (height - img.height * scale) / 2;
+
+//     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+//   };
+
+
+//   useEffect(() => {
+//     if (!isMobile || !framesReady) return;
+
+//     const redraw = () => {
+//       const frame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
+//       drawFrame(frame);
+//     };
+
+//     window.addEventListener("resize", redraw);
+//     return () => window.removeEventListener("resize", redraw);
+//   }, [isMobile, framesReady]);
+
+
 //   useEffect(() => {
 //     if (isMobile) return;
-//     if(!videoRef.current) return;
+//     const video = videoRef.current;
+//     if (!video) return;
 
-//     const fg = videoRef.current;
-
-//     // Pick the right video based on viewport
-//     const src = isMobile
-//       ? "/investwebp/investor_high_scrubbed.mp4"
-//       : "/investwebp/investor_high_scrubbed.mp4";
-
-//     fg.src = src;
-//     fg.muted = true;
-//     fg.playsInline = true;
-//     fg.preload = "auto";
-
-
-//     fg.load();
-
-//     setReady(false); // reset while new video loads
+//     video.src = "/investwebp/invescrub.webm";
+//     video.muted = true;
+//     video.playsInline = true;
+//     video.preload = "auto";
+//     video.load();
 
 //     const wake = async () => {
 //       try {
-//         await fg.play();
-//         fg.pause();
-//         fg.currentTime = 0;
-
-
-//       } catch {
-//         fg.currentTime = 0.01;
-
-//       }
-
-//       setReady(true); // 🔥 now safe to scrub
+//         video.currentTime = 0.01;
+//         await video.play().catch(() => { });
+//         video.pause();
+//         video.currentTime = 0;
+//       } catch { }
+//       setVideoReady(true);
 //     };
 
-//     fg.addEventListener("loadeddata", wake, { once: true });
-
-//     return () => {
-//       fg.removeEventListener("loadeddata", wake);
-//     };
-//   }, [isMobile]); // re-run when mobile/desktop switches
-
-//   useEffect(() => {
-//     if (!isMobile) return;
-
-//     const images: HTMLImageElement[] = [];
-//     let loaded = 0;
-
-//     for (let i = 1; i <= TOTAL_FRAMES; i++) {
-//       const img = new Image();
-//       img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
-
-//       img.onload = () => {
-//         loaded++;
-
-//         if (loaded === TOTAL_FRAMES) {
-//           drawFrame(0);
-//           setFramesReady(true);      // ⭐ VERY IMPORTANT
-//           ScrollTrigger.refresh();   // ⭐ VERY IMPORTANT
-//         }
-//       };
-
-//       images.push(img);
-//     }
-
-//     frameImagesRef.current = images;
+//     video.addEventListener("loadeddata", wake, { once: true });
+//     return () => video.removeEventListener("loadeddata", wake);
 //   }, [isMobile]);
 
-//   /* ---------------- SCRUB LOOP ---------------- */
-//   useEffect(() => {
-//     if (!ready || isMobile) return;
 
+//   useEffect(() => {
+//     if (!videoReady || isMobile) return;
 //     const video = videoRef.current;
 //     if (!video) return;
 
@@ -404,19 +173,19 @@
 //       const delta = Math.min((time - last) / 1000, 0.1);
 //       last = time;
 
-//       if (!video.duration || isNaN(video.duration)) {
+//       if (!video.duration) {
 //         raf = requestAnimationFrame(animate);
 //         return;
 //       }
 
-//       const speed = isMobile ? 1 : 12;
+//       const speed = 6; 
 //       smoothProgressRef.current +=
 //         (rawProgressRef.current - smoothProgressRef.current) *
 //         Math.min(delta * speed, 1);
 
 //       const target = smoothProgressRef.current * video.duration;
 
-//       if (Math.abs(video.currentTime - target) > 0.015) {
+//       if (Math.abs(video.currentTime - target) > 0.01) {
 //         video.currentTime = target;
 //       }
 
@@ -425,80 +194,114 @@
 
 //     raf = requestAnimationFrame(animate);
 //     return () => cancelAnimationFrame(raf);
-//   }, [isMobile, ready]);
+//   }, [videoReady, isMobile]);
 
-//   /* ---------------- VIDEO EVENT LISTENER ---------------- */
 //   useEffect(() => {
-//     if (!ready) return;
-//     const handler = () => {
-//       if (videoRef.current) {
-//         videoRef.current.currentTime = 0;
-//         videoRef.current.play();
-//       }
-//     };
-//     window.addEventListener('triggerVideoJump', handler);
-//     return () => window.removeEventListener('triggerVideoJump', handler);
-//   }, [ready, framesReady, isMobile]);
+//   if (!isMobile || !framesReady || mobileRafRunningRef.current) return;
+//   mobileRafRunningRef.current = true;
 
-//   /* ---------------- SCROLLTRIGGER ---------------- */
-//   const localScrollTriggerRef = useRef<ScrollTrigger | null>(null);
+//   smoothProgressRef.current = rawProgressRef.current;
+
+//   let raf = 0;
+//   let last = performance.now();
+//   let lastFrame = -1;
+//   let cleanupCounter = 0;
+
+//   const animate = (time: number) => {
+//     const delta = Math.min((time - last) / 1000, 0.1);
+//     last = time;
+
+//     const speed = 8;
+//     smoothProgressRef.current +=
+//       (rawProgressRef.current - smoothProgressRef.current) *
+//       Math.min(delta * speed, 1);
+
+//     const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
+
+//     const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
+
+//     if (frame !== lastFrame) {
+//       preloadNearbyFrames(frame);
+
+//       cleanupCounter++;
+//       if (cleanupCounter > 10) {
+//         cleanupFarFrames(frame);
+//         cleanupCounter = 0;
+//       }
+
+//       drawFrame(frame);
+//       lastFrame = frame;
+//     }
+
+//     raf = requestAnimationFrame(animate);
+//   };
+
+//   raf = requestAnimationFrame(animate);
+
+//   return () => {
+//     cancelAnimationFrame(raf);
+//     mobileRafRunningRef.current = false;
+//   };
+// }, [isMobile, framesReady]);
 
 //   useEffect(() => {
 //     if (!containerRef.current) return;
-//     if (!isMobile && !ready) return;
 //     if (isMobile && !framesReady) return;
+//     if (!isMobile && !videoReady) return;
 
-//     // Kill ONLY the trigger created by this component (if exists)
-//     if (localScrollTriggerRef.current) {
-//       localScrollTriggerRef.current.kill();
-//       localScrollTriggerRef.current = null;
-//     }
+//     scrollTriggerRef.current?.kill();
 
-//     // Create new trigger
-//     const st = ScrollTrigger.create({
+//     scrollTriggerRef.current = ScrollTrigger.create({
 //       trigger: containerRef.current,
 //       start: "top top",
 //       end: `+=${scrollDistanceRef.current}px`,
 //       pin: true,
 //       anticipatePin: 1,
-//       onUpdate: self => {
+//       onUpdate: (self) => {
 //         rawProgressRef.current = self.progress;
-
-//         if (isMobile) {
-//           const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
-//           drawFrame(frame);
-//         }
 //       },
 //     });
 
-//     // Store reference
-//     localScrollTriggerRef.current = st;
+//     return () => scrollTriggerRef.current?.kill();
+//   }, [isMobile, framesReady, videoReady]);
 
-//     // Cleanup only this trigger
-//     return () => {
-//       st.kill();
-//       localScrollTriggerRef.current = null;
+//   useEffect(() => {
+//     if (!isMobile) return;
+
+//     loadFrame(0);                
+
+//     const checkReady = () => {
+//       if (frameCache.current.has(0)) {
+//         drawFrame(0);
+//         setFramesReady(true);
+//         ScrollTrigger.refresh();
+//       } else {
+//         requestAnimationFrame(checkReady);
+//       }
 //     };
 
-//   }, [ready, framesReady, isMobile]);
+//     checkReady();
+//   }, [isMobile]);
 
-//   /* ---------------- JSX ---------------- */
+//   useEffect(() => {
+//     const t = setTimeout(() => {
+//       ScrollTrigger.refresh();
+//     }, 100);
+
+//     return () => clearTimeout(t);
+//   }, []);
+
+
 //   return (
 //     <>
 //       <Navbar />
 
 //       <div className="relative w-full min-h-screen bg-black overflow-hidden">
-
-
-//         {/* FOREGROUND */}
 //         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
 //           <div className="sticky top-0 h-screen flex items-center justify-center">
 //             <div className="w-full h-full flex items-center justify-center">
 //               {isMobile ? (
-//                 <canvas
-//                   ref={canvasRef}
-//                   className="w-full h-full"
-//                 />
+//                 <canvas ref={canvasRef} className="w-full h-full" />
 //               ) : (
 //                 <video
 //                   ref={videoRef}
@@ -509,17 +312,25 @@
 //               )}
 //             </div>
 //           </div>
-
-
 //         </div>
 //       </div>
 
-//       <div className="relative">
-//          <Footer />
-//      </div>
+//       <Footer />
 //     </>
 //   );
 // }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -542,8 +353,8 @@ export default function InvestorsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // const frameImagesRef = useRef<HTMLImageElement[]>([]);
   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
+  const loadingFrames = useRef<Set<number>>(new Set());
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const rawProgressRef = useRef(0);
@@ -555,11 +366,9 @@ export default function InvestorsPage() {
   const [videoReady, setVideoReady] = useState(false);
   const [framesReady, setFramesReady] = useState(false);
 
-  const TOTAL_FRAMES = 312;
+  const TOTAL_FRAMES = 187;
 
-  /* ------------------------------------------------ */
-  /* MOBILE DETECTION */
-  /* ------------------------------------------------ */
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
     check();
@@ -567,12 +376,10 @@ export default function InvestorsPage() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  /* ------------------------------------------------ */
-  /* SCROLL DISTANCE (RESPONSIVE) */
-  /* ------------------------------------------------ */
+
   useEffect(() => {
     const calc = () => {
-      if (window.innerWidth < 640) return TOTAL_FRAMES * 2;
+      if (window.innerWidth < 640) return TOTAL_FRAMES * 8;
       if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
       return TOTAL_FRAMES * 6;
     };
@@ -588,15 +395,27 @@ export default function InvestorsPage() {
   }, []);
 
   const loadFrame = (index: number) => {
-    if (frameCache.current.has(index)) return;
+    if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
+
+    loadingFrames.current.add(index);
 
     const img = new Image();
-    img.src = `/investwebp/potraitinvestframes/frame_${String(index + 1).padStart(4, "0")}.webp`;
+img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
+    
 
-    img.onload = () => {
+    img.onerror = () => {
+  console.log("Frame failed:", img.src);
+};
+
+    img.onload = async () => {
+      try {
+        await img.decode();
+      } catch { }
+
+      loadingFrames.current.delete(index);
+
       frameCache.current.set(index, img);
 
-      // ⭐ if this is the frame we need right now, redraw
       const currentFrame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
       if (index === currentFrame || (currentFrame === 0 && index === 0)) {
         drawFrame(index);
@@ -605,8 +424,8 @@ export default function InvestorsPage() {
   };
 
   const preloadNearbyFrames = (center: number) => {
-    const BUFFER_AHEAD = 12;
-    const BUFFER_BEHIND = 6;
+    const BUFFER_AHEAD = 8;
+    const BUFFER_BEHIND = 4;
 
     const start = Math.max(0, center - BUFFER_BEHIND);
     const end = Math.min(TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
@@ -617,7 +436,7 @@ export default function InvestorsPage() {
   };
 
   const cleanupFarFrames = (center: number) => {
-    const MAX_DISTANCE = 50; // how far frames can stay in memory
+    const MAX_DISTANCE = 50;
 
     frameCache.current.forEach((_, key) => {
       if (Math.abs(key - center) > MAX_DISTANCE) {
@@ -626,9 +445,7 @@ export default function InvestorsPage() {
     });
   };
 
-  /* ------------------------------------------------ */
-  /* CANVAS DRAW */
-  /* ------------------------------------------------ */
+
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current;
     const img = frameCache.current.get(index);
@@ -650,7 +467,7 @@ export default function InvestorsPage() {
     }
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, width, height);
+    ctx.globalCompositeOperation = "copy";
 
     const scale = Math.min(width / img.width, height / img.height);
     const x = (width - img.width * scale) / 2;
@@ -659,36 +476,7 @@ export default function InvestorsPage() {
     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
   };
 
-  /* ------------------------------------------------ */
-  /* MOBILE FRAME PRELOAD */
-  /* ------------------------------------------------ */
-  // useEffect(() => {
-  //   if (!isMobile) return;
 
-  //   const images: HTMLImageElement[] = [];
-  //   let loaded = 0;
-
-  //   for (let i = 1; i <= TOTAL_FRAMES; i++) {
-  //     const img = new Image();
-  //     img.src = `/investwebp/potraitinvestframes/frame_${String(i).padStart(4, "0")}.webp`;
-
-  //     img.onload = img.onerror = () => {
-  //       loaded++;
-  //       if (loaded === TOTAL_FRAMES) {
-  //         frameImagesRef.current = images;
-  //         drawFrame(0);
-  //         setFramesReady(true);
-  //         ScrollTrigger.refresh();
-  //       }
-  //     };
-
-  //     images.push(img);
-  //   }
-  // }, [isMobile]);
-
-  /* ------------------------------------------------ */
-  /* REDRAW CANVAS ON RESIZE */
-  /* ------------------------------------------------ */
   useEffect(() => {
     if (!isMobile || !framesReady) return;
 
@@ -701,9 +489,7 @@ export default function InvestorsPage() {
     return () => window.removeEventListener("resize", redraw);
   }, [isMobile, framesReady]);
 
-  /* ------------------------------------------------ */
-  /* VIDEO LOAD + HARD WAKE (DESKTOP) */
-  /* ------------------------------------------------ */
+
   useEffect(() => {
     if (isMobile) return;
     const video = videoRef.current;
@@ -729,9 +515,7 @@ export default function InvestorsPage() {
     return () => video.removeEventListener("loadeddata", wake);
   }, [isMobile]);
 
-  /* ------------------------------------------------ */
-  /* VIDEO SCRUB LOOP */
-  /* ------------------------------------------------ */
+
   useEffect(() => {
     if (!videoReady || isMobile) return;
     const video = videoRef.current;
@@ -749,7 +533,7 @@ export default function InvestorsPage() {
         return;
       }
 
-      const speed = 6; // smoother than 12
+      const speed = 6;
       smoothProgressRef.current +=
         (rawProgressRef.current - smoothProgressRef.current) *
         Math.min(delta * speed, 1);
@@ -768,56 +552,53 @@ export default function InvestorsPage() {
   }, [videoReady, isMobile]);
 
   useEffect(() => {
-  if (!isMobile || !framesReady || mobileRafRunningRef.current) return;
-  mobileRafRunningRef.current = true;
+    if (!isMobile || !framesReady || mobileRafRunningRef.current) return;
+    mobileRafRunningRef.current = true;
 
-  smoothProgressRef.current = rawProgressRef.current;
+    smoothProgressRef.current = rawProgressRef.current;
 
-  let raf = 0;
-  let last = performance.now();
-  let lastFrame = -1;
-  let cleanupCounter = 0;
+    let raf = 0;
+    let last = performance.now();
+    let lastFrame = -1;
+    let cleanupCounter = 0;
 
-  const animate = (time: number) => {
-    const delta = Math.min((time - last) / 1000, 0.1);
-    last = time;
+    const animate = (time: number) => {
+      const delta = Math.min((time - last) / 1000, 0.1);
+      last = time;
 
-    const speed = 8;
-    smoothProgressRef.current +=
-      (rawProgressRef.current - smoothProgressRef.current) *
-      Math.min(delta * speed, 1);
+      const speed = 6;
+      smoothProgressRef.current +=
+        (rawProgressRef.current - smoothProgressRef.current) *
+        Math.min(delta * speed, 1);
 
-    const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
+      const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
 
-    const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
+      const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
 
-    if (frame !== lastFrame) {
-      preloadNearbyFrames(frame);
+      if (frame !== lastFrame) {
+        
 
-      cleanupCounter++;
-      if (cleanupCounter > 10) {
-        cleanupFarFrames(frame);
-        cleanupCounter = 0;
+        cleanupCounter++;
+        if (cleanupCounter > 10) {
+          cleanupFarFrames(frame);
+          cleanupCounter = 0;
+        }
+
+        drawFrame(frame);
+        lastFrame = frame;
       }
 
-      drawFrame(frame);
-      lastFrame = frame;
-    }
+      raf = requestAnimationFrame(animate);
+    };
 
     raf = requestAnimationFrame(animate);
-  };
 
-  raf = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(raf);
+      mobileRafRunningRef.current = false;
+    };
+  }, [isMobile, framesReady]);
 
-  return () => {
-    cancelAnimationFrame(raf);
-    mobileRafRunningRef.current = false;
-  };
-}, [isMobile, framesReady]);
-
-  /* ------------------------------------------------ */
-  /* SCROLLTRIGGER */
-  /* ------------------------------------------------ */
   useEffect(() => {
     if (!containerRef.current) return;
     if (isMobile && !framesReady) return;
@@ -831,18 +612,24 @@ export default function InvestorsPage() {
       end: `+=${scrollDistanceRef.current}px`,
       pin: true,
       anticipatePin: 1,
-      onUpdate: (self) => {
-        rawProgressRef.current = self.progress;
-      },
+     onUpdate: (self) => {
+  rawProgressRef.current = self.progress;
+
+  const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+  preloadNearbyFrames(frame);
+},
     });
 
     return () => scrollTriggerRef.current?.kill();
   }, [isMobile, framesReady, videoReady]);
 
   useEffect(() => {
-    if (!isMobile) return;
+  if (!isMobile) return;
 
-    loadFrame(0);                 // load first frame only
+  // preload first frames so scroll starts smooth
+  for (let i = 0; i < 20; i++) {
+    loadFrame(i);
+  }
 
     const checkReady = () => {
       if (frameCache.current.has(0)) {
@@ -865,9 +652,7 @@ export default function InvestorsPage() {
     return () => clearTimeout(t);
   }, []);
 
-  /* ------------------------------------------------ */
-  /* UI */
-  /* ------------------------------------------------ */
+
   return (
     <>
       <Navbar />
@@ -895,314 +680,3 @@ export default function InvestorsPage() {
     </>
   );
 }
-
-
-
-
-
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import Navbar from "@/components/Navbar";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import Footer from "@/components/Footer";
-
-// gsap.registerPlugin(ScrollTrigger);
-
-// export default function InvestorsPage() {
-//   const containerRef = useRef<HTMLDivElement>(null);
-//   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   const videoRef = useRef<HTMLVideoElement>(null);
-
-//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-
-//   const rawProgressRef = useRef(0);
-//   const smoothProgressRef = useRef(0);
-//   const scrollDistanceRef = useRef(0);
-
-//   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
-
-//   const [isMobile, setIsMobile] = useState(false);
-//   const [videoReady, setVideoReady] = useState(false);
-//   const [framesReady, setFramesReady] = useState(false);
-
-//   const TOTAL_FRAMES = 312;
-
-//   /* ---------------- MOBILE DETECTION ---------------- */
-//   useEffect(() => {
-//     const check = () => setIsMobile(window.innerWidth < 640);
-//     check();
-//     window.addEventListener("resize", check);
-//     return () => window.removeEventListener("resize", check);
-//   }, []);
-
-//   /* ---------------- SCROLL DISTANCE ---------------- */
-//   useEffect(() => {
-//     const update = () => {
-//       scrollDistanceRef.current = window.innerHeight * 6;
-//       ScrollTrigger.refresh();
-//     };
-
-//     update();
-//     window.addEventListener("resize", update);
-//     return () => window.removeEventListener("resize", update);
-//   }, []);
-
-//   /* ========================================================= */
-//   /* ===================== MOBILE FRAMES ===================== */
-//   /* ========================================================= */
-
-//   const loadFrame = (index: number) => {
-//     if (frameCache.current.has(index)) return;
-
-//     const img = new Image();
-//     img.src = `/investwebp/potraitinvestframes/frame_${String(
-//       index + 1
-//     ).padStart(4, "0")}.webp`;
-
-//     img.onload = () => {
-//       frameCache.current.set(index, img);
-
-//       if (index === 0) {
-//         drawFrame(0);
-//         setFramesReady(true);
-//       }
-//     };
-//   };
-
-//   const preloadNearby = (center: number) => {
-//     const AHEAD = 12;
-//     const BEHIND = 6;
-
-//     for (
-//       let i = Math.max(0, center - BEHIND);
-//       i <= Math.min(TOTAL_FRAMES - 1, center + AHEAD);
-//       i++
-//     ) {
-//       loadFrame(i);
-//     }
-//   };
-
-//   const cleanupFar = (center: number) => {
-//     const MAX_DISTANCE = 50;
-
-//     frameCache.current.forEach((_, key) => {
-//       if (Math.abs(key - center) > MAX_DISTANCE) {
-//         frameCache.current.delete(key);
-//       }
-//     });
-//   };
-
-//   const drawFrame = (index: number) => {
-//     const canvas = canvasRef.current;
-//     const img = frameCache.current.get(index);
-//     if (!canvas || !img) return;
-
-//     const ctx = canvas.getContext("2d");
-//     if (!ctx) return;
-
-//     const dpr = window.devicePixelRatio || 1;
-//     const width = canvas.clientWidth;
-//     const height = canvas.clientHeight;
-
-//     canvas.width = width * dpr;
-//     canvas.height = height * dpr;
-
-//     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-//     ctx.clearRect(0, 0, width, height);
-
-//     const scale = Math.min(width / img.width, height / img.height);
-//     const x = (width - img.width * scale) / 2;
-//     const y = (height - img.height * scale) / 2;
-
-//     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-//   };
-
-//   useEffect(() => {
-//     if (!isMobile) return;
-
-//     loadFrame(0);
-//   }, [isMobile]);
-
-//   /* ========================================================= */
-//   /* ================= DESKTOP VIDEO SCRUB =================== */
-//   /* ========================================================= */
-
-//   useEffect(() => {
-//     if (isMobile) return;
-
-//     const video = videoRef.current;
-//     if (!video) return;
-
-//     video.src = "/investwebp/investor_high_scrubbed.mp4";
-//     video.muted = true;
-//     video.playsInline = true;
-//     video.preload = "auto";
-
-//     const wake = async () => {
-//       try {
-//         video.currentTime = 0.01;
-//         await video.play().catch(() => {});
-//         video.pause();
-//         video.currentTime = 0;
-//       } catch {}
-
-//       setVideoReady(true);
-//     };
-
-//     video.addEventListener("loadeddata", wake, { once: true });
-
-//     return () => {
-//       video.removeEventListener("loadeddata", wake);
-//     };
-//   }, [isMobile]);
-
-//   const drawVideoFrame = () => {
-//   const canvas = canvasRef.current;
-//   const video = videoRef.current;
-//   if (!canvas || !video) return;
-
-//   const ctx = canvas.getContext("2d");
-//   if (!ctx) return;
-
-//   const dpr = window.devicePixelRatio || 1;
-//   const width = canvas.clientWidth;
-//   const height = canvas.clientHeight;
-
-//   canvas.width = width * dpr;
-//   canvas.height = height * dpr;
-
-//   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-//   ctx.clearRect(0, 0, width, height);
-
-//   const videoWidth = video.videoWidth;
-//   const videoHeight = video.videoHeight;
-
-//   if (!videoWidth || !videoHeight) return;
-
-//   const videoAspect = videoWidth / videoHeight;
-//   const canvasAspect = width / height;
-
-//   let drawWidth;
-//   let drawHeight;
-//   let offsetX = 0;
-//   let offsetY = 0;
-
-//   if (videoAspect > canvasAspect) {
-//     // Video is wider → crop left/right
-//     drawHeight = height;
-//     drawWidth = height * videoAspect;
-//     offsetX = (width - drawWidth) / 2;
-//   } else {
-//     // Video is taller → crop top/bottom
-//     drawWidth = width;
-//     drawHeight = width / videoAspect;
-//     offsetY = (height - drawHeight) / 2;
-//   }
-
-//   ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
-// };
-
-//   /* ---------------- SMOOTH LOOP ---------------- */
-//   useEffect(() => {
-//     if ((isMobile && !framesReady) || (!isMobile && !videoReady)) return;
-
-//     let raf = 0;
-//     let last = performance.now();
-//     let lastSeek = 0;
-//     let lastFrame = -1;
-
-//     const animate = (time: number) => {
-//       const delta = Math.min((time - last) / 1000, 0.1);
-//       last = time;
-
-//       const speed = 5;
-//       smoothProgressRef.current +=
-//         (rawProgressRef.current - smoothProgressRef.current) *
-//         Math.min(delta * speed, 1);
-
-//       const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
-
-//       if (isMobile) {
-//         const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
-
-//         if (frame !== lastFrame) {
-//           preloadNearby(frame);
-//           cleanupFar(frame);
-//           drawFrame(frame);
-//           lastFrame = frame;
-//         }
-//       } else {
-//         const video = videoRef.current;
-//         if (!video || !video.duration) {
-//           raf = requestAnimationFrame(animate);
-//           return;
-//         }
-
-//         const target = progress * video.duration;
-
-//         if (
-//           Math.abs(video.currentTime - target) > 0.02 &&
-//           time - lastSeek > 16
-//         ) {
-//           video.currentTime = target;
-//           lastSeek = time;
-//         }
-
-//         drawVideoFrame();
-//       }
-
-//       raf = requestAnimationFrame(animate);
-//     };
-
-//     raf = requestAnimationFrame(animate);
-
-//     return () => cancelAnimationFrame(raf);
-//   }, [isMobile, videoReady, framesReady]);
-
-//   /* ---------------- SCROLLTRIGGER ---------------- */
-//   useEffect(() => {
-//     if (
-//       !containerRef.current ||
-//       (isMobile && !framesReady) ||
-//       (!isMobile && !videoReady)
-//     )
-//       return;
-
-//     scrollTriggerRef.current?.kill();
-
-//     scrollTriggerRef.current = ScrollTrigger.create({
-//       trigger: containerRef.current,
-//       start: "top top",
-//       end: `+=${scrollDistanceRef.current}px`,
-//       pin: true,
-//       anticipatePin: 1,
-//       onUpdate: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
-//     });
-
-//     return () => scrollTriggerRef.current?.kill();
-//   }, [isMobile, framesReady, videoReady]);
-
-//   /* ---------------- UI ---------------- */
-//   return (
-//     <>
-//       <Navbar />
-
-//       <div className="relative w-full min-h-screen bg-black overflow-hidden">
-//         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
-//           <div className="sticky top-0 h-screen flex items-center justify-center">
-//             <canvas ref={canvasRef} className="w-full h-full " />
-//             {!isMobile && (
-//               <video ref={videoRef} className="hidden" muted playsInline />
-//             )}
-//           </div>
-//         </div>
-//       </div>
-
-//       <Footer />
-//     </>
-//   );
-// }
