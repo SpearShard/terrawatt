@@ -1281,6 +1281,10 @@
     background-color: ref;
   }
 
+  .bg-\[violet\] {
+    background-color: violet;
+  }
+
   .bg-black {
     background-color: var(--color-black);
   }
