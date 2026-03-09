@@ -288,7 +288,7 @@ export default function DashboardAnimation({
 
   const loadingFrames = useRef<Set<number>>(new Set());
 
-  const MOBILE_TOTAL_FRAMES = 438;
+  const MOBILE_TOTAL_FRAMES = 457;
   const lastFrameRef = useRef(-1);
 const cleanupCounterRef = useRef(0);
 
@@ -297,7 +297,7 @@ const cleanupCounterRef = useRef(0);
     if (isMobile) return;
 
     const video = document.createElement("video");
-    video.src = "/dashsmaller/dash.mp4";
+    video.src = "/dashsmaller/scrubbed-dash.webm";
     video.muted = true;
     video.loop = false;
     video.playsInline = true;
@@ -331,7 +331,8 @@ const cleanupCounterRef = useRef(0);
     const loader = new THREE.TextureLoader();
 
     loader.load(
-      `/dashsmaller/potrait_dash/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      `/dashsmaller/new_potdash/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      
       
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
