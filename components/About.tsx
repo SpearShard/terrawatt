@@ -110,7 +110,7 @@ export default function About() {
 
       {/* ── HEADER ── */}
       <section className="pt-32 pb-20 text-center px-6">
-        <p className="bg-[yellow] text-xs font-mono  tracking-[0.5em] text-gray-500 uppercase mb-8">
+        <p className=" text-xs font-mono  tracking-[0.5em] text-gray-500 uppercase mb-8">
           The Ecosystem
         </p>
         {/* Main Statement */}

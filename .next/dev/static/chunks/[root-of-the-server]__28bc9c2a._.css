@@ -1361,28 +1361,8 @@
     background-color: #fff;
   }
 
-  .bg-\[green\] {
-    background-color: green;
-  }
-
-  .bg-\[pink\] {
-    background-color: pink;
-  }
-
-  .bg-\[red\] {
-    background-color: red;
-  }
-
-  .bg-\[ref\] {
-    background-color: ref;
-  }
-
-  .bg-\[violet\] {
-    background-color: violet;
-  }
-
-  .bg-\[yellow\] {
-    background-color: #ff0;
+  .bg-\[blue\] {
+    background-color: #00f;
   }
 
   .bg-black {
