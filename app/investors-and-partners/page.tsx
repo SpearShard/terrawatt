@@ -361,6 +361,7 @@ export default function InvestorsPage() {
   const smoothProgressRef = useRef(0);
   const scrollDistanceRef = useRef(0);
   const mobileRafRunningRef = useRef(false);
+  const lastPreloadFrameRef = useRef(-1);
 
   const [isMobile, setIsMobile] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
@@ -533,14 +534,14 @@ img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")
         return;
       }
 
-      const speed = 6;
-      smoothProgressRef.current +=
-        (rawProgressRef.current - smoothProgressRef.current) *
-        Math.min(delta * speed, 1);
+     const damping = 8;
+smoothProgressRef.current +=
+  (rawProgressRef.current - smoothProgressRef.current) *
+  (1 - Math.exp(-damping * delta));
 
       const target = smoothProgressRef.current * video.duration;
 
-      if (Math.abs(video.currentTime - target) > 0.01) {
+      if (Math.abs(video.currentTime - target) > 0.04) {
         video.currentTime = target;
       }
 
@@ -615,8 +616,12 @@ img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")
      onUpdate: (self) => {
   rawProgressRef.current = self.progress;
 
-  const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+ const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+
+if (frame !== lastPreloadFrameRef.current) {
   preloadNearbyFrames(frame);
+  lastPreloadFrameRef.current = frame;
+}
 },
     });
 

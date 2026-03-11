@@ -1248,6 +1248,7 @@ function InvestorsPage() {
     const smoothProgressRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const scrollDistanceRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     const mobileRafRunningRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const lastPreloadFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(-1);
     const [isMobile, setIsMobile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [videoReady, setVideoReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [framesReady, setFramesReady] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -1411,10 +1412,10 @@ function InvestorsPage() {
                         raf = requestAnimationFrame(animate);
                         return;
                     }
-                    const speed = 6;
-                    smoothProgressRef.current += (rawProgressRef.current - smoothProgressRef.current) * Math.min(delta * speed, 1);
+                    const damping = 8;
+                    smoothProgressRef.current += (rawProgressRef.current - smoothProgressRef.current) * (1 - Math.exp(-damping * delta));
                     const target = smoothProgressRef.current * video.duration;
-                    if (Math.abs(video.currentTime - target) > 0.01) {
+                    if (Math.abs(video.currentTime - target) > 0.04) {
                         video.currentTime = target;
                     }
                     raf = requestAnimationFrame(animate);
@@ -1486,7 +1487,10 @@ function InvestorsPage() {
                     "InvestorsPage.useEffect": (self)=>{
                         rawProgressRef.current = self.progress;
                         const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
-                        preloadNearbyFrames(frame);
+                        if (frame !== lastPreloadFrameRef.current) {
+                            preloadNearbyFrames(frame);
+                            lastPreloadFrameRef.current = frame;
+                        }
                     }
                 }["InvestorsPage.useEffect"]
             });
@@ -1538,7 +1542,7 @@ function InvestorsPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 658,
+                lineNumber: 663,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1555,7 +1559,7 @@ function InvestorsPage() {
                                 className: "w-full h-full"
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 665,
+                                lineNumber: 670,
                                 columnNumber: 17
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
                                 ref: videoRef,
@@ -1564,38 +1568,38 @@ function InvestorsPage() {
                                 playsInline: true
                             }, void 0, false, {
                                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                                lineNumber: 667,
+                                lineNumber: 672,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/investors-and-partners/page.tsx",
-                            lineNumber: 663,
+                            lineNumber: 668,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/investors-and-partners/page.tsx",
-                        lineNumber: 662,
+                        lineNumber: 667,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/investors-and-partners/page.tsx",
-                    lineNumber: 661,
+                    lineNumber: 666,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 660,
+                lineNumber: 665,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/investors-and-partners/page.tsx",
-                lineNumber: 679,
+                lineNumber: 684,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
-_s(InvestorsPage, "+fTR3cKlxHwwYoGfPnjHPTo5WU4=");
+_s(InvestorsPage, "3jvohvrWCa9t8Nw5OQeOG4kuAA0=");
 _c = InvestorsPage;
 var _c;
 __turbopack_context__.k.register(_c, "InvestorsPage");
