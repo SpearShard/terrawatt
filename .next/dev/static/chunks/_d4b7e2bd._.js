@@ -1269,8 +1269,8 @@ function InvestorsPage() {
             const calc = {
                 "InvestorsPage.useEffect.calc": ()=>{
                     if (window.innerWidth < 640) return TOTAL_FRAMES * 15;
-                    if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
-                    return TOTAL_FRAMES * 6;
+                    if (window.innerWidth < 1024) return TOTAL_FRAMES * 50;
+                    return TOTAL_FRAMES * 70;
                 }
             }["InvestorsPage.useEffect.calc"];
             const update = {
