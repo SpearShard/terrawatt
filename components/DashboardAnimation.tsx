@@ -382,8 +382,8 @@ export default function DashboardAnimation({
   };
 
   const preloadNearbyFrames = (center: number) => {
-    const BUFFER_AHEAD = 18;
-    const BUFFER_BEHIND = 10;
+    const BUFFER_AHEAD = 40;
+    const BUFFER_BEHIND = 20;
 
     const start = Math.max(0, center - BUFFER_BEHIND);
     const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
@@ -394,7 +394,7 @@ export default function DashboardAnimation({
   };
 
   const cleanupFarFrames = (center: number) => {
-    const MAX_DISTANCE = 80;
+    const MAX_DISTANCE = 180;
 
     frameCache.current.forEach((_, key) => {
       if (Math.abs(key - center) > MAX_DISTANCE) {
@@ -450,7 +450,7 @@ export default function DashboardAnimation({
   }, []);
 
   useEffect(() => {
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 60; i++) {
       loadFrame(i);
     }
   }, []);
@@ -480,20 +480,10 @@ const damping = 8;
 smoothScrollRef.current += 
   (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
 
-const MAX_DELTA = 0.03;
-
-const previous = progressRef.current;
-let progress = smoothScrollRef.current;
-
-const diff = progress - previous;
-
-if (Math.abs(diff) > MAX_DELTA) {
-  progress = previous + Math.sign(diff) * MAX_DELTA;
-}
+const progress = smoothScrollRef.current;
     /* ================= MOBILE = RAW FRAME SCRUB ================= */
     const eased = progress * progress * (3 - 2 * progress); // smoothstep
-const frame = Math.floor(eased * (MOBILE_TOTAL_FRAMES - 1));
-
+const frame = Math.round(eased * (MOBILE_TOTAL_FRAMES - 1));
 if (frame !== lastFrameRef.current) {
   preloadNearbyFrames(frame);
 
