@@ -406,38 +406,38 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //   const smoothScrollRef = useRef(0);
 //   const rafRef = useRef<number | null>(null);
 //   // Video (Desktop only)
-//   const videoRef = useRef<HTMLVideoElement | null>(null);
-//   const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
+//   // const videoRef = useRef<HTMLVideoElement | null>(null);
+//   // const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
 //   // Mobile frames
 //   const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
 //   const loadingFrames = useRef<Set<number>>(new Set());
 //   const MOBILE_TOTAL_FRAMES = 457;
 //   const lastFrameRef = useRef(-1);
-// const cleanupCounterRef = useRef(0);
+//   const cleanupCounterRef = useRef(0);
 //   /* ---------------- VIDEO SETUP (DESKTOP ONLY) ---------------- */
-//   useEffect(() => {
-//     if (isMobile) return;
-//     const video = document.createElement("video");
-//     video.src = "/dashsmaller/scrubbed-dash.webm";
-//     video.muted = true;
-//     video.loop = false;
-//     video.playsInline = true;
-//     video.preload = "auto";
-//     video.crossOrigin = "anonymous";
-//     video.pause();
-//     const texture = new THREE.VideoTexture(video);
-//     texture.colorSpace = THREE.SRGBColorSpace;
-//     texture.generateMipmaps = false;
-//     texture.minFilter = THREE.LinearFilter;
-//     texture.magFilter = THREE.LinearFilter;
-//     videoRef.current = video;
-//     videoTextureRef.current = texture;
-//     video.load();
-//     return () => {
-//       video.pause();
-//       texture.dispose();
-//     };
-//   }, [isMobile]);
+//   // useEffect(() => {
+//   //   if (isMobile) return;
+//   //   const video = document.createElement("video");
+//   //   video.src = "/dashsmaller/scrubbed-dash.webm";
+//   //   video.muted = true;
+//   //   video.loop = false;
+//   //   video.playsInline = true;
+//   //   video.preload = "auto";
+//   //   video.crossOrigin = "anonymous";
+//   //   video.pause();
+//   //   const texture = new THREE.VideoTexture(video);
+//   //   texture.colorSpace = THREE.SRGBColorSpace;
+//   //   texture.generateMipmaps = false;
+//   //   texture.minFilter = THREE.LinearFilter;
+//   //   texture.magFilter = THREE.LinearFilter;
+//   //   videoRef.current = video;
+//   //   videoTextureRef.current = texture;
+//   //   video.load();
+//   //   return () => {
+//   //     video.pause();
+//   //     texture.dispose();
+//   //   };
+//   // }, [isMobile]);
 //   /* ---------------- FRAME LOADER (MOBILE) ---------------- */
 //   const loadFrame = (index: number) => {
 //     if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
@@ -448,6 +448,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //       (texture) => {
 //         texture.colorSpace = THREE.SRGBColorSpace;
 //         texture.generateMipmaps = false;
+//         texture.anisotropy = 1;
 //         texture.minFilter = THREE.LinearFilter;
 //         texture.magFilter = THREE.LinearFilter;
 //         loadingFrames.current.delete(index);
@@ -460,24 +461,24 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //     );
 //   };
 //   const preloadNearbyFrames = (center: number) => {
-//   const BUFFER_AHEAD = 18;
-//   const BUFFER_BEHIND = 10;
-//   const start = Math.max(0, center - BUFFER_BEHIND);
-//   const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
-//   for (let i = start; i <= end; i++) {
-//     loadFrame(i);
-//   }
-// };
-// const cleanupFarFrames = (center: number) => {
-//   const MAX_DISTANCE = 80;
-//   frameCache.current.forEach((_, key) => {
-//     if (Math.abs(key - center) > MAX_DISTANCE) {
-//       const tex = frameCache.current.get(key);
-//       tex?.dispose();
-//       frameCache.current.delete(key);
+//     const BUFFER_AHEAD = 18;
+//     const BUFFER_BEHIND = 10;
+//     const start = Math.max(0, center - BUFFER_BEHIND);
+//     const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
+//     for (let i = start; i <= end; i++) {
+//       loadFrame(i);
 //     }
-//   });
-// };
+//   };
+//   const cleanupFarFrames = (center: number) => {
+//     const MAX_DISTANCE = 80;
+//     frameCache.current.forEach((_, key) => {
+//       if (Math.abs(key - center) > MAX_DISTANCE) {
+//         const tex = frameCache.current.get(key);
+//         tex?.dispose();
+//         frameCache.current.delete(key);
+//       }
+//     });
+//   };
 //   /* ---------------- SCROLL TRACKING ---------------- */
 //   useEffect(() => {
 //     let ticking = false;
@@ -512,11 +513,10 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //     };
 //   }, []);
 //   useEffect(() => {
-//   if (!isMobile) return;
-//   for (let i = 0; i < 25; i++) {
-//     loadFrame(i);
-//   }
-// }, [isMobile]);
+//     for (let i = 0; i < 25; i++) {
+//       loadFrame(i);
+//     }
+//   }, []);
 //   /* ---------------- ATTACH TO DASHBOARD ---------------- */
 //   useEffect(() => {
 //     const dashboardMesh = dashboardRef.current?.[0];
@@ -533,48 +533,37 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 //     const plane = planeRef.current;
 //     if (!plane) return;
 //     // Smooth scroll
-//     const lerpFactor = Math.min(delta * 12, 1);
-//     smoothScrollRef.current +=
-//       (scrollRef.current - smoothScrollRef.current) * lerpFactor;
-//     const progress = smoothScrollRef.current;
-//     /* ================= MOBILE = RAW FRAME SCRUB ================= */
-//     if (isMobile) {
-//   const eased = progress * progress * (3 - 2 * progress); // smoothstep
-// const frame = Math.floor(eased * (MOBILE_TOTAL_FRAMES - 1));
-//   if (frame !== lastFrameRef.current) {
-//     preloadNearbyFrames(frame);
-//     cleanupCounterRef.current++;
-//     if (cleanupCounterRef.current > 10) {
-//       cleanupFarFrames(frame);
-//       cleanupCounterRef.current = 0;
-//     }
-//     const texture = frameCache.current.get(frame);
-//     if (texture) {
-//       const mat = plane.material as THREE.MeshBasicMaterial;
-//       if (mat.map !== texture) {
-//         mat.map = texture;
-//         mat.needsUpdate = true;
-//       }
-//     }
-//     lastFrameRef.current = frame;
-//   }
+//    // Cinematic scroll smoothing (delta corrected)
+// const damping = 8; 
+// smoothScrollRef.current += 
+//   (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
+// const MAX_DELTA = 0.03;
+// const previous = progressRef.current;
+// let progress = smoothScrollRef.current;
+// const diff = progress - previous;
+// if (Math.abs(diff) > MAX_DELTA) {
+//   progress = previous + Math.sign(diff) * MAX_DELTA;
 // }
-//     /* ================= DESKTOP = VIDEO SCRUB ================= */
-//     else {
-//       const video = videoRef.current;
-//       const texture = videoTextureRef.current;
-//       if (!video || !texture || !video.duration) return;
-//       const targetTime = progress * video.duration;
-//       if (Math.abs(video.currentTime - targetTime) > 0.016) {
-//         video.currentTime = targetTime;
-//       }
-//       texture.needsUpdate = true;
-//       const mat = plane.material as THREE.MeshBasicMaterial;
-//       if (mat.map !== texture) {
-//         mat.map = texture;
-//         mat.needsUpdate = true;
-//       }
+//     /* ================= MOBILE = RAW FRAME SCRUB ================= */
+//     const eased = progress * progress * (3 - 2 * progress); // smoothstep
+// const frame = Math.floor(eased * (MOBILE_TOTAL_FRAMES - 1));
+// if (frame !== lastFrameRef.current) {
+//   preloadNearbyFrames(frame);
+//   cleanupCounterRef.current++;
+//   if (cleanupCounterRef.current > 10) {
+//     cleanupFarFrames(frame);
+//     cleanupCounterRef.current = 0;
+//   }
+//   const texture = frameCache.current.get(frame);
+//   if (texture) {
+//     const mat = plane.material as THREE.MeshBasicMaterial;
+//     if (mat.map !== texture) {
+//       mat.map = texture;
+//       mat.needsUpdate = true;
 //     }
+//   }
+//   lastFrameRef.current = frame;
+// }
 //     progressRef.current = progress;
 //     (window as any).__SCROLL_PROGRESS__ = progress;
 //   });
@@ -644,7 +633,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     // Mobile frames
     const frameCache = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Map());
     const loadingFrames = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Set());
-    const MOBILE_TOTAL_FRAMES = 457;
+    const MOBILE_TOTAL_FRAMES = 1370;
     const lastFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(-1);
     const cleanupCounterRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     /* ---------------- VIDEO SETUP (DESKTOP ONLY) ---------------- */ // useEffect(() => {
@@ -674,7 +663,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
         if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
         loadingFrames.current.add(index);
         const loader = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextureLoader"]();
-        loader.load(`/dashsmaller/new_potdash/frame_${String(index + 1).padStart(5, "0")}.webp`, (texture)=>{
+        loader.load(`/dashsmaller/dashframes_15-03-2026/frame_${String(index + 1).padStart(5, "0")}.webp`, (texture)=>{
             texture.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
             texture.generateMipmaps = false;
             texture.anisotropy = 1;
@@ -828,17 +817,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 metalness: 0.1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 557,
+                                lineNumber: 529,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/DashboardAnimation.tsx",
-                            lineNumber: 556,
+                            lineNumber: 528,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 555,
+                        lineNumber: 527,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -855,20 +844,20 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 562,
+                                lineNumber: 534,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 color: "#000"
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 563,
+                                lineNumber: 535,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 561,
+                        lineNumber: 533,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -886,26 +875,26 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 567,
+                                lineNumber: 539,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 toneMapped: false
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 568,
+                                lineNumber: 540,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 566,
+                        lineNumber: 538,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 554,
+                lineNumber: 526,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -913,13 +902,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 dashboardRef: dashboardRef
             }, void 0, false, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 572,
+                lineNumber: 544,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/DashboardAnimation.tsx",
-        lineNumber: 553,
+        lineNumber: 525,
         columnNumber: 5
     }, this);
 }

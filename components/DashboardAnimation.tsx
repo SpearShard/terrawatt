@@ -31,8 +31,8 @@
 //   const rafRef = useRef<number | null>(null);
 
 //   // Video (Desktop only)
-//   const videoRef = useRef<HTMLVideoElement | null>(null);
-//   const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
+//   // const videoRef = useRef<HTMLVideoElement | null>(null);
+//   // const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
 
 //   // Mobile frames
 //   const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
@@ -41,37 +41,37 @@
 
 //   const MOBILE_TOTAL_FRAMES = 457;
 //   const lastFrameRef = useRef(-1);
-// const cleanupCounterRef = useRef(0);
+//   const cleanupCounterRef = useRef(0);
 
 //   /* ---------------- VIDEO SETUP (DESKTOP ONLY) ---------------- */
-//   useEffect(() => {
-//     if (isMobile) return;
+//   // useEffect(() => {
+//   //   if (isMobile) return;
 
-//     const video = document.createElement("video");
-//     video.src = "/dashsmaller/scrubbed-dash.webm";
-//     video.muted = true;
-//     video.loop = false;
-//     video.playsInline = true;
-//     video.preload = "auto";
-//     video.crossOrigin = "anonymous";
-//     video.pause();
+//   //   const video = document.createElement("video");
+//   //   video.src = "/dashsmaller/scrubbed-dash.webm";
+//   //   video.muted = true;
+//   //   video.loop = false;
+//   //   video.playsInline = true;
+//   //   video.preload = "auto";
+//   //   video.crossOrigin = "anonymous";
+//   //   video.pause();
 
-//     const texture = new THREE.VideoTexture(video);
-//     texture.colorSpace = THREE.SRGBColorSpace;
-//     texture.generateMipmaps = false;
-//     texture.minFilter = THREE.LinearFilter;
-//     texture.magFilter = THREE.LinearFilter;
+//   //   const texture = new THREE.VideoTexture(video);
+//   //   texture.colorSpace = THREE.SRGBColorSpace;
+//   //   texture.generateMipmaps = false;
+//   //   texture.minFilter = THREE.LinearFilter;
+//   //   texture.magFilter = THREE.LinearFilter;
 
-//     videoRef.current = video;
-//     videoTextureRef.current = texture;
+//   //   videoRef.current = video;
+//   //   videoTextureRef.current = texture;
 
-//     video.load();
+//   //   video.load();
 
-//     return () => {
-//       video.pause();
-//       texture.dispose();
-//     };
-//   }, [isMobile]);
+//   //   return () => {
+//   //     video.pause();
+//   //     texture.dispose();
+//   //   };
+//   // }, [isMobile]);
 
 //   /* ---------------- FRAME LOADER (MOBILE) ---------------- */
 //   const loadFrame = (index: number) => {
@@ -88,6 +88,7 @@
 //       (texture) => {
 //         texture.colorSpace = THREE.SRGBColorSpace;
 //         texture.generateMipmaps = false;
+//         texture.anisotropy = 1;
 //         texture.minFilter = THREE.LinearFilter;
 //         texture.magFilter = THREE.LinearFilter;
 
@@ -102,28 +103,28 @@
 //   };
 
 //   const preloadNearbyFrames = (center: number) => {
-//   const BUFFER_AHEAD = 18;
-//   const BUFFER_BEHIND = 10;
+//     const BUFFER_AHEAD = 18;
+//     const BUFFER_BEHIND = 10;
 
-//   const start = Math.max(0, center - BUFFER_BEHIND);
-//   const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
+//     const start = Math.max(0, center - BUFFER_BEHIND);
+//     const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
 
-//   for (let i = start; i <= end; i++) {
-//     loadFrame(i);
-//   }
-// };
-
-// const cleanupFarFrames = (center: number) => {
-//   const MAX_DISTANCE = 80;
-
-//   frameCache.current.forEach((_, key) => {
-//     if (Math.abs(key - center) > MAX_DISTANCE) {
-//       const tex = frameCache.current.get(key);
-//       tex?.dispose();
-//       frameCache.current.delete(key);
+//     for (let i = start; i <= end; i++) {
+//       loadFrame(i);
 //     }
-//   });
-// };
+//   };
+
+//   const cleanupFarFrames = (center: number) => {
+//     const MAX_DISTANCE = 80;
+
+//     frameCache.current.forEach((_, key) => {
+//       if (Math.abs(key - center) > MAX_DISTANCE) {
+//         const tex = frameCache.current.get(key);
+//         tex?.dispose();
+//         frameCache.current.delete(key);
+//       }
+//     });
+//   };
 
 //   /* ---------------- SCROLL TRACKING ---------------- */
 //   useEffect(() => {
@@ -170,12 +171,10 @@
 //   }, []);
 
 //   useEffect(() => {
-//   if (!isMobile) return;
-
-//   for (let i = 0; i < 25; i++) {
-//     loadFrame(i);
-//   }
-// }, [isMobile]);
+//     for (let i = 0; i < 25; i++) {
+//       loadFrame(i);
+//     }
+//   }, []);
 
 //   /* ---------------- ATTACH TO DASHBOARD ---------------- */
 //   useEffect(() => {
@@ -197,60 +196,47 @@
 //     if (!plane) return;
 
 //     // Smooth scroll
-//     const lerpFactor = Math.min(delta * 12, 1);
-//     smoothScrollRef.current +=
-//       (scrollRef.current - smoothScrollRef.current) * lerpFactor;
+//    // Cinematic scroll smoothing (delta corrected)
+// const damping = 8; 
+// smoothScrollRef.current += 
+//   (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
 
-//     const progress = smoothScrollRef.current;
+// const MAX_DELTA = 0.03;
 
+// const previous = progressRef.current;
+// let progress = smoothScrollRef.current;
+
+// const diff = progress - previous;
+
+// if (Math.abs(diff) > MAX_DELTA) {
+//   progress = previous + Math.sign(diff) * MAX_DELTA;
+// }
 //     /* ================= MOBILE = RAW FRAME SCRUB ================= */
-//     if (isMobile) {
-//   const eased = progress * progress * (3 - 2 * progress); // smoothstep
+//     const eased = progress * progress * (3 - 2 * progress); // smoothstep
 // const frame = Math.floor(eased * (MOBILE_TOTAL_FRAMES - 1));
 
-//   if (frame !== lastFrameRef.current) {
-//     preloadNearbyFrames(frame);
+// if (frame !== lastFrameRef.current) {
+//   preloadNearbyFrames(frame);
 
-//     cleanupCounterRef.current++;
-//     if (cleanupCounterRef.current > 10) {
-//       cleanupFarFrames(frame);
-//       cleanupCounterRef.current = 0;
-//     }
-
-//     const texture = frameCache.current.get(frame);
-//     if (texture) {
-//       const mat = plane.material as THREE.MeshBasicMaterial;
-
-//       if (mat.map !== texture) {
-//         mat.map = texture;
-//         mat.needsUpdate = true;
-//       }
-//     }
-
-//     lastFrameRef.current = frame;
+//   cleanupCounterRef.current++;
+//   if (cleanupCounterRef.current > 10) {
+//     cleanupFarFrames(frame);
+//     cleanupCounterRef.current = 0;
 //   }
-// }
 
-//     /* ================= DESKTOP = VIDEO SCRUB ================= */
-//     else {
-//       const video = videoRef.current;
-//       const texture = videoTextureRef.current;
-//       if (!video || !texture || !video.duration) return;
+//   const texture = frameCache.current.get(frame);
 
-//       const targetTime = progress * video.duration;
+//   if (texture) {
+//     const mat = plane.material as THREE.MeshBasicMaterial;
 
-//       if (Math.abs(video.currentTime - targetTime) > 0.016) {
-//         video.currentTime = targetTime;
-//       }
-
-//       texture.needsUpdate = true;
-
-//       const mat = plane.material as THREE.MeshBasicMaterial;
-//       if (mat.map !== texture) {
-//         mat.map = texture;
-//         mat.needsUpdate = true;
-//       }
+//     if (mat.map !== texture) {
+//       mat.map = texture;
+//       mat.needsUpdate = true;
 //     }
+//   }
+
+//   lastFrameRef.current = frame;
+// }
 
 //     progressRef.current = progress;
 //     (window as any).__SCROLL_PROGRESS__ = progress;
@@ -280,20 +266,6 @@
 //     </group>
 //   );
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -346,7 +318,7 @@ export default function DashboardAnimation({
 
   const loadingFrames = useRef<Set<number>>(new Set());
 
-  const MOBILE_TOTAL_FRAMES = 457;
+  const MOBILE_TOTAL_FRAMES = 1370;
   const lastFrameRef = useRef(-1);
   const cleanupCounterRef = useRef(0);
 
@@ -389,7 +361,7 @@ export default function DashboardAnimation({
     const loader = new THREE.TextureLoader();
 
     loader.load(
-      `/dashsmaller/new_potdash/frame_${String(index + 1).padStart(5, "0")}.webp`,
+      `/dashsmaller/dashframes_15-03-2026/frame_${String(index + 1).padStart(5, "0")}.webp`,
 
 
       (texture) => {
@@ -573,8 +545,6 @@ if (frame !== lastFrameRef.current) {
     </group>
   );
 }
-
-
 
 
 

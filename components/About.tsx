@@ -110,7 +110,7 @@ export default function About() {
 
       {/* ── HEADER ── */}
       <section className="pt-32 pb-20 text-center px-6">
-        <p className=" text-xs font-mono  tracking-[0.5em] text-gray-500 uppercase mb-8">
+        <p className=" text-xs bg-[red] font-mono  tracking-[0.5em] text-gray-500 uppercase mb-8">
           The Ecosystem
         </p>
         {/* Main Statement */}
@@ -132,8 +132,8 @@ export default function About() {
           trip planning to seamless charging and beyond — creating a smarter, 
           more dependable electric experience.
         </p>
-        <div className="relative w-full max-w-3xl mx-auto aspect-[16/4]">
-          <Image src="/teraawattart.svg" alt="Teraawatt" fill className="object-contain" priority />
+        <div className="relative  w-full max-w-4xl mx-auto aspect-[16/4]">
+          <Image src="/teraawattart.svg" alt="Teraawatt" fill className="object-cover" priority />
         </div>
       </section>
 

@@ -13,18 +13,20 @@
 //   const videoRef = useRef<HTMLVideoElement>(null);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
 //   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
+//   const loadingFrames = useRef<Set<number>>(new Set());
 //   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
 //   const rawProgressRef = useRef(0);
 //   const smoothProgressRef = useRef(0);
 //   const scrollDistanceRef = useRef(0);
 //   const mobileRafRunningRef = useRef(false);
+//   const lastPreloadFrameRef = useRef(-1);
 
 //   const [isMobile, setIsMobile] = useState(false);
 //   const [videoReady, setVideoReady] = useState(false);
 //   const [framesReady, setFramesReady] = useState(false);
 
-//   const TOTAL_FRAMES = 312;
+//   const TOTAL_FRAMES = 187;
 
 
 //   useEffect(() => {
@@ -37,9 +39,9 @@
 
 //   useEffect(() => {
 //     const calc = () => {
-//       if (window.innerWidth < 640) return TOTAL_FRAMES * 2;
-//       if (window.innerWidth < 1024) return TOTAL_FRAMES * 4;
-//       return TOTAL_FRAMES * 6;
+//       if (window.innerWidth < 640) return TOTAL_FRAMES * 15;
+//       if (window.innerWidth < 1024) return TOTAL_FRAMES * 50;
+//       return TOTAL_FRAMES * 70;
 //     };
 
 //     const update = () => {
@@ -53,12 +55,25 @@
 //   }, []);
 
 //   const loadFrame = (index: number) => {
-//     if (frameCache.current.has(index)) return;
+//     if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
+
+//     loadingFrames.current.add(index);
 
 //     const img = new Image();
-//     img.src = `/investwebp/potraitinvestframes/frame_${String(index + 1).padStart(4, "0")}.webp`;
+// img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
 
-//     img.onload = () => {
+
+//     img.onerror = () => {
+//   console.log("Frame failed:", img.src);
+// };
+
+//     img.onload = async () => {
+//       try {
+//         await img.decode();
+//       } catch { }
+
+//       loadingFrames.current.delete(index);
+
 //       frameCache.current.set(index, img);
 
 //       const currentFrame = Math.floor(rawProgressRef.current * (TOTAL_FRAMES - 1));
@@ -69,8 +84,8 @@
 //   };
 
 //   const preloadNearbyFrames = (center: number) => {
-//     const BUFFER_AHEAD = 12;
-//     const BUFFER_BEHIND = 6;
+//     const BUFFER_AHEAD = 8;
+//     const BUFFER_BEHIND = 4;
 
 //     const start = Math.max(0, center - BUFFER_BEHIND);
 //     const end = Math.min(TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
@@ -81,7 +96,7 @@
 //   };
 
 //   const cleanupFarFrames = (center: number) => {
-//     const MAX_DISTANCE = 50; 
+//     const MAX_DISTANCE = 50;
 
 //     frameCache.current.forEach((_, key) => {
 //       if (Math.abs(key - center) > MAX_DISTANCE) {
@@ -112,7 +127,7 @@
 //     }
 
 //     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-//     ctx.clearRect(0, 0, width, height);
+//     ctx.globalCompositeOperation = "copy";
 
 //     const scale = Math.min(width / img.width, height / img.height);
 //     const x = (width - img.width * scale) / 2;
@@ -178,14 +193,14 @@
 //         return;
 //       }
 
-//       const speed = 6; 
-//       smoothProgressRef.current +=
-//         (rawProgressRef.current - smoothProgressRef.current) *
-//         Math.min(delta * speed, 1);
+//      const damping = 8;
+// smoothProgressRef.current +=
+//   (rawProgressRef.current - smoothProgressRef.current) *
+//   (1 - Math.exp(-damping * delta));
 
 //       const target = smoothProgressRef.current * video.duration;
 
-//       if (Math.abs(video.currentTime - target) > 0.01) {
+//       if (Math.abs(video.currentTime - target) > 0.04) {
 //         video.currentTime = target;
 //       }
 
@@ -197,52 +212,52 @@
 //   }, [videoReady, isMobile]);
 
 //   useEffect(() => {
-//   if (!isMobile || !framesReady || mobileRafRunningRef.current) return;
-//   mobileRafRunningRef.current = true;
+//     if (!isMobile || !framesReady || mobileRafRunningRef.current) return;
+//     mobileRafRunningRef.current = true;
 
-//   smoothProgressRef.current = rawProgressRef.current;
+//     smoothProgressRef.current = rawProgressRef.current;
 
-//   let raf = 0;
-//   let last = performance.now();
-//   let lastFrame = -1;
-//   let cleanupCounter = 0;
+//     let raf = 0;
+//     let last = performance.now();
+//     let lastFrame = -1;
+//     let cleanupCounter = 0;
 
-//   const animate = (time: number) => {
-//     const delta = Math.min((time - last) / 1000, 0.1);
-//     last = time;
+//     const animate = (time: number) => {
+//       const delta = Math.min((time - last) / 1000, 0.1);
+//       last = time;
 
-//     const speed = 8;
-//     smoothProgressRef.current +=
-//       (rawProgressRef.current - smoothProgressRef.current) *
-//       Math.min(delta * speed, 1);
+//       const speed = 4;
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current - smoothProgressRef.current) *
+//         Math.min(delta * speed, 1);
 
-//     const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
+//       const progress = Math.max(0, Math.min(1, smoothProgressRef.current));
 
-//     const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
+//       const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
 
-//     if (frame !== lastFrame) {
-//       preloadNearbyFrames(frame);
+//       if (frame !== lastFrame) {
 
-//       cleanupCounter++;
-//       if (cleanupCounter > 10) {
-//         cleanupFarFrames(frame);
-//         cleanupCounter = 0;
+
+//         cleanupCounter++;
+//         if (cleanupCounter > 10) {
+//           cleanupFarFrames(frame);
+//           cleanupCounter = 0;
+//         }
+
+//         drawFrame(frame);
+//         lastFrame = frame;
 //       }
 
-//       drawFrame(frame);
-//       lastFrame = frame;
-//     }
+//       raf = requestAnimationFrame(animate);
+//     };
 
 //     raf = requestAnimationFrame(animate);
-//   };
 
-//   raf = requestAnimationFrame(animate);
-
-//   return () => {
-//     cancelAnimationFrame(raf);
-//     mobileRafRunningRef.current = false;
-//   };
-// }, [isMobile, framesReady]);
+//     return () => {
+//       cancelAnimationFrame(raf);
+//       mobileRafRunningRef.current = false;
+//     };
+//   }, [isMobile, framesReady]);
 
 //   useEffect(() => {
 //     if (!containerRef.current) return;
@@ -257,18 +272,28 @@
 //       end: `+=${scrollDistanceRef.current}px`,
 //       pin: true,
 //       anticipatePin: 1,
-//       onUpdate: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
+//      onUpdate: (self) => {
+//   rawProgressRef.current = self.progress;
+
+//  const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+
+// if (frame !== lastPreloadFrameRef.current) {
+//   preloadNearbyFrames(frame);
+//   lastPreloadFrameRef.current = frame;
+// }
+// },
 //     });
 
 //     return () => scrollTriggerRef.current?.kill();
 //   }, [isMobile, framesReady, videoReady]);
 
 //   useEffect(() => {
-//     if (!isMobile) return;
+//   if (!isMobile) return;
 
-//     loadFrame(0);                
+//   // preload first frames so scroll starts smooth
+//   for (let i = 0; i < 20; i++) {
+//     loadFrame(i);
+//   }
 
 //     const checkReady = () => {
 //       if (frameCache.current.has(0)) {
@@ -336,9 +361,6 @@
 
 
 
-
-
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -353,6 +375,7 @@ export default function InvestorsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const scrollHintRef = useRef<HTMLDivElement>(null);
   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
   const loadingFrames = useRef<Set<number>>(new Set());
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
@@ -380,7 +403,7 @@ export default function InvestorsPage() {
 
   useEffect(() => {
     const calc = () => {
-      if (window.innerWidth < 640) return TOTAL_FRAMES * 15;
+      if (window.innerWidth < 640) return TOTAL_FRAMES * 50;
       if (window.innerWidth < 1024) return TOTAL_FRAMES * 50;
       return TOTAL_FRAMES * 70;
     };
@@ -401,12 +424,12 @@ export default function InvestorsPage() {
     loadingFrames.current.add(index);
 
     const img = new Image();
-img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
-    
+    img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
+
 
     img.onerror = () => {
-  console.log("Frame failed:", img.src);
-};
+      console.log("Frame failed:", img.src);
+    };
 
     img.onload = async () => {
       try {
@@ -534,10 +557,10 @@ img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")
         return;
       }
 
-     const damping = 8;
-smoothProgressRef.current +=
-  (rawProgressRef.current - smoothProgressRef.current) *
-  (1 - Math.exp(-damping * delta));
+      const damping = 8;
+      smoothProgressRef.current +=
+        (rawProgressRef.current - smoothProgressRef.current) *
+        (1 - Math.exp(-damping * delta));
 
       const target = smoothProgressRef.current * video.duration;
 
@@ -577,7 +600,7 @@ smoothProgressRef.current +=
       const frame = Math.floor(progress * (TOTAL_FRAMES - 1));
 
       if (frame !== lastFrame) {
-        
+
 
         cleanupCounter++;
         if (cleanupCounter > 10) {
@@ -613,28 +636,50 @@ smoothProgressRef.current +=
       end: `+=${scrollDistanceRef.current}px`,
       pin: true,
       anticipatePin: 1,
-     onUpdate: (self) => {
-  rawProgressRef.current = self.progress;
+      onUpdate: (self) => {
+        rawProgressRef.current = self.progress;
 
- const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+        // hide scroll hint when user scrolls
+  if (scrollHintRef.current) {
+    if (self.progress > 0.02) {
+      gsap.to(scrollHintRef.current, {
+        opacity: 0,
+        y: -40,
+        duration: 0.6,
+        ease: "power2.out",
+        pointerEvents: "none"
+      });
+    } else {
+      gsap.to(scrollHintRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        pointerEvents: "auto"
+      });
+    }
+  }
 
-if (frame !== lastPreloadFrameRef.current) {
-  preloadNearbyFrames(frame);
-  lastPreloadFrameRef.current = frame;
-}
-},
+
+        const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+
+        if (frame !== lastPreloadFrameRef.current) {
+          preloadNearbyFrames(frame);
+          lastPreloadFrameRef.current = frame;
+        }
+      },
     });
 
     return () => scrollTriggerRef.current?.kill();
   }, [isMobile, framesReady, videoReady]);
 
   useEffect(() => {
-  if (!isMobile) return;
+    if (!isMobile) return;
 
-  // preload first frames so scroll starts smooth
-  for (let i = 0; i < 20; i++) {
-    loadFrame(i);
-  }
+    // preload first frames so scroll starts smooth
+    for (let i = 0; i < 20; i++) {
+      loadFrame(i);
+    }
 
     const checkReady = () => {
       if (frameCache.current.has(0)) {
@@ -664,7 +709,7 @@ if (frame !== lastPreloadFrameRef.current) {
 
       <div className="relative w-full min-h-screen bg-black overflow-hidden">
         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
-          <div className="sticky top-0 h-screen flex items-center justify-center">
+          <div className="sticky top-0 h-screen flex items-center justify-center relative">
             <div className="w-full h-full flex items-center justify-center">
               {isMobile ? (
                 <canvas ref={canvasRef} className="w-full h-full" />
@@ -677,6 +722,20 @@ if (frame !== lastPreloadFrameRef.current) {
                 />
               )}
             </div>
+
+            {/* SCROLL INDICATOR */}
+  <div
+    ref={scrollHintRef}
+    className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-white z-20"
+  >
+    <p className="text-xs tracking-[0.35em] uppercase opacity-80">
+      Scroll
+    </p>
+
+    <div className="w-[2px] h-12 bg-white/30 overflow-hidden relative">
+      <div className="absolute top-0 w-full h-4 bg-white rounded-full animate-bounce"></div>
+    </div>
+  </div>
           </div>
         </div>
       </div>

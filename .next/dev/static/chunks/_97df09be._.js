@@ -480,7 +480,7 @@ function Navbar() {
                         href: "/",
                         onClick: ()=>handleNavigation("Pulse"),
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: "/teraawatt.svg",
+                            src: "/teraawatt-white.svg",
                             alt: "logo",
                             width: 125,
                             height: 45,
@@ -633,25 +633,25 @@ function Navbar() {
                                 },
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: `relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active === item.name ? "bg-white/5" : "hover:bg-white/5"}`,
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: `text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"}`,
-                                            children: !item.isButton ? item.name : "Connect"
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 618,
-                                            columnNumber: 21
-                                        }, this),
-                                        !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                                            layoutId: "mobile-indicator",
-                                            className: "absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/Navbar.tsx",
-                                            lineNumber: 626,
-                                            columnNumber: 23
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: `relative inline-block text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"}`,
+                                        children: [
+                                            !item.isButton ? item.name : "Connect",
+                                            !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+                                                layoutId: "mobile-indicator",
+                                                className: "absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/Navbar.tsx",
+                                                lineNumber: 625,
+                                                columnNumber: 3
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/components/Navbar.tsx",
+                                        lineNumber: 618,
+                                        columnNumber: 21
+                                    }, this)
+                                }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
                                     lineNumber: 614,
                                     columnNumber: 19
@@ -698,48 +698,131 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/components/Footer.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// // components/Footer.tsx
 // "use client";
 // import Image from "next/image";
+// import Link from "next/link";
+// import { useState, useRef } from "react";
+// import { ChevronDown } from "lucide-react";
 // export default function Footer() {
+//   const [isComplianceOpen, setIsComplianceOpen] = useState(false);
+//   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+//   const openDropdown = () => {
+//     if (closeTimeoutRef.current) {
+//       clearTimeout(closeTimeoutRef.current);
+//       closeTimeoutRef.current = null;
+//     }
+//     setIsComplianceOpen(true);
+//   };
+//   const closeDropdownWithDelay = () => {
+//     closeTimeoutRef.current = setTimeout(() => {
+//       setIsComplianceOpen(false);
+//     }, 300); // ⏱️ adjust to taste (200–400ms feels best)
+//   };
+//   const closeDropdownImmediately = () => {
+//     if (closeTimeoutRef.current) {
+//       clearTimeout(closeTimeoutRef.current);
+//       closeTimeoutRef.current = null;
+//     }
+//     setIsComplianceOpen(false);
+//   };
 //   return (
-//     <footer className="bg-[#E5E7EB] p-4 sm:p-6 md:p-[5vw] text-gray-800">
-//       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-start gap-6 sm:gap-8">
-//         {/* Left side logo */}
-//         <div className="relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center gap-4">
+//     <footer className="bg-[#FFFFFF] lg:p-0 p-4 sm:p-6 md:p-[5vw] text-gray-800 ">
+//       <div className="relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8">
+//         {/* Logo */}
+//         <div className=" relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center">
 //           <Image
-//             src="/tblack.svg"
+//             src="/teraawatt-black.svg"
 //             alt="Teraawatt Logo"
 //             fill
 //             className="object-contain"
 //           />
 //         </div>
-//         {/* Middle links */}
-//         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 justify-center md:justify-start text-base sm:text-lg font-medium mt-4 md:mt-0">
-//           <a href="#" className="hover:text-green-600 transition">
-//             Pulse
-//           </a>
-//           <a href="#" className="hover:text-green-600 transition">
+//         {/* Links */}
+//         <div className="flex flex-col sm:flex-row gap-6 md:gap-12 justify-center md:justify-start text-base sm:text-lg mt-4 md:mt-0 lg:align-middle">
+//           <Link href="/privacy-policy" className="hover:text-green-600 transition">
 //             Privacy Policy
-//           </a>
-//           <a href="#" className="hover:text-green-600 transition">
+//           </Link>
+//           <Link href="/terms" className="hover:text-green-600 transition">
 //             Terms & Conditions
-//           </a>
+//           </Link>
+//           {/* Compliance Dropdown */}
+//           <div
+//             className="relative"
+//             onMouseEnter={openDropdown}
+//             onMouseLeave={closeDropdownWithDelay}
+//           >
+//             <button
+//               className="flex items-center gap-1 hover:text-green-600 transition focus:outline-none whitespace-nowrap"
+//               onClick={() =>
+//                 isComplianceOpen
+//                   ? closeDropdownImmediately()
+//                   : openDropdown()
+//               }
+//               aria-expanded={isComplianceOpen}
+//               aria-haspopup="true"
+//             >
+//               Compliance
+//               <ChevronDown
+//                 className={`w-4 h-4 transition-transform duration-200 ${isComplianceOpen ? "rotate-180" : ""
+//                   }`}
+//               />
+//             </button>
+//             {/* Dropdown Menu */}
+//             {isComplianceOpen && (
+//               <div
+//                 className="absolute right-0 bottom-full mb-3 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-3 z-50"
+//                 onMouseEnter={openDropdown}
+//                 onMouseLeave={closeDropdownWithDelay}
+//               >
+//                 {/* ▼ Triangle Pointer */}
+//                 <div className="absolute -bottom-2 left-6 md:left-auto md:right-6 w-0 h-0 
+//   border-l-8 border-l-transparent
+//   border-r-8 border-r-transparent
+//   border-t-8 border-t-white"
+//                 />
+//                 <Link
+//                   href="/dcs"
+//                   className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+//                   onClick={closeDropdownImmediately}
+//                 >
+//                   Data and Security Compliance
+//                 </Link>
+//                 <Link
+//                   href="/isc"
+//                   className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+//                   onClick={closeDropdownImmediately}
+//                 >
+//                   Industry-Specific Compliance
+//                 </Link>
+//                 <Link
+//                   href="/pgc"
+//                   className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+//                   onClick={closeDropdownImmediately}
+//                 >
+//                   Payment Gateway Compliance
+//                 </Link>
+//                 <Link
+//                   href="/cgln"
+//                   className="block px-5 py-2.5 text-sm hover:bg-gray-100 hover:text-green-600 transition"
+//                   onClick={closeDropdownImmediately}
+//                 >
+//                   Corporate Governance and Legal Notice
+//                 </Link>
+//               </div>
+//             )}
+//           </div>
 //         </div>
 //       </div>
-//       {/* Faint horizontal line */}
-//       <div className="border-t border-gray-300 mx-4 sm:mx-6 md:mx-0"></div>
-//       {/* Bottom row */}
-//       <div className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-600 gap-2 sm:gap-0">
-//         <div>© 2025 Teraawatt. All rights reserved.</div>
-//         <div className="mt-2 sm:mt-0">
-//           Hyderabad, Telangana &nbsp;•&nbsp; info@teraawatt.com
-//         </div>
+//       {/* Divider */}
+//       <div className="border-t border-gray-300 mx-4 sm:mx-6 md:mx-0" />
+//       {/* Bottom Row */}
+//       <div className="container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-600 gap-2">
+//         <div>© 2026 Teraawatt. All rights reserved.</div>
+//         <div>Hyderabad, Telangana • info@teraawatt.com</div>
 //       </div>
 //     </footer>
 //   );
 // }
-// components/Footer.tsx
 __turbopack_context__.s([
     "default",
     ()=>Footer
@@ -749,9 +832,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$imag
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-down.js [app-client] (ecmascript) <export default as ChevronDown>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-icons/fa/index.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$si$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-icons/si/index.mjs [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
+;
 ;
 ;
 ;
@@ -786,20 +873,78 @@ function Footer() {
                 className: "relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: " relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                            src: "/terlogo.png",
-                            alt: "Teraawatt Logo",
-                            fill: true,
-                            className: "object-contain"
-                        }, void 0, false, {
-                            fileName: "[project]/components/Footer.tsx",
-                            lineNumber: 96,
-                            columnNumber: 11
-                        }, this)
-                    }, void 0, false, {
+                        className: "flex items-center gap-6",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                    src: "/teraawatt-black.svg",
+                                    alt: "Teraawatt Logo",
+                                    fill: true,
+                                    className: "object-contain"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Footer.tsx",
+                                    lineNumber: 205,
+                                    columnNumber: 5
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 204,
+                                columnNumber: 3
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex items-center gap-3",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "#",
+                                        target: "_blank",
+                                        className: "hover:scale-105 transition-transform",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            src: "/apple.svg",
+                                            alt: "Download on App Store",
+                                            width: 130,
+                                            height: 40,
+                                            className: "object-contain"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/Footer.tsx",
+                                            lineNumber: 221,
+                                            columnNumber: 7
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/Footer.tsx",
+                                        lineNumber: 216,
+                                        columnNumber: 5
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "#",
+                                        target: "_blank",
+                                        className: "hover:scale-105 transition-transform",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            src: "/google.svg",
+                                            alt: "Get it on Google Play",
+                                            width: 140,
+                                            height: 40,
+                                            className: "object-contain"
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/Footer.tsx",
+                                            lineNumber: 235,
+                                            columnNumber: 7
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/Footer.tsx",
+                                        lineNumber: 230,
+                                        columnNumber: 5
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 214,
+                                columnNumber: 3
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/components/Footer.tsx",
-                        lineNumber: 95,
+                        lineNumber: 201,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -811,7 +956,7 @@ function Footer() {
                                 children: "Privacy Policy"
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
-                                lineNumber: 106,
+                                lineNumber: 250,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -820,7 +965,7 @@ function Footer() {
                                 children: "Terms & Conditions"
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
-                                lineNumber: 110,
+                                lineNumber: 254,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -839,13 +984,13 @@ function Footer() {
                                                 className: `w-4 h-4 transition-transform duration-200 ${isComplianceOpen ? "rotate-180" : ""}`
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 131,
+                                                lineNumber: 275,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Footer.tsx",
-                                        lineNumber: 120,
+                                        lineNumber: 264,
                                         columnNumber: 13
                                     }, this),
                                     isComplianceOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -857,7 +1002,7 @@ function Footer() {
                                                 className: "absolute -bottom-2 left-6 md:left-auto md:right-6 w-0 h-0    border-l-8 border-l-transparent   border-r-8 border-r-transparent   border-t-8 border-t-white"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 145,
+                                                lineNumber: 289,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -867,7 +1012,7 @@ function Footer() {
                                                 children: "Data and Security Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 151,
+                                                lineNumber: 295,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -877,7 +1022,7 @@ function Footer() {
                                                 children: "Industry-Specific Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 159,
+                                                lineNumber: 303,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -887,7 +1032,7 @@ function Footer() {
                                                 children: "Payment Gateway Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 167,
+                                                lineNumber: 311,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -897,39 +1042,168 @@ function Footer() {
                                                 children: "Corporate Governance and Legal Notice"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Footer.tsx",
-                                                lineNumber: 175,
+                                                lineNumber: 319,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Footer.tsx",
-                                        lineNumber: 139,
+                                        lineNumber: 283,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Footer.tsx",
-                                lineNumber: 115,
+                                lineNumber: 259,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Footer.tsx",
-                        lineNumber: 105,
+                        lineNumber: 249,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Footer.tsx",
-                lineNumber: 92,
+                lineNumber: 198,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "border-t border-gray-300 mx-4 sm:mx-6 md:mx-0"
             }, void 0, false, {
                 fileName: "[project]/components/Footer.tsx",
-                lineNumber: 190,
+                lineNumber: 334,
                 columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "container mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "text-sm text-gray-600 max-w-xl leading-relaxed",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "font-semibold text-gray-800",
+                                children: "Recharge • Renew • Repurpose"
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 341,
+                                columnNumber: 5
+                            }, this),
+                            " — Building the next big thing in EV tech. For drivers, dreamers & disruptors who believe the future is electric."
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/Footer.tsx",
+                        lineNumber: 340,
+                        columnNumber: 3
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        className: "text-xs tracking-[0.25em] uppercase text-gray-500",
+                        children: "Stay Charged"
+                    }, void 0, false, {
+                        fileName: "[project]/components/Footer.tsx",
+                        lineNumber: 346,
+                        columnNumber: 3
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center gap-4",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "https://in.linkedin.com/company/teraawatt",
+                                target: "_blank",
+                                className: "group p-3 rounded-full bg-gray-100 hover:bg-[#0077B5]/10 transition-all duration-300 hover:-translate-y-1",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FaLinkedin"], {
+                                    size: 18,
+                                    className: "text-gray-600 group-hover:text-[#0077B5] transition"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Footer.tsx",
+                                    lineNumber: 358,
+                                    columnNumber: 7
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 353,
+                                columnNumber: 5
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "https://www.instagram.com/teraawatt",
+                                target: "_blank",
+                                className: "group p-3 rounded-full bg-gray-100 hover:bg-pink-500/10 transition-all duration-300 hover:-translate-y-1",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FaInstagram"], {
+                                    size: 18,
+                                    className: "text-gray-600 group-hover:text-pink-500 transition"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Footer.tsx",
+                                    lineNumber: 369,
+                                    columnNumber: 7
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 364,
+                                columnNumber: 5
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "https://x.com/teraawatt",
+                                target: "_blank",
+                                className: "group p-3 rounded-full bg-gray-100 hover:bg-black/10 transition-all duration-300 hover:-translate-y-1",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$si$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SiX"], {
+                                    size: 18,
+                                    className: "text-gray-600 group-hover:text-black transition"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Footer.tsx",
+                                    lineNumber: 380,
+                                    columnNumber: 7
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 375,
+                                columnNumber: 5
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "https://www.youtube.com/@teraawatt",
+                                target: "_blank",
+                                className: "group p-3 rounded-full bg-gray-100 hover:bg-red-500/10 transition-all duration-300 hover:-translate-y-1",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FaYoutube"], {
+                                    size: 18,
+                                    className: "text-gray-600 group-hover:text-red-500 transition"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Footer.tsx",
+                                    lineNumber: 391,
+                                    columnNumber: 7
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 386,
+                                columnNumber: 5
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "https://www.facebook.com/teraawatt",
+                                target: "_blank",
+                                className: "group p-3 rounded-full bg-gray-100 hover:bg-blue-500/10 transition-all duration-300 hover:-translate-y-1",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FaFacebook"], {
+                                    size: 18,
+                                    className: "text-gray-600 group-hover:text-blue-600 transition"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/Footer.tsx",
+                                    lineNumber: 402,
+                                    columnNumber: 7
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/Footer.tsx",
+                                lineNumber: 397,
+                                columnNumber: 5
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/components/Footer.tsx",
+                        lineNumber: 351,
+                        columnNumber: 3
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/components/Footer.tsx",
+                lineNumber: 337,
+                columnNumber: 1
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-600 gap-2",
@@ -938,26 +1212,26 @@ function Footer() {
                         children: "© 2026 Teraawatt. All rights reserved."
                     }, void 0, false, {
                         fileName: "[project]/components/Footer.tsx",
-                        lineNumber: 194,
+                        lineNumber: 413,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: "Hyderabad, Telangana • info@teraawatt.com"
                     }, void 0, false, {
                         fileName: "[project]/components/Footer.tsx",
-                        lineNumber: 195,
+                        lineNumber: 414,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Footer.tsx",
-                lineNumber: 193,
+                lineNumber: 412,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Footer.tsx",
-        lineNumber: 91,
+        lineNumber: 197,
         columnNumber: 5
     }, this);
 }
