@@ -201,7 +201,7 @@ export default function Footer() {
         <div className="flex items-center max-sm:flex-col  gap-6 max-sm:gap-1">
 
           {/* Logo */}
-          <div className="relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw]  max-sm:mr-auto  items-center">
+          <div className="relative  flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw]  max-sm:mr-auto  items-center">
             <Image
               src="/teraawatt-black.svg"
               alt="Teraawatt Logo"
@@ -214,10 +214,11 @@ export default function Footer() {
           <div className="flex items-center  gap-3">
 
             <Link
-              href="#"
-              target="_blank"
-              className="hover:scale-105 transition-transform"
-            >
+  href="/coming-soon"
+  onClick={() => {
+    sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+  }}
+>
               <Image
                 src="/apple.svg"
                 alt="Download on App Store"
@@ -228,10 +229,11 @@ export default function Footer() {
             </Link>
 
             <Link
-              href="#"
-              target="_blank"
-              className="hover:scale-105 transition-transform"
-            >
+  href="/coming-soon"
+  onClick={() => {
+    sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+  }}
+>
               <Image
                 src="/google.svg"
                 alt="Get it on Google Play"

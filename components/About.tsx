@@ -133,7 +133,7 @@ export default function About() {
           more dependable electric experience.
         </p>
         <div className="relative  w-full max-w-4xl mx-auto aspect-[16/4]">
-          <Image src="/teraawattart.svg" alt="Teraawatt" fill className="object-cover" priority />
+          <Image src="/aboutlogo.svg" alt="Teraawatt" fill className="object-cover" priority />
         </div>
       </section>
 

@@ -16,20 +16,17 @@
 //   const [active, setActive] = useState("Pulse");
 //   const [isScrolled, setIsScrolled] = useState(false);
 //   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-//   /* ---------------- body lock ---------------- */
 //   useEffect(() => {
 //     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
 //     return () => {
 //       document.body.style.overflow = "auto";
 //     };
 //   }, [isMobileMenuOpen]);
-//   /* ---------------- scroll bg ---------------- */
 //   useEffect(() => {
 //     const onScroll = () => setIsScrolled(window.scrollY > 20);
 //     window.addEventListener("scroll", onScroll);
 //     return () => window.removeEventListener("scroll", onScroll);
 //   }, []);
-//   /* -------- desktop hide / reveal -------- */
 //   useEffect(() => {
 //     if (!navRef.current || window.innerWidth < 768) return;
 //     const nav = navRef.current;
@@ -62,20 +59,21 @@
 //       topZone.remove();
 //     };
 //   }, []);
-//   /* ---------------- route syncing ---------------- */
 //   useEffect(() => {
-//     const stored = localStorage.getItem(ACTIVE_NAV_KEY);
-//     if (stored) {
-//       setActive(stored);
-//       localStorage.removeItem(ACTIVE_NAV_KEY);
-//       return;
-//     }
 //     if (pathname === "/") {
+//       const stored = localStorage.getItem(ACTIVE_NAV_KEY);
+//       if (stored) {
+//         setActive(stored);
+//         localStorage.removeItem(ACTIVE_NAV_KEY);
+//         return;
+//       }
 //       const action = localStorage.getItem("TW_action");
 //       if (action === "go_charge") setActive("TeraaCharge");
 //       else if (action === "go_mart") setActive("TeraaMart");
 //       else setActive("Pulse");
-//     } else if (pathname.includes("investors")) setActive("Investors & Partners");
+//       return;
+//     }
+//     if (pathname.includes("investors")) setActive("Investors & Partners");
 //     else if (pathname.includes("insights")) setActive("Insights");
 //     else if (pathname.includes("connect")) setActive("Connect");
 //   }, [pathname]);
@@ -88,7 +86,6 @@
 //     window.addEventListener("storage", sync);
 //     return () => window.removeEventListener("storage", sync);
 //   }, [pathname]);
-//   /* ---------------- navigation ---------------- */
 //   const handleNavigation = useCallback((name: string) => {
 //     setIsMobileMenuOpen(false);
 //     const onHome = window.location.pathname === "/";
@@ -103,8 +100,9 @@
 //     }
 //     if (name === "TeraaMart") {
 //       setActive(name);
-//       if (onHome) window.dispatchEvent(new Event("triggerVideoJump"));
-//       else {
+//       if (onHome) {
+//         window.dispatchEvent(new Event("triggerVideoJump"));
+//       } else {
 //         localStorage.setItem("TW_action", "go_mart");
 //         window.location.href = "/";
 //       }
@@ -124,46 +122,40 @@
 //   return (
 //     <nav
 //       ref={navRef}
-//       className={`fixed top-0 left-0 w-full z-50 transition-all ${
-//         isScrolled || isMobileMenuOpen
-//           ? "bg-black/90 backdrop-blur-xl shadow-lg"
-//           : "py-6 bg-transparent"
-//       }`}
+//       className={`fixed top-0 left-0 w-full z-50 transition-all ${isScrolled || isMobileMenuOpen
+//         ? "bg-black/90 backdrop-blur-xl shadow-lg"
+//         : "py-6 bg-transparent"
+//         }`}
 //     >
 //       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:px-10">
 //         <Link href="/" onClick={() => handleNavigation("Pulse")}>
 //           <Image
-//             src="/teraawatt.svg"
+//             src="/teraawatt-white.svg"
 //             alt="logo"
 //             width={125}
 //             height={45}
 //             className="p-[1vw] mr-[1vw]"
 //           />
 //         </Link>
-//         {/* hamburger */}
 //         <button
 //           className="md:hidden relative z-50 w-10 h-10 flex items-center justify-center"
 //           onClick={() => setIsMobileMenuOpen((v) => !v)}
 //         >
 //           <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
 //             <span
-//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
-//                 isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""
-//               }`}
+//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""
+//                 }`}
 //             />
 //             <span
-//               className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${
-//                 isMobileMenuOpen ? "opacity-0" : ""
-//               }`}
+//               className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""
+//                 }`}
 //             />
 //             <span
-//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${
-//                 isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""
-//               }`}
+//               className={`block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""
+//                 }`}
 //             />
 //           </div>
 //         </button>
-//         {/* desktop */}
 //         <div className="hidden md:flex space-x-8 text-white">
 //           {navItems.map((item) => (
 //             <Link
@@ -180,9 +172,8 @@
 //                   alt={item.name}
 //                   width={item.w}
 //                   height={item.h}
-//                   className={`relative top-[6%] ${
-//                     active === item.name ? "opacity-100" : "opacity-90"
-//                   }`}
+//                   className={`relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"
+//                     }`}
 //                 />
 //               ) : item.isButton ? (
 //                 <Image src="/Contact_page/connect1.svg" alt="connect" width={70} height={48} />
@@ -192,6 +183,7 @@
 //               {!item.isButton && active === item.name && (
 //                 <motion.div
 //                   layoutId="navbar-indicator"
+//                   transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
 //                   className="absolute left-0 right-0 h-[2px] bg-red-500"
 //                 />
 //               )}
@@ -199,7 +191,6 @@
 //           ))}
 //         </div>
 //       </div>
-//       {/* mobile menu */}
 //       <AnimatePresence>
 //         {isMobileMenuOpen && (
 //           <motion.div
@@ -225,23 +216,21 @@
 //                   }}
 //                 >
 //                   <div
-//                     className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${
-//                       active === item.name ? "bg-white/5" : "hover:bg-white/5"
-//                     }`}
+//                     className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active === item.name ? "bg-white/5" : "hover:bg-white/5"
+//                       }`}
 //                   >
 //                     <span
-//                       className={`text-lg font-medium tracking-wide ${
-//                         active === item.name ? "text-white" : "text-neutral-400"
-//                       }`}
+//                       className={`relative inline-block text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"
+//                         }`}
 //                     >
 //                       {!item.isButton ? item.name : "Connect"}
+//                       {!item.isButton && active === item.name && (
+//                         <motion.div
+//                           layoutId="mobile-indicator"
+//                           className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+//                         />
+//                       )}
 //                     </span>
-//                     {!item.isButton && active === item.name && (
-//                       <motion.div
-//                         layoutId="mobile-indicator"
-//                         className="absolute left-5 right-5 bottom-2 h-[2px] bg-red-500 rounded-full"
-//                       />
-//                     )}
 //                   </div>
 //                 </Link>
 //               ))}
@@ -281,7 +270,7 @@ function Navbar() {
     const [active, setActive] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("Pulse");
     const [isScrolled, setIsScrolled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    /* ---------------- body lock ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
             document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
             return ({
@@ -293,7 +282,7 @@ function Navbar() {
     }["Navbar.useEffect"], [
         isMobileMenuOpen
     ]);
-    /* ---------------- scroll bg ---------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
             const onScroll = {
                 "Navbar.useEffect.onScroll": ()=>setIsScrolled(window.scrollY > 20)
@@ -304,7 +293,7 @@ function Navbar() {
             })["Navbar.useEffect"];
         }
     }["Navbar.useEffect"], []);
-    /* -------- desktop hide / reveal -------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
             if (!navRef.current || window.innerWidth < 768) return;
             const nav = navRef.current;
@@ -312,10 +301,17 @@ function Navbar() {
             const onScroll = {
                 "Navbar.useEffect.onScroll": ()=>{
                     const current = window.scrollY;
+                    // scrolling down → hide
                     if (current > lastScroll && current > 80) {
                         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].to(nav, {
                             y: -120,
-                            duration: 0.4,
+                            duration: 0.35,
+                            ease: "power2.out"
+                        });
+                    } else if (current < lastScroll) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$gsap$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].to(nav, {
+                            y: 0,
+                            duration: 0.25,
                             ease: "power2.out"
                         });
                     }
@@ -351,25 +347,8 @@ function Navbar() {
             })["Navbar.useEffect"];
         }
     }["Navbar.useEffect"], []);
-    /* ---------------- route syncing ---------------- */ // useEffect(() => {
-    //   const stored = localStorage.getItem(ACTIVE_NAV_KEY);
-    //   if (stored) {
-    //     setActive(stored);
-    //     localStorage.removeItem(ACTIVE_NAV_KEY);
-    //     return;
-    //   }
-    //   if (pathname === "/") {
-    //     const action = localStorage.getItem("TW_action");
-    //     if (action === "go_charge") setActive("TeraaCharge");
-    //     else if (action === "go_mart") setActive("TeraaMart");
-    //     else setActive("Pulse");
-    //   } else if (pathname.includes("investors")) setActive("Investors & Partners");
-    //   else if (pathname.includes("insights")) setActive("Insights");
-    //   else if (pathname.includes("connect")) setActive("Connect");
-    // }, [pathname]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
-            // ⭐ Only read scroll-based active tab when on home page
             if (pathname === "/") {
                 const stored = localStorage.getItem(ACTIVE_NAV_KEY);
                 if (stored) {
@@ -383,7 +362,6 @@ function Navbar() {
                 else setActive("Pulse");
                 return;
             }
-            // ⭐ For other routes, use route matching ONLY
             if (pathname.includes("investors")) setActive("Investors & Partners");
             else if (pathname.includes("insights")) setActive("Insights");
             else if (pathname.includes("connect")) setActive("Connect");
@@ -408,7 +386,7 @@ function Navbar() {
     }["Navbar.useEffect"], [
         pathname
     ]);
-    /* ---------------- navigation ---------------- */ const handleNavigation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+    const handleNavigation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "Navbar.useCallback[handleNavigation]": (name)=>{
             setIsMobileMenuOpen(false);
             const onHome = window.location.pathname === "/";
@@ -424,7 +402,6 @@ function Navbar() {
             if (name === "TeraaMart") {
                 setActive(name);
                 if (onHome) {
-                    // (window as any).__TERAAMART_PENDING__ = true;
                     window.dispatchEvent(new Event("triggerVideoJump"));
                 } else {
                     localStorage.setItem("TW_action", "go_mart");
@@ -487,12 +464,12 @@ function Navbar() {
                             className: "p-[1vw] mr-[1vw]"
                         }, void 0, false, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 521,
+                            lineNumber: 501,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 520,
+                        lineNumber: 500,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -505,32 +482,32 @@ function Navbar() {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 536,
+                                    lineNumber: 515,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 540,
+                                    lineNumber: 519,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: `block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 544,
+                                    lineNumber: 523,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/Navbar.tsx",
-                            lineNumber: 535,
+                            lineNumber: 514,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 531,
+                        lineNumber: 510,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -550,7 +527,7 @@ function Navbar() {
                                         className: `relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 563,
+                                        lineNumber: 541,
                                         columnNumber: 17
                                     }, this) : item.isButton ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                         src: "/Contact_page/connect1.svg",
@@ -559,7 +536,7 @@ function Navbar() {
                                         height: 48
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 572,
+                                        lineNumber: 550,
                                         columnNumber: 17
                                     }, this) : item.name,
                                     !item.isButton && active === item.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -572,24 +549,24 @@ function Navbar() {
                                         className: "absolute left-0 right-0 h-[2px] bg-red-500"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 578,
+                                        lineNumber: 556,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, item.name, true, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 554,
+                                lineNumber: 532,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 552,
+                        lineNumber: 530,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 518,
+                lineNumber: 498,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -642,44 +619,44 @@ function Navbar() {
                                                 className: "absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Navbar.tsx",
-                                                lineNumber: 625,
-                                                columnNumber: 3
+                                                lineNumber: 602,
+                                                columnNumber: 25
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Navbar.tsx",
-                                        lineNumber: 618,
+                                        lineNumber: 595,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/components/Navbar.tsx",
-                                    lineNumber: 614,
+                                    lineNumber: 591,
                                     columnNumber: 19
                                 }, this)
                             }, item.name, false, {
                                 fileName: "[project]/components/Navbar.tsx",
-                                lineNumber: 607,
+                                lineNumber: 584,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/Navbar.tsx",
-                        lineNumber: 599,
+                        lineNumber: 576,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Navbar.tsx",
-                    lineNumber: 592,
+                    lineNumber: 569,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.tsx",
-                lineNumber: 590,
+                lineNumber: 567,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.tsx",
-        lineNumber: 511,
+        lineNumber: 491,
         columnNumber: 5
     }, this);
 }
@@ -873,10 +850,10 @@ function Footer() {
                 className: "relative container mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 sm:gap-8",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-6",
+                        className: "flex items-center max-sm:flex-col  gap-6 max-sm:gap-1",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "relative flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw] items-center",
+                                className: "relative  flex h-[12vh] sm:h-[15vh] w-[40vw] sm:w-[30vw] md:w-[25vw]  max-sm:mr-auto  items-center",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                     src: "/teraawatt-black.svg",
                                     alt: "Teraawatt Logo",
@@ -885,18 +862,18 @@ function Footer() {
                                 }, void 0, false, {
                                     fileName: "[project]/components/Footer.tsx",
                                     lineNumber: 205,
-                                    columnNumber: 5
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 204,
-                                columnNumber: 3
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex items-center gap-3",
+                                className: "flex items-center  gap-3",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: "#",
+                                        href: "/coming-soon",
                                         target: "_blank",
                                         className: "hover:scale-105 transition-transform",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -908,15 +885,15 @@ function Footer() {
                                         }, void 0, false, {
                                             fileName: "[project]/components/Footer.tsx",
                                             lineNumber: 221,
-                                            columnNumber: 7
+                                            columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/Footer.tsx",
                                         lineNumber: 216,
-                                        columnNumber: 5
+                                        columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: "#",
+                                        href: "/coming-soon",
                                         target: "_blank",
                                         className: "hover:scale-105 transition-transform",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -928,18 +905,18 @@ function Footer() {
                                         }, void 0, false, {
                                             fileName: "[project]/components/Footer.tsx",
                                             lineNumber: 235,
-                                            columnNumber: 7
+                                            columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/Footer.tsx",
                                         lineNumber: 230,
-                                        columnNumber: 5
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 214,
-                                columnNumber: 3
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
@@ -1088,14 +1065,14 @@ function Footer() {
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 341,
-                                columnNumber: 5
+                                columnNumber: 11
                             }, this),
                             " — Building the next big thing in EV tech. For drivers, dreamers & disruptors who believe the future is electric."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Footer.tsx",
                         lineNumber: 340,
-                        columnNumber: 3
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         className: "text-xs tracking-[0.25em] uppercase text-gray-500",
@@ -1103,7 +1080,7 @@ function Footer() {
                     }, void 0, false, {
                         fileName: "[project]/components/Footer.tsx",
                         lineNumber: 346,
-                        columnNumber: 3
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-4",
@@ -1118,12 +1095,12 @@ function Footer() {
                                 }, void 0, false, {
                                     fileName: "[project]/components/Footer.tsx",
                                     lineNumber: 358,
-                                    columnNumber: 7
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 353,
-                                columnNumber: 5
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 href: "https://www.instagram.com/teraawatt",
@@ -1135,12 +1112,12 @@ function Footer() {
                                 }, void 0, false, {
                                     fileName: "[project]/components/Footer.tsx",
                                     lineNumber: 369,
-                                    columnNumber: 7
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 364,
-                                columnNumber: 5
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 href: "https://x.com/teraawatt",
@@ -1152,12 +1129,12 @@ function Footer() {
                                 }, void 0, false, {
                                     fileName: "[project]/components/Footer.tsx",
                                     lineNumber: 380,
-                                    columnNumber: 7
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 375,
-                                columnNumber: 5
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 href: "https://www.youtube.com/@teraawatt",
@@ -1169,12 +1146,12 @@ function Footer() {
                                 }, void 0, false, {
                                     fileName: "[project]/components/Footer.tsx",
                                     lineNumber: 391,
-                                    columnNumber: 7
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 386,
-                                columnNumber: 5
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 href: "https://www.facebook.com/teraawatt",
@@ -1186,24 +1163,24 @@ function Footer() {
                                 }, void 0, false, {
                                     fileName: "[project]/components/Footer.tsx",
                                     lineNumber: 402,
-                                    columnNumber: 7
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Footer.tsx",
                                 lineNumber: 397,
-                                columnNumber: 5
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Footer.tsx",
                         lineNumber: 351,
-                        columnNumber: 3
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Footer.tsx",
                 lineNumber: 337,
-                columnNumber: 1
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "container mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-600 gap-2",

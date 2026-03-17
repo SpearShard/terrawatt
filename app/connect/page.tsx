@@ -150,7 +150,7 @@ export default function Connect() {
             
             {/* Text size adjusted */}
             <span className="text-white text-base md:text-[20px] font-medium">
-              Support@teraawatt.com
+              support@teraawatt.com
             </span>
           </Link>
         </div>

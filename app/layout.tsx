@@ -68,6 +68,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import Script from "next/script";
 
 
 const geistSans = Geist({
@@ -94,14 +95,29 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          rel="preload"
-          href="/models/final.glb"
-          as="fetch"
-          type="model/gltf-binary"
-          crossOrigin="anonymous"
-        />
-      </head>
+  <link
+    rel="preload"
+    href="/models/final.glb"
+    as="fetch"
+    type="model/gltf-binary"
+    crossOrigin="anonymous"
+  />
+
+  {/* Google Analytics */}
+  <Script
+    src="https://www.googletagmanager.com/gtag/js?id=G-NVFT6GFMX0"
+    strategy="afterInteractive"
+  />
+
+  <Script id="google-analytics" strategy="afterInteractive">
+    {`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NVFT6GFMX0');
+    `}
+  </Script>
+</head>
 
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
