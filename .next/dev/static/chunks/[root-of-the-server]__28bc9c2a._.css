@@ -618,10 +618,6 @@
     bottom: calc(var(--spacing) * -2);
   }
 
-  .-bottom-6 {
-    bottom: calc(var(--spacing) * -6);
-  }
-
   .bottom-1\/4 {
     bottom: 25%;
   }

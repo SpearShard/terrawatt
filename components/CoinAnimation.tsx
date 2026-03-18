@@ -372,9 +372,9 @@ export default function CoinAnimation({
     }
 
     /* 🚀 Approach camera */
-    if (progress > 0.9) {
+    if (progress > 0.95) {
       
-      const t = THREE.MathUtils.clamp((progress - 0.9) / 0.1, 0, 1);
+      const t = THREE.MathUtils.clamp((progress - 0.95) / 0.05, 0, 1);
       const e = THREE.MathUtils.smoothstep(t, 0, 1);
 
       coin.visible = true;
@@ -384,9 +384,9 @@ export default function CoinAnimation({
       coin.position.z = isMobile ? 0.196 : 0.165;
       coin.scale.setScalar(1 + e * 1.5);
 
-      if (progress > 0.96) {
+      if (progress > 0.97) {
         const faceT = THREE.MathUtils.clamp(
-          (progress - 0.96) / 0.04,
+          (progress - 0.97) / 0.03,
           0,
           1
         );
@@ -399,7 +399,7 @@ export default function CoinAnimation({
     }
 
     /* 🌑 DEFINITIVE BLACKOUT VERY CLOSE */
-    if (progress > 0.985) {
+    if (progress > 0.995) {
       const d = THREE.MathUtils.clamp(
         (progress - 0.985) / 0.015,
         0,

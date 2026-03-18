@@ -802,7 +802,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleChargeJump = () => {
-      const targetProgress = -0.28;
+      const targetProgress = -0.50;
 
       const scrollContainer = document.getElementById("scroll-container");
       if (!scrollContainer) return;
@@ -877,7 +877,7 @@ export default function Home() {
 
       // 🔁 SAME math used by TeraaCharge jump
       const isMobile = window.innerWidth < 768;
-      const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
+      const startOffset = containerHeight * (isMobile ? 0.588 : 0.550);
       const chargeTriggerY = containerTop + startOffset;
 
       const martTriggerY = videoSection?.offsetTop ?? Infinity;

@@ -314,23 +314,23 @@ function CoinAnimation({ progressRef, dashboardRef }) {
                 coin.rotation.y += delta * 5;
                 coin.rotation.x += delta * 2;
             }
-            /* 🚀 Approach camera */ if (progress > 0.9) {
-                const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.9) / 0.1, 0, 1);
+            /* 🚀 Approach camera */ if (progress > 0.95) {
+                const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.95) / 0.05, 0, 1);
                 const e = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
                 coin.visible = true;
                 const isMobile = window.innerWidth < 768;
                 coin.position.y = isMobile ? 0.63 - e * 0.7 : 0.58 - e * 0.7;
                 coin.position.z = isMobile ? 0.196 : 0.165;
                 coin.scale.setScalar(1 + e * 1.5);
-                if (progress > 0.96) {
-                    const faceT = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.96) / 0.04, 0, 1);
+                if (progress > 0.97) {
+                    const faceT = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.97) / 0.03, 0, 1);
                     coin.quaternion.slerp(camera.quaternion, faceT * 0.2);
                 }
             } else {
                 coin.visible = false;
                 coin.scale.setScalar(1);
             }
-            /* 🌑 DEFINITIVE BLACKOUT VERY CLOSE */ if (progress > 0.985) {
+            /* 🌑 DEFINITIVE BLACKOUT VERY CLOSE */ if (progress > 0.995) {
                 const d = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.985) / 0.015, 0, 1);
                 const darkness = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].lerp(1, 0.0, d); // ← goes almost black
                 mats.forEach({
