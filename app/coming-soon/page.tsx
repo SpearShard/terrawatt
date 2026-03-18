@@ -63,9 +63,7 @@ export default function ComingSoon() {
             className="w-[150px] sm:w-[170px]"
           />
 
-          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-neutral-400">
-            Coming Soon
-          </span>
+          
         </div>
 
         {/* Google Play */}
@@ -78,9 +76,7 @@ export default function ComingSoon() {
             className="w-[165px] sm:w-[190px]"
           />
 
-          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-neutral-400">
-            Coming Soon
-          </span>
+          
         </div>
 
       </div>

@@ -1,5 +1,5 @@
 {
-  "/connect/page": "app/connect/page.js",
-  "/delete-account/page": "app/delete-account/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/coming-soon/page": "app/coming-soon/page.js",
   "/page": "app/page.js"
 }

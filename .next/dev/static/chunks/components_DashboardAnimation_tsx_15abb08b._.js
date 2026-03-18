@@ -2,7 +2,7 @@
 "[project]/components/DashboardAnimation.tsx [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
 // "use client";
-// import { useEffect, useRef } from "react";
+// import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
 // import { useFrame } from "@react-three/fiber";
 // import { RoundedBox } from "@react-three/drei";
@@ -17,6 +17,13 @@
 // }) {
 //   const uiGroup = useRef<THREE.Group>(new THREE.Group());
 //   const planeRef = useRef<THREE.Mesh | null>(null);
+//   const [isMobile, setIsMobile] = useState(false);
+//   useEffect(() => {
+//     const check = () => setIsMobile(window.innerWidth < 640);
+//     check();
+//     window.addEventListener("resize", check);
+//     return () => window.removeEventListener("resize", check);
+//   }, []);
 //   // Scroll state
 //   const scrollRef = useRef(0);
 //   const smoothScrollRef = useRef(0);
@@ -30,12 +37,36 @@
 //   const MOBILE_TOTAL_FRAMES = 1143;
 //   const lastFrameRef = useRef(-1);
 //   const cleanupCounterRef = useRef(0);
-//   const textureLoader = useRef(new THREE.TextureLoader());
-//   const ANIMATION_COMPLETE_RATIO = 0.9;
+//   /* ---------------- VIDEO SETUP (DESKTOP ONLY) ---------------- */
+//   // useEffect(() => {
+//   //   if (isMobile) return;
+//   //   const video = document.createElement("video");
+//   //   video.src = "/dashsmaller/scrubbed-dash.webm";
+//   //   video.muted = true;
+//   //   video.loop = false;
+//   //   video.playsInline = true;
+//   //   video.preload = "auto";
+//   //   video.crossOrigin = "anonymous";
+//   //   video.pause();
+//   //   const texture = new THREE.VideoTexture(video);
+//   //   texture.colorSpace = THREE.SRGBColorSpace;
+//   //   texture.generateMipmaps = false;
+//   //   texture.minFilter = THREE.LinearFilter;
+//   //   texture.magFilter = THREE.LinearFilter;
+//   //   videoRef.current = video;
+//   //   videoTextureRef.current = texture;
+//   //   video.load();
+//   //   return () => {
+//   //     video.pause();
+//   //     texture.dispose();
+//   //   };
+//   // }, [isMobile]);
+//   /* ---------------- FRAME LOADER (MOBILE) ---------------- */
 //   const loadFrame = (index: number) => {
 //     if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
 //     loadingFrames.current.add(index);
-//     textureLoader.current.load(
+//     const loader = new THREE.TextureLoader();
+//     loader.load(
 //       `/dashsmaller/dashframes_16-03-2026/frame_${String(index + 1).padStart(5, "0")}.webp`,
 //       (texture) => {
 //         texture.colorSpace = THREE.SRGBColorSpace;
@@ -53,8 +84,8 @@
 //     );
 //   };
 //   const preloadNearbyFrames = (center: number) => {
-//     const BUFFER_AHEAD = 10;
-//     const BUFFER_BEHIND = 6;
+//     const BUFFER_AHEAD = 40;
+//     const BUFFER_BEHIND = 20;
 //     const start = Math.max(0, center - BUFFER_BEHIND);
 //     const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
 //     for (let i = start; i <= end; i++) {
@@ -62,7 +93,7 @@
 //     }
 //   };
 //   const cleanupFarFrames = (center: number) => {
-//     const MAX_DISTANCE = 50;
+//     const MAX_DISTANCE = 180;
 //     frameCache.current.forEach((_, key) => {
 //       if (Math.abs(key - center) > MAX_DISTANCE) {
 //         const tex = frameCache.current.get(key);
@@ -91,25 +122,21 @@
 //           MIN_SCROLL_PX,
 //           endHeight - startHeight
 //         );
-//         const normalized = Math.max(
+//         scrollRef.current = Math.max(
 //           0,
 //           Math.min(1, rawScroll / maxScroll)
 //         );
-//         // Finish the dashboard sequence before the section ends so
-//         // users get a brief black hold before the next section appears.
-//         scrollRef.current = Math.min(1, normalized / ANIMATION_COMPLETE_RATIO);
 //         ticking = false;
 //       });
 //     };
 //     window.addEventListener("scroll", handleScroll, { passive: true });
-//     handleScroll();
 //     return () => {
 //       window.removeEventListener("scroll", handleScroll);
 //       if (rafRef.current) cancelAnimationFrame(rafRef.current);
 //     };
 //   }, []);
 //   useEffect(() => {
-//     for (let i = 0; i < 12; i++) {
+//     for (let i = 0; i < 60; i++) {
 //       loadFrame(i);
 //     }
 //   }, []);
@@ -117,30 +144,23 @@
 //   useEffect(() => {
 //     const dashboardMesh = dashboardRef.current?.[0];
 //     if (!dashboardMesh) return;
-//     const group = uiGroup.current;
-//     dashboardMesh.add(group);
-//     group.position.set(0, 0.7, 0.17);
-//     group.rotation.set(1.35, 0, 0);
+//     dashboardMesh.add(uiGroup.current);
+//     uiGroup.current.position.set(0, 0.7, 0.17);
+//     uiGroup.current.rotation.set(1.35, 0, 0);
 //     return () => {
-//       dashboardMesh.remove(group);
+//       dashboardMesh.remove(uiGroup.current);
 //     };
 //   }, [dashboardRef]);
 //   /* ---------------- MAIN ANIMATION LOOP ---------------- */
 //   useFrame((_state, delta) => {
 //     const plane = planeRef.current;
 //     if (!plane) return;
-//     const targetProgress = scrollRef.current;
-//     const finalStretch = targetProgress > 0.88;
-//     const damping = finalStretch ? 18 : 5;
-//     // Cinematic smoothing, but with low lag near the transition.
-//     smoothScrollRef.current +=
-//       (targetProgress - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
-//     const maxLag = finalStretch ? 0.03 : 0.18;
-//     if (targetProgress - smoothScrollRef.current > maxLag) {
-//       smoothScrollRef.current = targetProgress - maxLag;
-//     }
-//     smoothScrollRef.current = THREE.MathUtils.clamp(smoothScrollRef.current, 0, 1);
-//     const progress = smoothScrollRef.current;
+//     // Smooth scroll
+//    // Cinematic scroll smoothing (delta corrected)
+// const damping = 8; 
+// smoothScrollRef.current += 
+//   (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
+// const progress = smoothScrollRef.current;
 //     /* ================= MOBILE = RAW FRAME SCRUB ================= */
 //     const eased = progress * progress * (3 - 2 * progress); // smoothstep
 // const frame = Math.round(eased * (MOBILE_TOTAL_FRAMES - 1));
@@ -162,8 +182,7 @@
 //   lastFrameRef.current = frame;
 // }
 //     progressRef.current = progress;
-//     const globalWindow = window as Window & { __SCROLL_PROGRESS__?: number };
-//     globalWindow.__SCROLL_PROGRESS__ = progress;
+//     (window as any).__SCROLL_PROGRESS__ = progress;
 //   });
 //   return (
 //     <group ref={uiGroup}>
@@ -185,7 +204,7 @@
 //       <CoinAnimation progressRef={progressRef} dashboardRef={dashboardRef} />
 //     </group>
 //   );
-// }
+// } 
 // "use client";
 // import { useEffect, useRef, useState } from "react";
 // import * as THREE from "three";
