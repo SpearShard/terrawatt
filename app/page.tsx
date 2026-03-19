@@ -24,7 +24,7 @@
 //   { ssr: false }
 // );
 
-// gsap.registerPlugin(ScrollTrigger);
+// // gsap.registerPlugin(ScrollTrigger);
 
 // function Car({
 //   rearLightsRef,
@@ -37,6 +37,7 @@
 // }) {
 //   const { scene } = useGLTF("/models/final.glb");
 //   const [ready, setReady] = useState(false);
+
 
 //   const memoizedScene = useMemo(() => scene, []);
 
@@ -99,7 +100,10 @@
 //       // 0 means it starts with the camera animation
 //     });
 
-//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+//     return () => {
+//       tl.scrollTrigger?.kill();
+//       tl.kill();
+//     };
 //   }, [camera, rearLightsRef]);
 
 //   return null;
@@ -110,7 +114,7 @@
 //     if (!rearLightsRef.current || rearLightsRef.current.length === 0) return;
 
 //     // Trigger flicker when scroll reaches the top of the canvas
-//     ScrollTrigger.create({
+//     const flickerTrigger = ScrollTrigger.create({
 //       trigger: "#scroll-container",
 //       start: "top top", // trigger as soon as scrolling starts
 //       end: "+=1",       // short duration
@@ -130,21 +134,88 @@
 //       },
 //     });
 
-//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+//     return () => {
+//       flickerTrigger.kill();
+//     };
 //   }, [rearLightsRef]);
 
 //   return null;
 // }
 
 // export default function Home() {
+
+  
+  
+
+
 //   const rearLightsRef = useRef<THREE.Mesh[]>([]); // ref for rear lights
 //   const dashboardRef = useRef<THREE.Mesh[] | undefined>(undefined);
 //   const progressRef = useRef(0); // 👈 add this line
 //   const pulseReadyRef = useRef(false);
 
+//   const navActionRef = useRef<string | null>(null);
+//   const layoutReadyRef = useRef(false);
+//   const videoReadyRef = useRef(false);
+//   const pulseReadyLocalRef = useRef(false);
+//   const videoScrollReadyRef = useRef(false);
+
 //   const [carScale, setCarScale] = useState(1.2);
 //   const [showPreloader, setShowPreloader] = useState(false);
 //   const [ready, setReady] = useState(false);
+
+//   const tryRunAction = () => {
+//     if (!layoutReadyRef.current) return;
+//     if (!videoReadyRef.current) return;
+//     if (!videoScrollReadyRef.current) return;  // ⭐ NEW
+//     if (!pulseReadyLocalRef.current) return;
+
+//     if (!navActionRef.current) {
+//       navActionRef.current = localStorage.getItem("TW_action");
+//       localStorage.removeItem("TW_action");
+//     }
+
+//     const action = navActionRef.current;
+//     if (!action) return;
+
+//     navActionRef.current = null;
+
+//     if (action === "go_charge") {
+//       window.dispatchEvent(new CustomEvent("scrollToFrame804"));
+//     }
+
+//     if (action === "go_mart") {
+//       const videoSection = document.getElementById("video-section");
+//       if (!videoSection) return;
+
+//       // 1️⃣ Force full layout + pin calculation
+//       ScrollTrigger.refresh(true);
+
+//       // 2️⃣ Wait for refresh to finish
+//       requestAnimationFrame(() => {
+//         requestAnimationFrame(() => {
+
+//           // 3️⃣ INSTANT jump (NO smooth scroll)
+//           window.scrollTo({
+//             top: videoSection.offsetTop,
+//             behavior: "auto"
+//           });
+
+//           // 4️⃣ Let ScrollTrigger sync internal progress
+//           requestAnimationFrame(() => {
+//             requestAnimationFrame(() => {
+
+//               ScrollTrigger.refresh(true);
+
+//               // 5️⃣ Now jump video frame
+//               window.dispatchEvent(new Event("triggerVideoJump"));
+
+//             });
+//           });
+
+//         });
+//       });
+//     }
+//   };
 
 
 
@@ -176,12 +247,64 @@
 //     setReady(true);
 //   }, []);
 
+//   useEffect(() => {
+//     const isMobile = window.innerWidth < 768;
+
+//     if (!ready || isMobile) return;
+
+//     requestAnimationFrame(() => {
+//       requestAnimationFrame(() => {
+//         ScrollTrigger.refresh(true);
+//         layoutReadyRef.current = true;
+//         tryRunAction();
+//       });
+//     });
+//   }, [ready]);
+
+//   useEffect(() => {
+//     const onVideoReady = () => {
+//       videoReadyRef.current = true;
+//       tryRunAction();
+//     };
+
+//     const onVideoScrollReady = () => {
+//       videoScrollReadyRef.current = true;
+//       tryRunAction();
+//     };
+
+//     const onPulseReady = () => {
+//       pulseReadyLocalRef.current = true;
+//       tryRunAction();
+//     };
+
+//     window.addEventListener("videoReady", onVideoReady);
+//     window.addEventListener("videoScrollReady", onVideoScrollReady);
+//     window.addEventListener("pulseReady", onPulseReady);
+
+//     return () => {
+//       window.removeEventListener("videoReady", onVideoReady);
+//       window.removeEventListener("videoScrollReady", onVideoScrollReady);
+//       window.removeEventListener("pulseReady", onPulseReady);
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     if (showPreloader) return;
+
+//     requestAnimationFrame(() => {
+//       requestAnimationFrame(() => {
+//         pulseReadyLocalRef.current = true;
+//         window.dispatchEvent(new Event("pulseReady"));
+//       });
+//     });
+//   }, [showPreloader]);
+
 
 
 
 //   useEffect(() => {
 //     const handleChargeJump = () => {
-//       const targetProgress = -0.18;
+//       const targetProgress = -0.495;
 
 //       const scrollContainer = document.getElementById("scroll-container");
 //       if (!scrollContainer) return;
@@ -235,102 +358,11 @@
 //     return () => window.removeEventListener("resize", handleResize);
 //   }, []);
 
-//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "850vh" : "5000vh";
+//   // const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "850vh" : "5000vh";
+//   const scrollHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "2000vh" : "5000vh";
 //   const contentHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? "50vh" : "300vh";
 
-//   useEffect(() => {
-//     const runAction = () => {
-//       if ((window as any).__MART_LOCK__) return;
 
-//       const action = localStorage.getItem("TW_action");
-//       if (!action) return;
-
-//       localStorage.removeItem("TW_action");
-
-//       if (action === "go_charge") {
-//         window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-//       }
-
-//       // if (action === "go_mart") {
-//       //   const scrollContainer = document.getElementById("scroll-container");
-//       //   if (!scrollContainer) return;
-
-//       //   ScrollTrigger.refresh(true);
-
-//       //   requestAnimationFrame(() => {
-//       //     requestAnimationFrame(() => {
-//       //       const containerTop = scrollContainer.offsetTop;
-//       //       const containerHeight = scrollContainer.offsetHeight;
-//       //       const windowHeight = window.innerHeight;
-
-//       //       const targetY = containerTop + containerHeight - windowHeight - 50;
-
-//       //       window.scrollTo({
-//       //         top: targetY,
-//       //         behavior: "smooth",
-//       //       });
-
-//       //       setTimeout(() => {
-//       //         window.dispatchEvent(new Event("triggerVideoJump"));
-//       //       }, 600);
-//       //     });
-//       //   });
-//       // }
-
-//       if (action === "go_mart") {
-//         const jumpToMart = () => {
-//           const videoSection = document.getElementById("video-section");
-//           if (!videoSection) return;
-
-//           // Recalculate ScrollTrigger to get accurate positions
-//           ScrollTrigger.refresh(true);
-
-//           requestAnimationFrame(() => {
-//             // Give a tiny moment for layout
-//             const container = document.getElementById("scroll-container");
-//             const martVideo = videoSection.querySelector("video"); // Just checking existence
-
-//             // We jump to the video section start, then the internal Video component's event handles the frame sync
-//             videoSection.scrollIntoView({ behavior: "smooth" });
-
-//             setTimeout(() => {
-//               window.dispatchEvent(new Event("triggerVideoJump"));
-//             }, 600);
-//           });
-
-//           window.removeEventListener("videoReady", jumpToMart);
-//         };
-
-//         if ((window as any).__VIDEO_READY__) {
-//           jumpToMart();
-//         } else {
-//           window.addEventListener("videoReady", jumpToMart);
-//         }
-//       }
-
-
-
-
-
-
-
-
-
-//     };
-
-//     if (!showPreloader) {
-//   requestAnimationFrame(() => requestAnimationFrame(runAction));
-// }
-
-// window.addEventListener("pulseReady", runAction);
-// // window.addEventListener("storage", runAction);
-
-// return () => {
-//   window.removeEventListener("pulseReady", runAction);
-//   window.removeEventListener("storage", runAction);
-// };
-
-//   }, [showPreloader]);
 
 //   useEffect(() => {
 //     const onScroll = () => {
@@ -347,7 +379,7 @@
 
 //       // 🔁 SAME math used by TeraaCharge jump
 //       const isMobile = window.innerWidth < 768;
-//       const startOffset = containerHeight * (isMobile ? 0.588 : 0.649);
+//       const startOffset = containerHeight * (isMobile ? 0.588 : 0.550);
 //       const chargeTriggerY = containerTop + startOffset;
 
 //       const martTriggerY = videoSection?.offsetTop ?? Infinity;
@@ -393,6 +425,8 @@
 
 //   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 //   const cameraFov = isMobile ? 70 : 50; // 👈 tweak values here
+
+
 
 
 //   return (
@@ -496,6 +530,14 @@
 
 
 
+
+
+
+
+
+
+
+
 "use client";
 import dynamic from "next/dynamic";
 import Navbar from "../components/Navbar";
@@ -559,7 +601,7 @@ function Car({
 function ScrollCameraAnimation({ rearLightsRef }: { rearLightsRef: React.MutableRefObject<THREE.Mesh[] | undefined> }) {
   const { camera } = useThree();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     camera.position.set(0, 50, 450);
     camera.lookAt(0, 50, 0);
 
@@ -660,6 +702,19 @@ export default function Home() {
   const [carScale, setCarScale] = useState(1.2);
   const [showPreloader, setShowPreloader] = useState(false);
   const [ready, setReady] = useState(false);
+  const coinSequenceCompleteRef = useRef(false);
+  const hasCompletedFirstCoinPassRef = useRef(false);
+
+  useLayoutEffect(() => {
+    const globalWindow = window as Window & {
+      __SCROLL_PROGRESS__?: number;
+      __COIN_LOCK__?: boolean;
+    };
+
+    // Ensure first scroll after reload has a deterministic baseline.
+    globalWindow.__SCROLL_PROGRESS__ = 0;
+    globalWindow.__COIN_LOCK__ = false;
+  }, []);
 
   const tryRunAction = () => {
     if (!layoutReadyRef.current) return;
@@ -720,7 +775,7 @@ export default function Home() {
 
 
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isPulse = window.location.pathname === "/";
     const wasReload = sessionStorage.getItem("PAGE_WAS_RELOADED") === "true";
     const hasAction = !!localStorage.getItem("TW_action"); // charge/mart navigation
@@ -863,8 +918,14 @@ export default function Home() {
 
 
   useEffect(() => {
+    const globalWindow = window as Window & {
+      __MART_LOCK__?: boolean;
+      __SCROLL_PROGRESS__?: number;
+      __COIN_LOCK__?: boolean;
+    };
+
     const onScroll = () => {
-      if ((window as any).__MART_LOCK__) return;
+      if (globalWindow.__MART_LOCK__) return;
       const scrollY = window.scrollY;
 
       const scrollContainer = document.getElementById("scroll-container");
@@ -875,9 +936,64 @@ export default function Home() {
       const containerTop = scrollContainer.offsetTop;
       const containerHeight = scrollContainer.offsetHeight;
 
-      // 🔁 SAME math used by TeraaCharge jump
+      // Keep native scroll close to smoothed dashboard progress near the coin phase.
+      // This prevents fast wheel input from revealing the next section before
+      // the coin move-to-camera animation visually catches up.
+      const progressStartOffset = containerHeight * 0.1;
+      const progressStartY = containerTop + progressStartOffset;
+      const progressTrack = Math.max(
+        window.innerHeight * 5,
+        containerHeight - window.innerHeight - progressStartOffset
+      );
+      const rawProgress = THREE.MathUtils.clamp(
+        (scrollY - progressStartY) / progressTrack,
+        0,
+        1
+      );
+      const smoothProgress =
+        typeof globalWindow.__SCROLL_PROGRESS__ === "number"
+          ? globalWindow.__SCROLL_PROGRESS__
+          : 0;
+
+      const completionEnter = 0.998;
+      const completionExit = 0.94;
+      const nextCoinSequenceComplete = coinSequenceCompleteRef.current
+        ? smoothProgress > completionExit
+        : smoothProgress >= completionEnter;
+
+      if (nextCoinSequenceComplete !== coinSequenceCompleteRef.current) {
+        coinSequenceCompleteRef.current = nextCoinSequenceComplete;
+        if (nextCoinSequenceComplete) {
+          hasCompletedFirstCoinPassRef.current = true;
+        }
+      }
+
+      const isFirstCoinPass = !hasCompletedFirstCoinPassRef.current;
+      const lockPhaseStart = isFirstCoinPass ? 0.78 : 0.85;
+      const maxAllowedLead = isFirstCoinPass
+        ? (rawProgress > 0.97 ? 0.003 : 0.008)
+        : (rawProgress > 0.97 ? 0.006 : 0.012);
+      const progressLead = rawProgress - smoothProgress;
+
+      if (rawProgress >= lockPhaseStart && progressLead > maxAllowedLead) {
+        const cappedProgress = Math.min(1, smoothProgress + maxAllowedLead);
+        const cappedScrollY = progressStartY + cappedProgress * progressTrack;
+        globalWindow.__COIN_LOCK__ = true;
+
+        if (scrollY > cappedScrollY) {
+          window.scrollTo({
+            top: cappedScrollY,
+            behavior: "auto",
+          });
+        }
+        return;
+      }
+
+      globalWindow.__COIN_LOCK__ = false;
+
+      // same math used by TeraaCharge jump
       const isMobile = window.innerWidth < 768;
-      const startOffset = containerHeight * (isMobile ? 0.588 : 0.550);
+      const startOffset = containerHeight * (isMobile ? 0.588 : 0.55);
       const chargeTriggerY = containerTop + startOffset;
 
       const martTriggerY = videoSection?.offsetTop ?? Infinity;
@@ -899,7 +1015,112 @@ export default function Home() {
     };
 
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    onScroll();
+    return () => {
+      globalWindow.__COIN_LOCK__ = false;
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const globalWindow = window as Window & {
+      __SCROLL_PROGRESS__?: number;
+      __COIN_LOCK__?: boolean;
+    };
+
+    const getCappedScrollY = (deltaY: number) => {
+      if (deltaY <= 0) return null;
+
+      const scrollContainer = document.getElementById("scroll-container");
+      if (!scrollContainer) return null;
+
+      const containerTop = scrollContainer.offsetTop;
+      const containerHeight = scrollContainer.offsetHeight;
+      const progressStartOffset = containerHeight * 0.1;
+      const progressStartY = containerTop + progressStartOffset;
+      const progressTrack = Math.max(
+        window.innerHeight * 5,
+        containerHeight - window.innerHeight - progressStartOffset
+      );
+
+      const predictedScrollY = window.scrollY + deltaY;
+      const rawProgress = THREE.MathUtils.clamp(
+        (predictedScrollY - progressStartY) / progressTrack,
+        0,
+        1
+      );
+      const smoothProgress =
+        typeof globalWindow.__SCROLL_PROGRESS__ === "number"
+          ? globalWindow.__SCROLL_PROGRESS__
+          : 0;
+      const isFirstCoinPass = !hasCompletedFirstCoinPassRef.current;
+      const lockPhaseStart = isFirstCoinPass ? 0.78 : 0.85;
+      const maxAllowedLead = isFirstCoinPass
+        ? (rawProgress > 0.97 ? 0.003 : 0.008)
+        : (rawProgress > 0.97 ? 0.006 : 0.012);
+      const progressLead = rawProgress - smoothProgress;
+
+      if (rawProgress < lockPhaseStart || progressLead <= maxAllowedLead) {
+        return null;
+      }
+
+      const cappedProgress = Math.min(1, smoothProgress + maxAllowedLead);
+      return progressStartY + cappedProgress * progressTrack;
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      const cappedScrollY = getCappedScrollY(event.deltaY);
+      if (cappedScrollY === null) return;
+
+      event.preventDefault();
+      globalWindow.__COIN_LOCK__ = true;
+
+      if (window.scrollY >= cappedScrollY) {
+        window.scrollTo({ top: cappedScrollY, behavior: "auto" });
+        return;
+      }
+
+      // Allow tiny controlled forward movement instead of momentum jumps.
+      const nextY = Math.min(cappedScrollY, window.scrollY + Math.max(1, event.deltaY * 0.3));
+      window.scrollTo({ top: nextY, behavior: "auto" });
+    };
+
+    let touchStartY = 0;
+    const onTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+      touchStartY = touch.clientY;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+
+      const deltaY = touchStartY - touch.clientY;
+      const cappedScrollY = getCappedScrollY(deltaY);
+      if (cappedScrollY === null) return;
+
+      event.preventDefault();
+      globalWindow.__COIN_LOCK__ = true;
+
+      if (window.scrollY >= cappedScrollY) {
+        window.scrollTo({ top: cappedScrollY, behavior: "auto" });
+        return;
+      }
+
+      const nextY = Math.min(cappedScrollY, window.scrollY + Math.max(1, deltaY * 0.3));
+      window.scrollTo({ top: nextY, behavior: "auto" });
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
   }, []);
 
 
@@ -934,7 +1155,13 @@ export default function Home() {
       <Navbar />
 
       {/* 🚗 3D Car Section */}
-      <div id="scroll-container" style={{ height: scrollHeight, position: "relative" }}>
+      <div
+        id="scroll-container"
+        style={{
+          height: scrollHeight,
+          position: "relative",
+        }}
+      >
         {/* Sticky 3D Canvas */}
         <ScrollCanvasWrapper cameraFov={cameraFov} rearLightsRef={rearLightsRef} dashboardRef={dashboardRef} carScale={carScale} progressRef={progressRef} />
       </div>
@@ -946,7 +1173,6 @@ export default function Home() {
       <div className="min-h-screen relative z-10 bg-black">
         <About />
       </div>
-
       <Footer />
 
     </main>

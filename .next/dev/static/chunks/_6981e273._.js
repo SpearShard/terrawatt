@@ -2,175 +2,6 @@
 "[project]/components/CoinAnimation.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// "use client";
-// import { useEffect, useRef } from "react";
-// import * as THREE from "three";
-// import { useFrame, useThree } from "@react-three/fiber";
-// export default function CoinAnimation({
-//   progressRef,
-//   dashboardRef,
-// }: {
-//   progressRef: React.MutableRefObject<number>;
-//   dashboardRef?: React.MutableRefObject<THREE.Mesh[] | undefined>;
-// }) {
-//   const coinRef = useRef<THREE.Mesh | null>(null);
-//   const baseColorsRef = useRef<THREE.Color[]>([]);
-//   const baseEmissiveRef = useRef<number[]>([]);
-//   const baseEnvRef = useRef<number[]>([]);
-//   const { camera } = useThree();
-//   const APPROACH_START = 0.9;
-//   const APPROACH_END = 0.965;
-//   const FACE_START = 0.94;
-//   const BLACKOUT_START = 0.972;
-//   const BLACKOUT_END = 0.995;
-//   useEffect(() => {
-//     const dashboardMesh = dashboardRef?.current?.[0];
-//     if (!dashboardMesh) return;
-//     const loader = new THREE.TextureLoader();
-//     const frontMap = loader.load("/croppedback.png");
-//     const backMap = loader.load("/coins.png");
-//     frontMap.colorSpace = THREE.SRGBColorSpace;
-//     backMap.colorSpace = THREE.SRGBColorSpace;
-//     frontMap.flipY = false;
-//     backMap.flipY = false;
-//     frontMap.center.set(0.5, 0.5);
-//     frontMap.rotation = Math.PI / 2;
-//     backMap.center.set(0.5, 0.5);
-//     backMap.rotation = Math.PI / 2;
-//     frontMap.wrapS = THREE.RepeatWrapping;
-//     frontMap.repeat.x = -1;
-//     backMap.wrapS = THREE.RepeatWrapping;
-//     backMap.repeat.x = -1;
-//     const envMap = loader.load(
-//       "https://threejs.org/examples/textures/229/brushed_metal.jpg"
-//     );
-//     envMap.mapping = THREE.EquirectangularReflectionMapping;
-//     const radius = 0.012;
-//     const thickness = 0.0025;
-//     const geo = new THREE.CylinderGeometry(radius, radius, thickness, 96, 1);
-//     const pos = geo.attributes.position;
-//     for (let i = 0; i < pos.count; i++) {
-//       const y = pos.getY(i);
-//       if (Math.abs(y) < thickness * 0.49) {
-//         const x = pos.getX(i);
-//         const z = pos.getZ(i);
-//         const a = Math.atan2(z, x);
-//         const ridge = Math.sin(a * 120) * 0.0003;
-//         pos.setXYZ(i, x + ridge * (x / radius), y, z + ridge * (z / radius));
-//       }
-//     }
-//     pos.needsUpdate = true;
-//     geo.computeVertexNormals();
-//     const gold = 0xd29508;
-//     const matSide = new THREE.MeshStandardMaterial({
-//       color: gold,
-//       metalness: 1,
-//       roughness: 0.22,
-//       emissive: new THREE.Color(gold),
-//       emissiveIntensity: 0.45,
-//       envMap,
-//       envMapIntensity: 1.5,
-//     });
-//     const matFront = new THREE.MeshStandardMaterial({
-//       map: frontMap,
-//       color: 0xffffff,
-//       metalness: 0,
-//       roughness: 0.35,
-//       transparent: true,
-//       alphaTest: 0.5,
-//     });
-//     const matBack = new THREE.MeshStandardMaterial({
-//       map: backMap,
-//       color: 0xffffff,
-//       metalness: 0,
-//       roughness: 0.4,
-//       transparent: true,
-//       alphaTest: 0.5,
-//     });
-//     const coin = new THREE.Mesh(geo, [matSide, matFront, matBack]);
-//     coin.visible = false;
-//     const mats = coin.material as THREE.MeshStandardMaterial[];
-//     baseColorsRef.current = mats.map((m) => m.color.clone());
-//     baseEmissiveRef.current = mats.map((m) => m.emissiveIntensity);
-//     baseEnvRef.current = mats.map((m) => m.envMapIntensity ?? 1);
-//     const lcdMesh = dashboardMesh.getObjectByName("LCDs_LCDs.0_0");
-//     if (lcdMesh) {
-//       const p = new THREE.Vector3();
-//       lcdMesh.getWorldPosition(p);
-//       dashboardMesh.worldToLocal(p);
-//       coin.position.copy(p);
-//       coin.position.y += 0.055;
-//     } else {
-//       coin.position.set(0, 0.32, 0.18);
-//     }
-//     dashboardMesh.add(coin);
-//     coinRef.current = coin;
-//     return () => {
-//       coin.removeFromParent();
-//       geo.dispose();
-//       matSide.dispose();
-//       matFront.dispose();
-//       matBack.dispose();
-//       frontMap.dispose();
-//       backMap.dispose();
-//       envMap.dispose();
-//     };
-//   }, [dashboardRef]);
-//   useFrame((_, delta) => {
-//     if (!coinRef.current) return;
-//     const coin = coinRef.current;
-//     const progress = progressRef.current;
-//     const mats = coin.material as THREE.MeshStandardMaterial[];
-//     if (progress < APPROACH_START) {
-//       coin.rotation.y += delta * 5;
-//       coin.rotation.x += delta * 2;
-//     }
-//     if (progress > APPROACH_START) {
-//       const t = THREE.MathUtils.clamp(
-//         (progress - APPROACH_START) / (APPROACH_END - APPROACH_START),
-//         0,
-//         1
-//       );
-//       const e = THREE.MathUtils.smoothstep(t, 0, 1);
-//       coin.visible = true;
-//       const isMobile = window.innerWidth < 768;
-//       coin.position.y = isMobile ? 0.63 - e * 0.7 : 0.58 - e * 0.7;
-//       coin.position.z = isMobile ? 0.196 : 0.165;
-//       coin.scale.setScalar(1 + e * 1.5);
-//       if (progress > FACE_START) {
-//         const faceT = THREE.MathUtils.clamp(
-//           (progress - FACE_START) / (APPROACH_END - FACE_START),
-//           0,
-//           1
-//         );
-//         coin.quaternion.slerp(camera.quaternion, faceT * 0.2);
-//       }
-//     } else {
-//       coin.visible = false;
-//       coin.scale.setScalar(1);
-//     }
-//     if (progress > BLACKOUT_START) {
-//       const d = THREE.MathUtils.clamp(
-//         (progress - BLACKOUT_START) / (BLACKOUT_END - BLACKOUT_START),
-//         0,
-//         1
-//       );
-//       const darkness = THREE.MathUtils.lerp(1, 0.0, d);
-//       mats.forEach((mat, i) => {
-//         mat.color.copy(baseColorsRef.current[i]).multiplyScalar(darkness);
-//         mat.emissiveIntensity = baseEmissiveRef.current[i] * (1 - d);
-//         mat.envMapIntensity = baseEnvRef.current[i] * (1 - d);
-//       });
-//     } else {
-//       mats.forEach((mat, i) => {
-//         mat.color.copy(baseColorsRef.current[i]);
-//         mat.emissiveIntensity = baseEmissiveRef.current[i];
-//         mat.envMapIntensity = baseEnvRef.current[i];
-//       });
-//     }
-//   });
-//   return null;
-// }
 __turbopack_context__.s([
     "default",
     ()=>CoinAnimation
@@ -191,9 +22,7 @@ function CoinAnimation({ progressRef, dashboardRef }) {
     const baseEmissiveRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])([]);
     const baseEnvRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])([]);
     const { camera } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__C__as__useThree$3e$__["useThree"])();
-    /* --------------------------------------------------
-     CREATE + ATTACH COIN
-  -------------------------------------------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "CoinAnimation.useEffect": ()=>{
             const dashboardMesh = dashboardRef?.current?.[0];
             if (!dashboardMesh) return;
@@ -217,7 +46,6 @@ function CoinAnimation({ progressRef, dashboardRef }) {
             const radius = 0.012;
             const thickness = 0.0025;
             const geo = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CylinderGeometry"](radius, radius, thickness, 96, 1);
-            // Ridged edge
             const pos = geo.attributes.position;
             for(let i = 0; i < pos.count; i++){
                 const y = pos.getY(i);
@@ -264,7 +92,6 @@ function CoinAnimation({ progressRef, dashboardRef }) {
             ]);
             coin.visible = false;
             const mats = coin.material;
-            // 🔐 Store original values
             baseColorsRef.current = mats.map({
                 "CoinAnimation.useEffect": (m)=>m.color.clone()
             }["CoinAnimation.useEffect"]);
@@ -302,19 +129,17 @@ function CoinAnimation({ progressRef, dashboardRef }) {
     }["CoinAnimation.useEffect"], [
         dashboardRef
     ]);
-    /* --------------------------------------------------
-     ANIMATION
-  -------------------------------------------------- */ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])({
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"])({
         "CoinAnimation.useFrame": (_, delta)=>{
             if (!coinRef.current) return;
             const coin = coinRef.current;
             const progress = progressRef.current;
             const mats = coin.material;
-            /* 🌀 Spin until VERY late */ if (progress < 0.965) {
+            if (progress < 0.965) {
                 coin.rotation.y += delta * 5;
                 coin.rotation.x += delta * 2;
             }
-            /* 🚀 Approach camera */ if (progress > 0.95) {
+            if (progress > 0.95) {
                 const t = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.95) / 0.05, 0, 1);
                 const e = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].smoothstep(t, 0, 1);
                 coin.visible = true;
@@ -330,9 +155,9 @@ function CoinAnimation({ progressRef, dashboardRef }) {
                 coin.visible = false;
                 coin.scale.setScalar(1);
             }
-            /* 🌑 DEFINITIVE BLACKOUT VERY CLOSE */ if (progress > 0.995) {
+            if (progress > 0.985) {
                 const d = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].clamp((progress - 0.985) / 0.015, 0, 1);
-                const darkness = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].lerp(1, 0.0, d); // ← goes almost black
+                const darkness = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MathUtils"].lerp(1, 0.0, d);
                 mats.forEach({
                     "CoinAnimation.useFrame": (mat, i)=>{
                         mat.color.copy(baseColorsRef.current[i]).multiplyScalar(darkness);
@@ -341,7 +166,6 @@ function CoinAnimation({ progressRef, dashboardRef }) {
                     }
                 }["CoinAnimation.useFrame"]);
             } else {
-                // 🔁 Restore fully when scrolling back
                 mats.forEach({
                     "CoinAnimation.useFrame": (mat, i)=>{
                         mat.color.copy(baseColorsRef.current[i]);
@@ -370,6 +194,174 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "[project]/components/DashboardAnimation.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+// "use client";
+// import { useEffect, useRef, useState } from "react";
+// import * as THREE from "three";
+// import { useFrame } from "@react-three/fiber";
+// import { RoundedBox } from "@react-three/drei";
+// import CoinAnimation from "./CoinAnimation";
+// export default function DashboardAnimation({
+//   dashboardRef,
+//   progressRef,
+// }: {
+//   dashboardRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
+//   progressRef: React.MutableRefObject<number>;
+//   onReady?: () => void;
+// }) {
+//   const uiGroup = useRef<THREE.Group>(new THREE.Group());
+//   const planeRef = useRef<THREE.Mesh | null>(null);
+//   const [isMobile, setIsMobile] = useState(false);
+//   useEffect(() => {
+//     const check = () => setIsMobile(window.innerWidth < 640);
+//     check();
+//     window.addEventListener("resize", check);
+//     return () => window.removeEventListener("resize", check);
+//   }, []);
+//   const scrollRef = useRef(0);
+//   const smoothScrollRef = useRef(0);
+//   const rafRef = useRef<number | null>(null);
+//   const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
+//   const textureLoader = useRef(new THREE.TextureLoader());
+//   const MOBILE_TOTAL_FRAMES = 1143;
+//   const lastFrameRef = useRef(-1);
+//   const targetFrameRef = useRef(-1);
+//   const INITIAL_PRELOAD = 800;
+//   const loadFrame = (index: number) => {
+//     if (frameCache.current.has(index)) return;
+//     textureLoader.current.load(
+//       `/dashsmaller/dashframes_16-03-2026/frame_${String(index + 1).padStart(5, "0")}.webp`,
+//       (texture) => {
+//         texture.colorSpace = THREE.SRGBColorSpace;
+//         texture.generateMipmaps = false;
+//         texture.minFilter = THREE.LinearFilter;
+//         texture.magFilter = THREE.LinearFilter;
+//         texture.anisotropy = 1;
+//         frameCache.current.set(index, texture);
+// // only apply if this frame is still the one we want
+// if (targetFrameRef.current === index || index === 0) {
+//   const plane = planeRef.current;
+//   if (plane) {
+//     const mat = plane.material as THREE.MeshBasicMaterial;
+//     mat.map = texture;
+//     mat.needsUpdate = true;
+//   }
+// }
+//       }
+//     );
+//   };
+//   useEffect(() => {
+//     let ticking = false;
+//     const handleScroll = () => {
+//       if (ticking) return;
+//       ticking = true;
+//       rafRef.current = requestAnimationFrame(() => {
+//         const scrollContainer = document.querySelector("#scroll-container") as HTMLElement | null;
+//         const startHeight = scrollContainer
+//           ? scrollContainer.offsetHeight * 0.1
+//           : window.innerHeight * 2;
+//         const endHeight = scrollContainer
+//           ? scrollContainer.offsetHeight - window.innerHeight
+//           : document.body.scrollHeight - window.innerHeight;
+//         const rawScroll = Math.max(0, window.scrollY - startHeight);
+//         const MIN_SCROLL_PX = window.innerHeight * 5;
+//         const maxScroll = Math.max(
+//           MIN_SCROLL_PX,
+//           endHeight - startHeight
+//         );
+//         scrollRef.current = Math.max(
+//           0,
+//           Math.min(1, rawScroll / maxScroll)
+//         );
+//         ticking = false;
+//       });
+//     };
+//     window.addEventListener("scroll", handleScroll, { passive: true });
+//     return () => {
+//       window.removeEventListener("scroll", handleScroll);
+//       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+//     };
+//   }, []);
+//   useEffect(() => {
+//   // warm up first frames so initial scroll is smooth
+//   for (let i = 0; i < INITIAL_PRELOAD; i++) {
+//     loadFrame(i);
+//   }
+//   const check = () => {
+//     const tex = frameCache.current.get(0);
+//     if (!tex) {
+//       requestAnimationFrame(check);
+//       return;
+//     }
+//     const plane = planeRef.current;
+//     if (plane) {
+//       const mat = plane.material as THREE.MeshBasicMaterial;
+//       mat.map = tex;
+//     }
+//   };
+//   check();
+// }, []);
+//   useEffect(() => {
+//     const dashboardMesh = dashboardRef.current?.[0];
+//     if (!dashboardMesh) return;
+//     dashboardMesh.add(uiGroup.current);
+//     uiGroup.current.position.set(0, 0.7, 0.17);
+//     uiGroup.current.rotation.set(1.35, 0, 0);
+//     return () => {
+//       dashboardMesh.remove(uiGroup.current);
+//     };
+//   }, [dashboardRef]);
+//   useFrame((_state, delta) => {
+//     const plane = planeRef.current;
+//     if (!plane) return;
+//     const damping = 4;
+//     smoothScrollRef.current +=
+//       (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
+//     const progress = smoothScrollRef.current;
+//     const exactFrame = progress * (MOBILE_TOTAL_FRAMES - 1);
+// const frame = Math.floor(exactFrame);
+// const nextFrame = frame + 1;
+// const mix = exactFrame - frame;
+//     targetFrameRef.current = frame;
+//    if (frame !== lastFrameRef.current && frameCache.current.has(frame)) {
+//       loadFrame(frame);
+// loadFrame(frame + 1);
+// loadFrame(frame + 2);
+// loadFrame(frame + 3);
+// loadFrame(frame + 4);
+//      const tex1 = frameCache.current.get(frame);
+// const tex2 = frameCache.current.get(nextFrame);
+// if (tex1 && tex2) {
+//   const mat = plane.material as THREE.MeshBasicMaterial;
+//   // simple blend trick
+//   mat.map = mix < 0.5 ? tex1 : tex2;
+//   mat.needsUpdate = true;
+// }
+//       lastFrameRef.current = frame;
+//     }
+//     progressRef.current = progress;
+//     (window as any).__SCROLL_PROGRESS__ = progress;
+//   });
+//   return (
+//     <group ref={uiGroup}>
+//       <group position={[0, 0, 0.05]}>
+//         <mesh position={[0, 0, -0.015]}>
+//           <RoundedBox args={[0.5, 0.33, 0.03]} radius={0.015} smoothness={4}>
+//             <meshStandardMaterial color="#111111" roughness={0.6} metalness={0.1} />
+//           </RoundedBox>
+//         </mesh>
+//         <mesh position={[0, 0, 0]}>
+//           <planeGeometry args={[0.47, 0.29]} />
+//           <meshBasicMaterial color="#000" />
+//         </mesh>
+//         <mesh ref={planeRef} position={[0, 0, 0.001]}>
+//           <planeGeometry args={[0.47, 0.29]} />
+//           <meshBasicMaterial toneMapped={false} />
+//         </mesh>
+//       </group>
+//       <CoinAnimation progressRef={progressRef} dashboardRef={dashboardRef} />
+//     </group>
+//   );
+// }
 __turbopack_context__.s([
     "default",
     ()=>DashboardAnimation
@@ -414,7 +406,9 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     const lastFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(-1);
     const targetFrameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(-1);
     const INITIAL_PRELOAD = 800;
+    const LATE_PRELOAD_START = Math.floor(MOBILE_TOTAL_FRAMES * 0.86);
     const loadFrame = (index)=>{
+        if (index < 0 || index >= MOBILE_TOTAL_FRAMES) return;
         if (frameCache.current.has(index)) return;
         textureLoader.current.load(`/dashsmaller/dashframes_16-03-2026/frame_${String(index + 1).padStart(5, "0")}.webp`, (texture)=>{
             texture.colorSpace = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$three$2f$build$2f$three$2e$core$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SRGBColorSpace"];
@@ -436,6 +430,7 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "DashboardAnimation.useEffect": ()=>{
+            window.__SCROLL_PROGRESS__ = 0;
             let ticking = false;
             const handleScroll = {
                 "DashboardAnimation.useEffect.handleScroll": ()=>{
@@ -472,6 +467,16 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
             for(let i = 0; i < INITIAL_PRELOAD; i++){
                 loadFrame(i);
             }
+            // warm up coin-phase frames too, so first run after reload does not lag
+            // when reaching the end of the dashboard timeline.
+            let latePreloadTimeout = null;
+            latePreloadTimeout = setTimeout({
+                "DashboardAnimation.useEffect": ()=>{
+                    for(let i = LATE_PRELOAD_START; i < MOBILE_TOTAL_FRAMES; i++){
+                        loadFrame(i);
+                    }
+                }
+            }["DashboardAnimation.useEffect"], 250);
             const check = {
                 "DashboardAnimation.useEffect.check": ()=>{
                     const tex = frameCache.current.get(0);
@@ -487,6 +492,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 }
             }["DashboardAnimation.useEffect.check"];
             check();
+            return ({
+                "DashboardAnimation.useEffect": ()=>{
+                    if (latePreloadTimeout) {
+                        clearTimeout(latePreloadTimeout);
+                    }
+                }
+            })["DashboardAnimation.useEffect"];
         }
     }["DashboardAnimation.useEffect"], []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -509,15 +521,18 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
         "DashboardAnimation.useFrame": (_state, delta)=>{
             const plane = planeRef.current;
             if (!plane) return;
-            const damping = 4;
-            smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
+            const targetScroll = scrollRef.current;
+            const gap = Math.abs(targetScroll - smoothScrollRef.current);
+            const inCoinPhase = targetScroll > 0.9;
+            const damping = inCoinPhase ? gap > 0.03 ? 20 : 14 : 4;
+            smoothScrollRef.current += (targetScroll - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
             const progress = smoothScrollRef.current;
             const exactFrame = progress * (MOBILE_TOTAL_FRAMES - 1);
             const frame = Math.floor(exactFrame);
             const nextFrame = frame + 1;
             const mix = exactFrame - frame;
             targetFrameRef.current = frame;
-            if (frame !== lastFrameRef.current && frameCache.current.has(frame)) {
+            if (frame !== lastFrameRef.current) {
                 loadFrame(frame);
                 loadFrame(frame + 1);
                 loadFrame(frame + 2);
@@ -525,10 +540,13 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 loadFrame(frame + 4);
                 const tex1 = frameCache.current.get(frame);
                 const tex2 = frameCache.current.get(nextFrame);
-                if (tex1 && tex2) {
+                if (tex1) {
                     const mat = plane.material;
-                    // simple blend trick
-                    mat.map = mix < 0.5 ? tex1 : tex2;
+                    if (tex2) {
+                        mat.map = mix < 0.5 ? tex1 : tex2;
+                    } else {
+                        mat.map = tex1;
+                    }
                     mat.needsUpdate = true;
                 }
                 lastFrameRef.current = frame;
@@ -567,17 +585,17 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 metalness: 0.1
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 203,
+                                lineNumber: 463,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/DashboardAnimation.tsx",
-                            lineNumber: 202,
+                            lineNumber: 462,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 201,
+                        lineNumber: 461,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -594,20 +612,20 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 208,
+                                lineNumber: 468,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 color: "#000"
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 209,
+                                lineNumber: 469,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 207,
+                        lineNumber: 467,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("mesh", {
@@ -625,26 +643,26 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                                 ]
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 213,
+                                lineNumber: 473,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("meshBasicMaterial", {
                                 toneMapped: false
                             }, void 0, false, {
                                 fileName: "[project]/components/DashboardAnimation.tsx",
-                                lineNumber: 214,
+                                lineNumber: 474,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/DashboardAnimation.tsx",
-                        lineNumber: 212,
+                        lineNumber: 472,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 200,
+                lineNumber: 460,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$CoinAnimation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -652,176 +670,16 @@ function DashboardAnimation({ dashboardRef, progressRef }) {
                 dashboardRef: dashboardRef
             }, void 0, false, {
                 fileName: "[project]/components/DashboardAnimation.tsx",
-                lineNumber: 218,
+                lineNumber: 478,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/DashboardAnimation.tsx",
-        lineNumber: 199,
+        lineNumber: 459,
         columnNumber: 5
     }, this);
-} // "use client";
- // import { useEffect, useRef, useState } from "react";
- // import * as THREE from "three";
- // import { useFrame } from "@react-three/fiber";
- // import { RoundedBox } from "@react-three/drei";
- // import CoinAnimation from "./CoinAnimation";
- // export default function DashboardAnimation({
- //   dashboardRef,
- //   progressRef,
- // }: {
- //   dashboardRef: React.MutableRefObject<THREE.Mesh[] | undefined>;
- //   progressRef: React.MutableRefObject<number>;
- //   onReady?: () => void;
- // }) {
- //   const uiGroup = useRef<THREE.Group>(new THREE.Group());
- //   const planeRef = useRef<THREE.Mesh | null>(null);
- //   const [isMobile, setIsMobile] = useState(false);
- //   useEffect(() => {
- //     const check = () => setIsMobile(window.innerWidth < 640);
- //     check();
- //     window.addEventListener("resize", check);
- //     return () => window.removeEventListener("resize", check);
- //   }, []);
- //   const scrollRef = useRef(0);
- //   const smoothScrollRef = useRef(0);
- //   const rafRef = useRef<number | null>(null);
- //   const frameCache = useRef<Map<number, THREE.Texture>>(new Map());
- //   const textureLoader = useRef(new THREE.TextureLoader());
- //   const MOBILE_TOTAL_FRAMES = 1143;
- //   const lastFrameRef = useRef(-1);
- //   const targetFrameRef = useRef(-1);
- //   const INITIAL_PRELOAD = 230;
- //   const loadFrame = (index: number) => {
- //     if (frameCache.current.has(index)) return;
- //     textureLoader.current.load(
- //       `/dashsmaller/dashframes_16-03-2026/frame_${String(index + 1).padStart(5, "0")}.webp`,
- //       (texture) => {
- //         texture.colorSpace = THREE.SRGBColorSpace;
- //         texture.generateMipmaps = false;
- //         texture.minFilter = THREE.LinearFilter;
- //         texture.magFilter = THREE.LinearFilter;
- //         texture.anisotropy = 1;
- //         frameCache.current.set(index, texture);
- // // only apply if this frame is still the one we want
- // if (targetFrameRef.current === index || index === 0) {
- //   const plane = planeRef.current;
- //   if (plane) {
- //     const mat = plane.material as THREE.MeshBasicMaterial;
- //     mat.map = texture;
- //     mat.needsUpdate = true;
- //   }
- // }
- //       }
- //     );
- //   };
- //   useEffect(() => {
- //     let ticking = false;
- //     const handleScroll = () => {
- //       if (ticking) return;
- //       ticking = true;
- //       rafRef.current = requestAnimationFrame(() => {
- //         const scrollContainer = document.querySelector("#scroll-container") as HTMLElement | null;
- //         const startHeight = scrollContainer
- //           ? scrollContainer.offsetHeight * 0.1
- //           : window.innerHeight * 2;
- //         const endHeight = scrollContainer
- //           ? scrollContainer.offsetHeight - window.innerHeight
- //           : document.body.scrollHeight - window.innerHeight;
- //         const rawScroll = Math.max(0, window.scrollY - startHeight);
- //         const MIN_SCROLL_PX = window.innerHeight * 3;
- //         const maxScroll = Math.max(
- //           MIN_SCROLL_PX,
- //           endHeight - startHeight
- //         );
- //         scrollRef.current = Math.max(
- //           0,
- //           Math.min(1, rawScroll / maxScroll)
- //         );
- //         ticking = false;
- //       });
- //     };
- //     window.addEventListener("scroll", handleScroll, { passive: true });
- //     return () => {
- //       window.removeEventListener("scroll", handleScroll);
- //       if (rafRef.current) cancelAnimationFrame(rafRef.current);
- //     };
- //   }, []);
- //   useEffect(() => {
- //   // warm up first frames so initial scroll is smooth
- //   for (let i = 0; i < INITIAL_PRELOAD; i++) {
- //     loadFrame(i);
- //   }
- //   const check = () => {
- //     const tex = frameCache.current.get(0);
- //     if (!tex) {
- //       requestAnimationFrame(check);
- //       return;
- //     }
- //     const plane = planeRef.current;
- //     if (plane) {
- //       const mat = plane.material as THREE.MeshBasicMaterial;
- //       mat.map = tex;
- //     }
- //   };
- //   check();
- // }, []);
- //   useEffect(() => {
- //     const dashboardMesh = dashboardRef.current?.[0];
- //     if (!dashboardMesh) return;
- //     dashboardMesh.add(uiGroup.current);
- //     uiGroup.current.position.set(0, 0.7, 0.17);
- //     uiGroup.current.rotation.set(1.35, 0, 0);
- //     return () => {
- //       dashboardMesh.remove(uiGroup.current);
- //     };
- //   }, [dashboardRef]);
- //   useFrame((_state, delta) => {
- //     const plane = planeRef.current;
- //     if (!plane) return;
- //     const damping = 8;
- //     smoothScrollRef.current +=
- //       (scrollRef.current - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
- //     const progress = smoothScrollRef.current;
- //     const frame = Math.round(progress * (MOBILE_TOTAL_FRAMES - 1));
- //     targetFrameRef.current = frame;
- //     if (frame !== lastFrameRef.current) {
- //       loadFrame(frame);
- // loadFrame(frame + 1);
- // loadFrame(frame + 2);
- //       const texture = frameCache.current.get(frame);
- //       if (texture) {
- //   const mat = plane.material as THREE.MeshBasicMaterial;
- //   mat.map = texture;
- //   mat.needsUpdate = true;
- // }
- //       lastFrameRef.current = frame;
- //     }
- //     progressRef.current = progress;
- //     (window as any).__SCROLL_PROGRESS__ = progress;
- //   });
- //   return (
- //     <group ref={uiGroup}>
- //       <group position={[0, 0, 0.05]}>
- //         <mesh position={[0, 0, -0.015]}>
- //           <RoundedBox args={[0.5, 0.33, 0.03]} radius={0.015} smoothness={4}>
- //             <meshStandardMaterial color="#111111" roughness={0.6} metalness={0.1} />
- //           </RoundedBox>
- //         </mesh>
- //         <mesh position={[0, 0, 0]}>
- //           <planeGeometry args={[0.47, 0.29]} />
- //           <meshBasicMaterial color="#000" />
- //         </mesh>
- //         <mesh ref={planeRef} position={[0, 0, 0.001]}>
- //           <planeGeometry args={[0.47, 0.29]} />
- //           <meshBasicMaterial toneMapped={false} />
- //         </mesh>
- //       </group>
- //       <CoinAnimation progressRef={progressRef} dashboardRef={dashboardRef} />
- //     </group>
- //   );
- // }
+}
 _s(DashboardAnimation, "O1neiK0773NAs30lao1WGv8GU94=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$three$2f$fiber$2f$dist$2f$events$2d$f8cd670d$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__D__as__useFrame$3e$__["useFrame"]

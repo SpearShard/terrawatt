@@ -447,6 +447,13 @@ export default function Navbar() {
 
     const onHome = window.location.pathname === "/";
 
+    if (name === "Pulse") {
+      setActive("Pulse");
+      localStorage.setItem(ACTIVE_NAV_KEY, "Pulse");
+      localStorage.removeItem("TW_action");
+      return false;
+    }
+
     if (name === "TeraaCharge") {
       setActive(name);
 
@@ -463,7 +470,33 @@ export default function Navbar() {
       setActive(name);
 
       if (onHome) {
-        window.dispatchEvent(new Event("triggerVideoJump"));
+        const globalWindow = window as Window & { __MART_LOCK__?: boolean };
+        globalWindow.__MART_LOCK__ = true;
+
+        const videoSection = document.getElementById("video-section");
+
+if (videoSection) {
+  const currentScroll = window.scrollY;
+  const sectionTop = videoSection.offsetTop;
+  const sectionBottom = sectionTop + videoSection.offsetHeight;
+
+  // only jump to section if we are OUTSIDE it
+  if (currentScroll < sectionTop || currentScroll > sectionBottom) {
+    window.scrollTo({
+      top: sectionTop,
+      behavior: "auto",
+    });
+  }
+}
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            window.dispatchEvent(new Event("triggerVideoJump"));
+            setTimeout(() => {
+              globalWindow.__MART_LOCK__ = false;
+            }, 1200);
+          });
+        });
       } else {
         localStorage.setItem("TW_action", "go_mart");
         window.location.href = "/";
