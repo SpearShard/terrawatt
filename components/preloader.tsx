@@ -1,9 +1,19 @@
 // "use client";
 
-// import { useEffect } from "react";
+// import { useEffect, useState } from "react";
 
 // export default function Preloader({ onDone }: { onDone: () => void }) {
+//   const [src, setSrc] = useState<string | null>(null);
+
 //   useEffect(() => {
+//     const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+//     setSrc(isMobile ? "/phoneloader.mp4" : "/desktoploader.mp4");
+//   }, []);
+
+//   useEffect(() => {
+//     if (!src) return;
+
 //     const video = document.getElementById(
 //       "pulse-preloader-video"
 //     ) as HTMLVideoElement | null;
@@ -16,25 +26,23 @@
 //     return () => {
 //       video.removeEventListener("ended", handleEnd);
 //     };
-//   }, [onDone]);
+//   }, [src, onDone]);
+
+//   if (!src) return null; // prevents flashing wrong video
 
 //   return (
 //     <div className="fixed inset-0 z-[9999] bg-black">
 //       <video
 //         id="pulse-preloader-video"
-//         src="/preloader.mp4"
+//         src={src}
 //         autoPlay
 //         muted
 //         playsInline
-//         className="w-full max-sm:object-fill h-full object-cover"
+//         className="w-full h-full object-cover"
 //       />
 //     </div>
 //   );
 // }
-
-
-
-
 
 
 
@@ -56,7 +64,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    setSrc(isMobile ? "/phoneloader.mp4" : "/desktoploader.mp4");
+    setSrc(isMobile ? "https://ik.imagekit.io/0s6dxbeae/Logo%20reveal_Portrait_4K.mp4" : "https://ik.imagekit.io/0s6dxbeae/DL.mp4");
   }, []);
 
   useEffect(() => {

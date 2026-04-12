@@ -12,6 +12,7 @@
 //   const containerRef = useRef<HTMLDivElement>(null);
 //   const videoRef = useRef<HTMLVideoElement>(null);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
+//   const scrollHintRef = useRef<HTMLDivElement>(null);
 //   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
 //   const loadingFrames = useRef<Set<number>>(new Set());
 //   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
@@ -39,7 +40,7 @@
 
 //   useEffect(() => {
 //     const calc = () => {
-//       if (window.innerWidth < 640) return TOTAL_FRAMES * 15;
+//       if (window.innerWidth < 640) return TOTAL_FRAMES * 50;
 //       if (window.innerWidth < 1024) return TOTAL_FRAMES * 50;
 //       return TOTAL_FRAMES * 70;
 //     };
@@ -60,12 +61,12 @@
 //     loadingFrames.current.add(index);
 
 //     const img = new Image();
-// img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
+//     img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
 
 
 //     img.onerror = () => {
-//   console.log("Frame failed:", img.src);
-// };
+//       console.log("Frame failed:", img.src);
+//     };
 
 //     img.onload = async () => {
 //       try {
@@ -193,10 +194,10 @@
 //         return;
 //       }
 
-//      const damping = 8;
-// smoothProgressRef.current +=
-//   (rawProgressRef.current - smoothProgressRef.current) *
-//   (1 - Math.exp(-damping * delta));
+//       const damping = 8;
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current - smoothProgressRef.current) *
+//         (1 - Math.exp(-damping * delta));
 
 //       const target = smoothProgressRef.current * video.duration;
 
@@ -272,28 +273,50 @@
 //       end: `+=${scrollDistanceRef.current}px`,
 //       pin: true,
 //       anticipatePin: 1,
-//      onUpdate: (self) => {
-//   rawProgressRef.current = self.progress;
+//       onUpdate: (self) => {
+//         rawProgressRef.current = self.progress;
 
-//  const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+//         // hide scroll hint when user scrolls
+//   if (scrollHintRef.current) {
+//     if (self.progress > 0.02) {
+//       gsap.to(scrollHintRef.current, {
+//         opacity: 0,
+//         y: -40,
+//         duration: 0.6,
+//         ease: "power2.out",
+//         pointerEvents: "none"
+//       });
+//     } else {
+//       gsap.to(scrollHintRef.current, {
+//         opacity: 1,
+//         y: 0,
+//         duration: 0.6,
+//         ease: "power2.out",
+//         pointerEvents: "auto"
+//       });
+//     }
+//   }
 
-// if (frame !== lastPreloadFrameRef.current) {
-//   preloadNearbyFrames(frame);
-//   lastPreloadFrameRef.current = frame;
-// }
-// },
+
+//         const frame = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+
+//         if (frame !== lastPreloadFrameRef.current) {
+//           preloadNearbyFrames(frame);
+//           lastPreloadFrameRef.current = frame;
+//         }
+//       },
 //     });
 
 //     return () => scrollTriggerRef.current?.kill();
 //   }, [isMobile, framesReady, videoReady]);
 
 //   useEffect(() => {
-//   if (!isMobile) return;
+//     if (!isMobile) return;
 
-//   // preload first frames so scroll starts smooth
-//   for (let i = 0; i < 20; i++) {
-//     loadFrame(i);
-//   }
+//     // preload first frames so scroll starts smooth
+//     for (let i = 0; i < 20; i++) {
+//       loadFrame(i);
+//     }
 
 //     const checkReady = () => {
 //       if (frameCache.current.has(0)) {
@@ -323,7 +346,7 @@
 
 //       <div className="relative w-full min-h-screen bg-black overflow-hidden">
 //         <div ref={containerRef} className="relative z-10 w-full overflow-hidden">
-//           <div className="sticky top-0 h-screen flex items-center justify-center">
+//           <div className="sticky top-0 h-screen flex items-center justify-center relative">
 //             <div className="w-full h-full flex items-center justify-center">
 //               {isMobile ? (
 //                 <canvas ref={canvasRef} className="w-full h-full" />
@@ -336,6 +359,20 @@
 //                 />
 //               )}
 //             </div>
+
+//             {/* SCROLL INDICATOR */}
+//   <div
+//     ref={scrollHintRef}
+//     className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-white z-20"
+//   >
+//     <p className="text-xs tracking-[0.35em] uppercase opacity-80">
+//       Scroll
+//     </p>
+
+//     <div className="w-[2px] h-12 bg-white/30 overflow-hidden relative">
+//       <div className="absolute top-0 w-full h-4 bg-white rounded-full animate-bounce"></div>
+//     </div>
+//   </div>
 //           </div>
 //         </div>
 //       </div>
@@ -344,10 +381,6 @@
 //     </>
 //   );
 // }
-
-
-
-
 
 
 
@@ -424,10 +457,12 @@ export default function InvestorsPage() {
     loadingFrames.current.add(index);
 
     const img = new Image();
+    img.decoding = "async";
     img.src = `/investwebp/mobileinvestor/frame_${String(index + 1).padStart(4, "0")}.webp`;
 
 
     img.onerror = () => {
+      loadingFrames.current.delete(index);
       console.log("Frame failed:", img.src);
     };
 
@@ -515,7 +550,7 @@ export default function InvestorsPage() {
 
 
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || window.innerWidth < 640) return;
     const video = videoRef.current;
     if (!video) return;
 

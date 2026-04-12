@@ -41,14 +41,20 @@
 //     let lastScroll = window.scrollY;
 
 //     const onScroll = () => {
-//       const current = window.scrollY;
+//   const current = window.scrollY;
 
-//       if (current > lastScroll && current > 80) {
-//         gsap.to(nav, { y: -120, duration: 0.4, ease: "power2.out" });
-//       }
+//   // scrolling down → hide
+//   if (current > lastScroll && current > 80) {
+//     gsap.to(nav, { y: -120, duration: 0.35, ease: "power2.out" });
+//   }
 
-//       lastScroll = current;
-//     };
+//   // scrolling up → show
+//   else if (current < lastScroll) {
+//     gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
+//   }
+
+//   lastScroll = current;
+// };
 
 //     const show = () =>
 //       gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
@@ -122,6 +128,13 @@
 
 //     const onHome = window.location.pathname === "/";
 
+//     if (name === "Pulse") {
+//       setActive("Pulse");
+//       localStorage.setItem(ACTIVE_NAV_KEY, "Pulse");
+//       localStorage.removeItem("TW_action");
+//       return false;
+//     }
+
 //     if (name === "TeraaCharge") {
 //       setActive(name);
 
@@ -138,7 +151,33 @@
 //       setActive(name);
 
 //       if (onHome) {
-//         window.dispatchEvent(new Event("triggerVideoJump"));
+//         const globalWindow = window as Window & { __MART_LOCK__?: boolean };
+//         globalWindow.__MART_LOCK__ = true;
+
+//         const videoSection = document.getElementById("video-section");
+
+// if (videoSection) {
+//   const currentScroll = window.scrollY;
+//   const sectionTop = videoSection.offsetTop;
+//   const sectionBottom = sectionTop + videoSection.offsetHeight;
+
+//   // only jump to section if we are OUTSIDE it
+//   if (currentScroll < sectionTop || currentScroll > sectionBottom) {
+//     window.scrollTo({
+//       top: sectionTop,
+//       behavior: "auto",
+//     });
+//   }
+// }
+
+//         requestAnimationFrame(() => {
+//           requestAnimationFrame(() => {
+//             window.dispatchEvent(new Event("triggerVideoJump"));
+//             setTimeout(() => {
+//               globalWindow.__MART_LOCK__ = false;
+//             }, 1200);
+//           });
+//         });
 //       } else {
 //         localStorage.setItem("TW_action", "go_mart");
 //         window.location.href = "/";
@@ -290,11 +329,6 @@
 //     </nav>
 //   );
 // }
-
-
-
-
-
 
 
 
@@ -470,8 +504,14 @@ export default function Navbar() {
       setActive(name);
 
       if (onHome) {
-        const globalWindow = window as Window & { __MART_LOCK__?: boolean };
+        const globalWindow = window as Window & {
+          __MART_LOCK__?: boolean;
+          __SCROLL_PROGRESS__?: number;
+          __COIN_LOCK__?: boolean;
+        };
         globalWindow.__MART_LOCK__ = true;
+        globalWindow.__SCROLL_PROGRESS__ = 1;
+        globalWindow.__COIN_LOCK__ = false;
 
         const videoSection = document.getElementById("video-section");
 

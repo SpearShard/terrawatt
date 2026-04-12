@@ -12,6 +12,7 @@
 //   const fgVideoRef = useRef<HTMLVideoElement>(null);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
 //   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
+//   const loadingFrames = useRef<Set<number>>(new Set());
 //   const [isMobile, setIsMobile] = useState(false);
 
 //   useEffect(() => {
@@ -33,33 +34,54 @@
 
 //   const FG_TOTAL_FRAMES = 451;
 //   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
-//   const MOBILE_TOTAL_FRAMES = 720;
+//   const MOBILE_TOTAL_FRAMES = 271;
 //   const START_BG_AT_FRAME = 251;
 //   const targetProgress = 328 / FG_FRAME_MAX;
 
 
 //   const loadFrame = (index: number) => {
-//     if (frameCache.current.has(index)) return;
+//     if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
+
+//     loadingFrames.current.add(index);
 
 //     const img = new Image();
-//     img.src = `/iphoneframes/androscrubframes/frame_${String(index + 1).padStart(5, "0")}.webp`;
+//     img.src = `/iphoneframes/potrait_iphone/frame_${String(index + 1).padStart(5, "0")}.webp`;
+    
 
+//     img.onload = async () => {
+//       try {
+//         await img.decode();
+//       } catch { }
 
-//     img.onload = () => {
+//       loadingFrames.current.delete(index);
 //       frameCache.current.set(index, img);
-
-//       const loadFrame = (index: number) => {
-//   if (frameCache.current.has(index)) return;
-
-//   const img = new Image();
-//   img.src = `/iphoneframes/androscrubframes/frame_${String(index + 1).padStart(5, "0")}.webp`;
-
-
-//   img.onload = () => {
-//     frameCache.current.set(index, img);
-//   };
-// };
 //     };
+
+//     img.onerror = () => {
+//       loadingFrames.current.delete(index);
+//     };
+//   };
+
+//   const preloadNearbyFrames = (center: number) => {
+//     const BUFFER_AHEAD = 14;
+//     const BUFFER_BEHIND = 8;
+
+//     const start = Math.max(0, center - BUFFER_BEHIND);
+//     const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
+
+//     for (let i = start; i <= end; i++) {
+//       loadFrame(i);
+//     }
+//   };
+
+//   const cleanupFarFrames = (center: number) => {
+//     const MAX_DISTANCE = 80;
+
+//     frameCache.current.forEach((_, key) => {
+//       if (Math.abs(key - center) > MAX_DISTANCE) {
+//         frameCache.current.delete(key);
+//       }
+//     });
 //   };
 
 //   // const preloadNearbyFrames = (center: number) => {
@@ -93,11 +115,13 @@
 //     const w = canvas.clientWidth;
 //     const h = canvas.clientHeight;
 
-//     canvas.width = w * dpr;
-//     canvas.height = h * dpr;
+//     if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+//   canvas.width = w * dpr;
+//   canvas.height = h * dpr;
+// }
 
 //     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-//     ctx.clearRect(0, 0, w, h);
+//     ctx.globalCompositeOperation = "copy";
 
 //     const scale = Math.max(w / img.width, h / img.height);
 //     const x = (w - img.width * scale) / 2;
@@ -178,19 +202,21 @@
 //   /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */
 //   useEffect(() => {
 
-//   const bgVideo = bgVideoRef.current;
-//   const fgVideo = fgVideoRef.current;
+//     const bgVideo = bgVideoRef.current;
+//     const fgVideo = fgVideoRef.current;
 
-//   if (!bgVideo || (!isMobile && !fgVideo)) return;
+//     if (!bgVideo || (!isMobile && !fgVideo)) return;
 
-//   // reset smoothing when switching modes
-//   smoothProgressRef.current = 0;
-//   rawProgressRef.current = 0;
-//   scrollProgressRef.current = 0;
+//     // reset smoothing when switching modes
+//     smoothProgressRef.current = 0;
+//     rawProgressRef.current = 0;
+//     scrollProgressRef.current = 0;
 
 //     let raf = 0;
 //     let lastTime = performance.now();
 //     let lastRender = 0;
+//     let lastFrame = -1;
+// let cleanupCounter = 0;
 
 //     // cache durations once
 //     let fgDuration = 0;
@@ -198,7 +224,7 @@
 
 //     const animate = (time: number) => {
 //       // hard cap ~60fps
-//       if (time - lastRender < 33) {
+//       if (time - lastRender < 16) {
 //         raf = requestAnimationFrame(animate);
 //         return;
 //       }
@@ -275,11 +301,18 @@
 //       if (isMobile) {
 //   const frame = Math.floor(smooth * (MOBILE_TOTAL_FRAMES - 1));
 
-//   if (!frameCache.current.has(frame)) {
-//     loadFrame(frame);
-//   }
+//   if (frame !== lastFrame) {
+//     preloadNearbyFrames(frame);
 
-//   drawFrame(frame);
+//     cleanupCounter++;
+//     if (cleanupCounter > 10) {
+//       cleanupFarFrames(frame);
+//       cleanupCounter = 0;
+//     }
+
+//     drawFrame(frame);
+//     lastFrame = frame;
+//   }
 // }
 
 //       raf = requestAnimationFrame(animate);
@@ -359,9 +392,11 @@
 //   }, []);
 
 //   useEffect(() => {
-//     if (!isMobile) return;
+//   if (!isMobile) return;
 
-//     loadFrame(0);
+//   for (let i = 0; i < 25; i++) {
+//     loadFrame(i);
+//   }
 
 //     const wait = () => {
 //       if (frameCache.current.has(0)) {
@@ -391,9 +426,9 @@
 //         {/* FOREGROUND */}
 //         {isMobile ? (
 //           <canvas
-//   ref={canvasRef}
-//   className=" z-10 w-full h-full pointer-events-none"
-// />
+//             ref={canvasRef}
+//             className=" z-10 w-full h-full pointer-events-none"
+//           />
 //         ) : (
 //           <video
 //             ref={fgVideoRef}
@@ -414,24 +449,6 @@
 //     </div>
 //   );
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -492,6 +509,7 @@ export default function Video() {
     loadingFrames.current.add(index);
 
     const img = new Image();
+    img.decoding = "async";
     img.src = `/iphoneframes/potrait_iphone/frame_${String(index + 1).padStart(5, "0")}.webp`;
     
 
@@ -580,7 +598,8 @@ export default function Video() {
   useEffect(() => {
     const fg = fgVideoRef.current;
     const bg = bgVideoRef.current;
-    if (!fg || !bg) return;
+    const isMobileViewport = window.innerWidth < 640;
+    if (!bg || (!isMobileViewport && !fg)) return;
 
     // Check if we need to wake (already loaded?)
     const wake = async (video: HTMLVideoElement) => {
@@ -608,40 +627,45 @@ export default function Video() {
     };
 
     setup(bg, "/iphoneframes/whitetickets.mp4");
-    if (!isMobile) {
+    if (!isMobileViewport && fg) {
       setup(fg, "/iphoneframes/androscrub.webm");
 
     }
 
-    const onReady = () => {
+    const markReady = () => {
       if (!(window as any).__VIDEO_READY__) {
         (window as any).__VIDEO_READY__ = true;
         window.dispatchEvent(new Event("videoReady"));
       }
     };
 
-    let fgReady = false;
+    let fgReady = isMobileViewport;
     let bgReady = false;
 
     const checkReady = () => {
-      if (fgReady && bgReady && !(window as any).__VIDEO_READY__) {
-        (window as any).__VIDEO_READY__ = true;
-        window.dispatchEvent(new Event("videoReady"));
-      }
+      if (fgReady && bgReady) markReady();
     };
 
-    fg.addEventListener("loadedmetadata", () => {
+    const onFgMetadata = () => {
       fgReady = true;
       checkReady();
-    });
+    };
 
-    bg.addEventListener("loadedmetadata", () => {
+    const onBgMetadata = () => {
       bgReady = true;
       checkReady();
-    });
+    };
+
+    if (!isMobileViewport && fg) {
+      fg.addEventListener("loadedmetadata", onFgMetadata);
+    }
+    bg.addEventListener("loadedmetadata", onBgMetadata);
 
     return () => {
-      fg.removeEventListener("loadedmetadata", onReady);
+      if (fg) {
+        fg.removeEventListener("loadedmetadata", onFgMetadata);
+      }
+      bg.removeEventListener("loadedmetadata", onBgMetadata);
     };
   }, []);
 
@@ -896,20 +920,6 @@ let cleanupCounter = 0;
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
