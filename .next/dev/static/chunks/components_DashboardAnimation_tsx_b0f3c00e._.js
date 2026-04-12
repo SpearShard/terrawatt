@@ -1,7 +1,0 @@
-(globalThis.TURBOPACK || (globalThis.TURBOPACK = [])).push([typeof document === "object" ? document.currentScript : undefined,
-"[project]/components/DashboardAnimation.tsx [app-client] (ecmascript, next/dynamic entry, async loader)", (() => {{
-
-throw new Error("An error occurred while generating the chunk item [project]/components/DashboardAnimation.tsx [app-client] (ecmascript, next/dynamic entry, async loader)\n\nCaused by:\n- Cell CellId { type_id: ValueTypeId { id: 292, name: ValueType { name: \"turbopack_core::chunk::available_modules::AvailableModulesSet\", dbg: \"(trait fn)\", dbg_depth: \"(trait fn)\" } }, index: 0 } no longer exists in task <BrowserChunkingContext as ChunkingContext>::chunk_group (no cell of this type exists)\n\nDebug info:\n- An error occurred while generating the chunk item [project]/components/DashboardAnimation.tsx [app-client] (ecmascript, next/dynamic entry, async loader)\n- Execution of <AsyncLoaderChunkItem as EcmascriptChunkItem>::content failed\n- Execution of AsyncLoaderChunkItem::chunks_data failed\n- Execution of AsyncLoaderChunkItem::chunk_group failed\n- Execution of AvailableModules::get failed\n- Cell CellId { type_id: ValueTypeId { id: 292, name: ValueType { name: \"turbopack_core::chunk::available_modules::AvailableModulesSet\", dbg: \"(trait fn)\", dbg_depth: \"(trait fn)\" } }, index: 0 } no longer exists in task <BrowserChunkingContext as ChunkingContext>::chunk_group (no cell of this type exists)");
-
-}}),
-]);
