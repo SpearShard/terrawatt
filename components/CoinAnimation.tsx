@@ -137,55 +137,76 @@ export default function CoinAnimation({
     };
   }, [dashboardRef]);
 
-  useFrame((_, delta) => {
-    if (!coinRef.current) return;
+    useFrame((_, delta) => {
+        if (!coinRef.current) return;
 
-    const coin = coinRef.current;
-    const progress = progressRef.current;
-    const mats = coin.material as THREE.MeshStandardMaterial[];
+        const coin = coinRef.current;
+        const progress = progressRef.current;
+        
+        // Cache material reference to avoid repeated conversion
+        if (!coin.material) return;
+        const mats = coin.material as THREE.MeshStandardMaterial[];
 
-    if (progress < 0.965) {
-      coin.rotation.y += delta * 5;
-      coin.rotation.x += delta * 2;
-    }
+        // Rotation - optimized for smoother motion
+        if (progress < 0.965) {
+            const rotSpeedY = Math.min(delta * 4, 0.1); // Cap rotation speed
+            const rotSpeedX = Math.min(delta * 1.5, 0.05); // Cap rotation speed
+            coin.rotation.y += rotSpeedY;
+            coin.rotation.x += rotSpeedX;
+        }
 
-    if (progress > 0.95) {
-      const t = THREE.MathUtils.clamp((progress - 0.95) / 0.05, 0, 1);
-      const e = THREE.MathUtils.smoothstep(t, 0, 1);
+        if (progress > 0.95) {
+            const t = THREE.MathUtils.clamp((progress - 0.95) / 0.05, 0, 1);
+            // Optimized easing function
+            const e = t * t * (3 - 2 * t); // Smoothstep equivalent
 
-      coin.visible = true;
-      const isMobile = window.innerWidth < 768;
+            coin.visible = true;
+            const isMobile = window.innerWidth < 768;
 
-      coin.position.y = isMobile ? 0.63 - e * 0.7 : 0.58 - e * 0.7;
-      coin.position.z = isMobile ? 0.196 : 0.165;
-      coin.scale.setScalar(1 + e * 1.5);
+            // Position animation - optimized calculations
+            const moveY = isMobile ? 0.63 : 0.58;
+            const moveZ = isMobile ? 0.196 : 0.165;
+            const scaleBase = 1.0;
+            const scaleAmplitude = 1.5;
+            
+            coin.position.y = moveY - e * 0.7;
+            coin.position.z = moveZ;
+            coin.scale.setScalar(scaleBase + e * scaleAmplitude);
 
-      if (progress > 0.97) {
-        const faceT = THREE.MathUtils.clamp((progress - 0.97) / 0.03, 0, 1);
-        coin.quaternion.slerp(camera.quaternion, faceT * 0.2);
-      }
-    } else {
-      coin.visible = false;
-      coin.scale.setScalar(1);
-    }
+            if (progress > 0.97) {
+                const faceT = THREE.MathUtils.clamp((progress - 0.97) / 0.03, 0, 1);
+                // Reduced smoothing factor for more responsive movement
+                coin.quaternion.slerp(camera.quaternion, faceT * 0.15);
+            }
+        } else {
+            coin.visible = false;
+            coin.scale.setScalar(1);
+            coin.rotation.set(0, 0, 0); // Reset rotation when hidden
+        }
 
-    if (progress > 0.985) {
-      const d = THREE.MathUtils.clamp((progress - 0.985) / 0.015, 0, 1);
-      const darkness = THREE.MathUtils.lerp(1, 0.0, d);
+        // Material updates - optimized to reduce operations
+        if (progress > 0.985) {
+            const d = THREE.MathUtils.clamp((progress - 0.985) / 0.015, 0, 1);
+            const darkness = 1 - d; // Simplified calculation
 
-      mats.forEach((mat, i) => {
-        mat.color.copy(baseColorsRef.current[i]).multiplyScalar(darkness);
-        mat.emissiveIntensity = baseEmissiveRef.current[i] * (1 - d);
-        mat.envMapIntensity = baseEnvRef.current[i] * (1 - d);
-      });
-    } else {
-      mats.forEach((mat, i) => {
-        mat.color.copy(baseColorsRef.current[i]);
-        mat.emissiveIntensity = baseEmissiveRef.current[i];
-        mat.envMapIntensity = baseEnvRef.current[i];
-      });
-    }
-  });
+            for (let i = 0; i < mats.length; i++) {
+                const mat = mats[i];
+                const baseColor = baseColorsRef.current[i];
+                mat.color.copy(baseColor);
+                mat.color.multiplyScalar(darkness);
+                mat.emissiveIntensity = baseEmissiveRef.current[i] * darkness;
+                mat.envMapIntensity = baseEnvRef.current[i] * darkness;
+            }
+        } else {
+            for (let i = 0; i < mats.length; i++) {
+                const mat = mats[i];
+                const baseColor = baseColorsRef.current[i];
+                mat.color.copy(baseColor);
+                mat.emissiveIntensity = baseEmissiveRef.current[i];
+                mat.envMapIntensity = baseEnvRef.current[i];
+            }
+        }
+    });
 
   return null;
 }

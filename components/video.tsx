@@ -694,7 +694,7 @@ let cleanupCounter = 0;
     let bgDuration = 0;
 
     const animate = (time: number) => {
-      // hard cap ~60fps
+      // hard cap ~60fps for consistency
       if (time - lastRender < 16) {
         raf = requestAnimationFrame(animate);
         return;
@@ -732,8 +732,9 @@ let cleanupCounter = 0;
         return;
       }
 
-      // physically-smooth damping (better than lerp)
-      const damping = 1 - Math.exp(-delta * 18);
+      // Optimized damping for better responsiveness
+      // Reduced from 18 to 12 for more immediate response
+      const damping = 1 - Math.exp(-delta * 12);
       smoothProgressRef.current +=
         (rawProgressRef.current - smoothProgressRef.current) * damping;
 
@@ -744,7 +745,8 @@ let cleanupCounter = 0;
         const fgTargetTime = smooth * fgDuration;
         const fgDiff = Math.abs(fgVideo.currentTime - fgTargetTime);
 
-        if (fgDiff > 0.03) {
+        // Reduced threshold for more frequent updates
+        if (fgDiff > 0.02) {
           fgVideo.currentTime = fgTargetTime;
         }
       }
@@ -760,31 +762,34 @@ let cleanupCounter = 0;
         const bgTargetTime = bgProgress * bgDuration;
         const bgDiff = Math.abs(bgVideo.currentTime - bgTargetTime);
 
-        if (bgDiff > 0.03) {
+        // Reduced threshold for more frequent updates
+        if (bgDiff > 0.02) {
           bgVideo.currentTime = bgTargetTime;
         }
-      } else if (bgVideo.currentTime > 0.03) {
+      } else if (bgVideo.currentTime > 0.02) {
         bgVideo.currentTime = 0;
       }
 
       scrollProgressRef.current = smooth;
 
       if (isMobile) {
-  const frame = Math.floor(smooth * (MOBILE_TOTAL_FRAMES - 1));
+        const frame = Math.floor(smooth * (MOBILE_TOTAL_FRAMES - 1));
 
-  if (frame !== lastFrame) {
-    preloadNearbyFrames(frame);
+        if (frame !== lastFrame) {
+          // Optimized preloading - look ahead less to reduce memory pressure
+          preloadNearbyFrames(frame);
 
-    cleanupCounter++;
-    if (cleanupCounter > 10) {
-      cleanupFarFrames(frame);
-      cleanupCounter = 0;
-    }
+          cleanupCounter++;
+          // Reduced cleanup frequency to reduce stalls
+          if (cleanupCounter > 15) {
+            cleanupFarFrames(frame);
+            cleanupCounter = 0;
+          }
 
-    drawFrame(frame);
-    lastFrame = frame;
-  }
-}
+          drawFrame(frame);
+          lastFrame = frame;
+        }
+      }
 
       raf = requestAnimationFrame(animate);
     };

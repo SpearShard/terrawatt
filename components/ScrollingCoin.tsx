@@ -167,126 +167,111 @@ export default function VideoCoin({
     )
   );
 
-  useFrame((_, delta) => {
-    const g = groupRef.current;
-    const p = progressRef.current;
+    useFrame((_, delta) => {
+        const g = groupRef.current;
+        const p = progressRef.current;
 
-    if (!g || materialsRef.current.length === 0) return;
+        if (!g || materialsRef.current.length === 0) return;
 
-    // ---------- VISIBILITY CONTROL ----------
-if (p < CONFIG.appearAt || p > CONFIG.fadeEnd) {
-  g.visible = false;
-  return;
-}
-
-g.visible = true;
-
-    const t = THREE.MathUtils.clamp(
-      (p - CONFIG.appearAt) /
-      (CONFIG.disappearAt - CONFIG.appearAt),
-      0,
-      1
-    );
-    const ease = THREE.MathUtils.smoothstep(t, 0, 1);
-
-    /* ---------- POSITION & SCALE ---------- */
-    g.position.z = THREE.MathUtils.lerp(CONFIG.start.z, CONFIG.end.z, ease);
-    g.position.x = THREE.MathUtils.lerp(CONFIG.start.x, CONFIG.end.x, ease);
-    g.position.y = THREE.MathUtils.lerp(CONFIG.start.y, CONFIG.end.y, ease);
-    g.scale.setScalar(
-      THREE.MathUtils.lerp(CONFIG.start.scale, CONFIG.end.scale, ease)
-    );
-
-    /* ---------- ROTATION (SINGLE CONTROLLER) ---------- */
-    if (p < CONFIG.freeSpinStart) {
-      // 🔒 LOCKED START
-      const lt = THREE.MathUtils.clamp(
-        (p - CONFIG.appearAt) /
-        (CONFIG.freeSpinStart - CONFIG.appearAt),
-        0,
-        1
-      );
-      const le = THREE.MathUtils.smoothstep(lt, 0, 1);
-      g.quaternion.slerp(startQuat, 1 - le);
-
-    } else if (p < CONFIG.freeSpinEnd) {
-      // 🌀 FREE SPIN
-      g.rotation.y += delta * CONFIG.spinY;
-      g.rotation.x += delta * CONFIG.spinX;
-
-    } else {
-      // 🔒 LOCKED END
-      const lt = THREE.MathUtils.clamp(
-        (p - CONFIG.freeSpinEnd) /
-        (CONFIG.disappearAt - CONFIG.freeSpinEnd),
-        0,
-        1
-      );
-      const le = THREE.MathUtils.smoothstep(lt, 0, 1);
-      g.quaternion.slerp(endQuat, le);
-    }
-
-    /* ---------- DARKEN → BRIGHTEN ---------- */
-    if (p < CONFIG.darkenEnd) {
-      const d = THREE.MathUtils.clamp(p / CONFIG.darkenEnd, 0, 1);
-      materialsRef.current.forEach((m, i) => {
-        if (m instanceof THREE.MeshBasicMaterial) {
-          m.color.copy(baseColorsRef.current[i]).multiplyScalar(d);
-        } else if (m instanceof THREE.MeshStandardMaterial) {
-          m.color.copy(baseColorsRef.current[i]).multiplyScalar(d);
-          m.emissiveIntensity = baseEmissiveRef.current[i] * d;
+        // ---------- VISIBILITY CONTROL ----------
+        if (p < CONFIG.appearAt || p > CONFIG.fadeEnd) {
+            g.visible = false;
+            return;
         }
-      });
-    } else {
-      materialsRef.current.forEach((m, i) => {
-        if (m instanceof THREE.MeshBasicMaterial) {
-          m.color.copy(baseColorsRef.current[i]);
-        } else if (m instanceof THREE.MeshStandardMaterial) {
-          m.color.copy(baseColorsRef.current[i]);
-          m.emissiveIntensity = baseEmissiveRef.current[i];
+
+        g.visible = true;
+
+        // Calculate common values once
+        const appearToDisappear = CONFIG.disappearAt - CONFIG.appearAt;
+        const t = THREE.MathUtils.clamp((p - CONFIG.appearAt) / appearToDisappear, 0, 1);
+        // Optimized smoothstep equivalent: t * t * (3 - 2 * t)
+        const ease = t * t * (3 - 2 * t);
+
+        /* ---------- POSITION & SCALE ---------- */
+        g.position.z = CONFIG.start.z + (CONFIG.end.z - CONFIG.start.z) * ease;
+        g.position.x = CONFIG.start.x + (CONFIG.end.x - CONFIG.start.x) * ease;
+        g.position.y = CONFIG.start.y + (CONFIG.end.y - CONFIG.start.y) * ease;
+        g.scale.setScalar(CONFIG.start.scale + (CONFIG.end.scale - CONFIG.start.scale) * ease);
+
+        /* ---------- ROTATION (SINGLE CONTROLLER) ---------- */
+        if (p < CONFIG.freeSpinStart) {
+            // 🔒 LOCKED START
+            const freeSpinToAppear = CONFIG.freeSpinStart - CONFIG.appearAt;
+            const lt = THREE.MathUtils.clamp((p - CONFIG.appearAt) / freeSpinToAppear, 0, 1);
+            // Optimized smoothstep
+            const le = lt * lt * (3 - 2 * lt);
+            g.quaternion.slerp(startQuat, 1 - le);
+
+        } else if (p < CONFIG.freeSpinEnd) {
+            // 🌀 FREE SPIN - optimized quaternion approach to avoid gimbal lock
+            const spinAmount = delta * 0.016; // Scale delta for consistent speed
+            const spinQuat = new THREE.Quaternion();
+            spinQuat.setFromEuler(new THREE.Euler(spinAmount * CONFIG.spinX, spinAmount * CONFIG.spinY, 0));
+            g.quaternion.multiply(spinQuat);
+
+        } else {
+            // 🔒 LOCKED END
+            const disappearToFreeSpin = CONFIG.disappearAt - CONFIG.freeSpinEnd;
+            const lt = THREE.MathUtils.clamp((p - CONFIG.freeSpinEnd) / disappearToFreeSpin, 0, 1);
+            // Optimized smoothstep
+            const le = lt * lt * (3 - 2 * lt);
+            g.quaternion.slerp(endQuat, le);
         }
-      });
-    }
 
-    // if (p > CONFIG.disappearAt) {
-    //   g.visible = false;
-    // }
+        /* ---------- DARKEN → BRIGHTEN ---------- */
+        if (p < CONFIG.darkenEnd) {
+            const d = p / CONFIG.darkenEnd; // Already clamped by condition
+            materialsRef.current.forEach((m, i) => {
+                const baseColor = baseColorsRef.current[i];
+                if (m instanceof THREE.MeshBasicMaterial) {
+                    m.color.copy(baseColor);
+                    m.color.multiplyScalar(d);
+                } else if (m instanceof THREE.MeshStandardMaterial) {
+                    m.color.copy(baseColor);
+                    m.color.multiplyScalar(d);
+                    m.emissiveIntensity = baseEmissiveRef.current[i] * d;
+                }
+            });
+        } else {
+            materialsRef.current.forEach((m, i) => {
+                const baseColor = baseColorsRef.current[i];
+                if (m instanceof THREE.MeshBasicMaterial) {
+                    m.color.copy(baseColor);
+                } else if (m instanceof THREE.MeshStandardMaterial) {
+                    m.color.copy(baseColor);
+                    m.emissiveIntensity = baseEmissiveRef.current[i];
+                }
+            });
+        }
 
-    // ---------- FADE OUT ----------
-// ---------- FADE OUT / RESTORE ----------
-if (p >= CONFIG.fadeStart) {
+        // ---------- FADE OUT ----------
+        if (p >= CONFIG.fadeStart) {
+            const fadeDuration = CONFIG.fadeEnd - CONFIG.fadeStart;
+            const fadeT = THREE.MathUtils.clamp((p - CONFIG.fadeStart) / fadeDuration, 0, 1);
+            const opacity = 1 - fadeT;
 
-  const fadeT = THREE.MathUtils.clamp(
-    (p - CONFIG.fadeStart) / (CONFIG.fadeEnd - CONFIG.fadeStart),
-    0,
-    1
-  );
+            materialsRef.current.forEach((m) => {
+                if ("opacity" in m) {
+                    m.transparent = true;
+                    m.opacity = opacity;
+                }
+            });
 
-  const opacity = 1 - fadeT;
+            if (p >= CONFIG.fadeEnd) {
+                g.visible = false;
+            }
+        } else {
+            // ⭐ RESTORE FULL OPACITY WHEN SCROLLING BACK
+            materialsRef.current.forEach((m) => {
+                if ("opacity" in m) {
+                    m.transparent = false;
+                    m.opacity = 1;
+                }
+            });
 
-  materialsRef.current.forEach((m) => {
-    if ("opacity" in m) {
-      m.transparent = true;
-      m.opacity = opacity;
-    }
-  });
-
-  if (p >= CONFIG.fadeEnd) {
-    g.visible = false;
-  }
-
-} else {
-  // ⭐ RESTORE FULL OPACITY WHEN SCROLLING BACK
-  materialsRef.current.forEach((m) => {
-    if ("opacity" in m) {
-      m.transparent = false;
-      m.opacity = 1;
-    }
-  });
-
-  g.visible = true;
-}
-  });
+            g.visible = true;
+        }
+    });
 
   return (
     <group ref={groupRef}>

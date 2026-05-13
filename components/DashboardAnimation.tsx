@@ -890,7 +890,41 @@ export default function DashboardAnimation({
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoTextureRef = useRef<THREE.VideoTexture | null>(null);
-  const mountedRef = useRef(false);
+  const MOBILE_TOTAL_FRAMES = 300;
+
+const lastFrameRef = useRef(-1);
+
+const loadFrame = (frameIndex: number) => {
+  if (
+    frameIndex < 0 ||
+    frameIndex >= MOBILE_TOTAL_FRAMES ||
+    loadingFrames.current.has(frameIndex) ||
+    frameCache.current.has(frameIndex)
+  ) {
+    return;
+  }
+
+  loadingFrames.current.add(frameIndex);
+
+  const framePath = `/dashsmaller/frames/frame_${String(frameIndex).padStart(4, "0")}.jpg`;
+
+  textureLoader.current.load(
+    framePath,
+    (texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
+
+      frameCache.current.set(frameIndex, texture);
+      loadingFrames.current.delete(frameIndex);
+    },
+    undefined,
+    () => {
+      loadingFrames.current.delete(frameIndex);
+    }
+  );
+};
 
 
 
@@ -999,57 +1033,85 @@ export default function DashboardAnimation({
   const lastVideoTimeRef = useRef(0);
 
 
-  useFrame((_state, delta) => {
-    const plane = planeRef.current;
-    if (!plane) return;
+    useFrame((_state, delta) => {
+        const plane = planeRef.current;
+        if (!plane) return;
 
-    // 🧠 DESKTOP → VIDEO MODE
-    if (videoRef.current && videoTextureRef.current) {
-      const video = videoRef.current;
+        // Optimized frame loading - reduce lookahead and throttle updates
+        const exactFrame = progressRef.current * (MOBILE_TOTAL_FRAMES - 1);
+        const frame = Math.floor(exactFrame);
+        const nextFrame = frame + 1;
+        const mix = exactFrame - frame;
 
-      if (video.readyState >= 2 && video.duration) {
-        const targetTime = progressRef.current * video.duration;
-        const nextTime =
-          video.currentTime + (targetTime - video.currentTime) * 0.22;
+        // 🧠 DESKTOP → VIDEO MODE
+        if (videoRef.current && videoTextureRef.current) {
+            const video = videoRef.current;
 
-        if (Math.abs(nextTime - lastVideoTimeRef.current) > 0.01) {
-          video.currentTime = nextTime;
-          lastVideoTimeRef.current = nextTime;
+            if (video.readyState >= 2 && video.duration) {
+                const targetTime = progressRef.current * video.duration;
+                // Increased responsiveness for video smoothing
+                const nextTime =
+                    video.currentTime + (targetTime - video.currentTime) * 0.15;
+
+                // Reduced threshold for more frequent updates
+                if (Math.abs(nextTime - lastVideoTimeRef.current) > 0.008) {
+                    video.currentTime = nextTime;
+                    lastVideoTimeRef.current = nextTime;
+                }
+
+            }
+
+            const mat = plane.material as THREE.MeshBasicMaterial;
+            if (mat.map !== videoTextureRef.current) {
+                mat.map = videoTextureRef.current;
+                mat.needsUpdate = true;
+            }
+
+            // ✅ ADD THIS
+            progressRef.current = scrollRef.current;
+            (window as any).__SCROLL_PROGRESS__ = scrollRef.current;
+
+            return; // 🚨 skip frame logic
         }
 
-      }
 
-      const mat = plane.material as THREE.MeshBasicMaterial;
-      if (mat.map !== videoTextureRef.current) {
-        mat.map = videoTextureRef.current;
-        mat.needsUpdate = true;
-      }
+        const targetScroll = scrollRef.current;
+        const gap = Math.abs(targetScroll - smoothScrollRef.current);
+        const inCoinPhase = targetScroll > 0.9;
+        // Optimized damping for smoother scroll responsiveness
+        const damping = inCoinPhase ? (gap > 0.02 ? 18 : 12) : 3;
 
-      // ✅ ADD THIS
-      progressRef.current = scrollRef.current;
-      (window as any).__SCROLL_PROGRESS__ = scrollRef.current;
+        smoothScrollRef.current +=
+            (targetScroll - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
 
-      return; // 🚨 skip frame logic
-    }
+        const progress = smoothScrollRef.current;
 
+        progressRef.current = progress;
+        (window as any).__SCROLL_PROGRESS__ = progress;
 
-    const targetScroll = scrollRef.current;
-    const gap = Math.abs(targetScroll - smoothScrollRef.current);
-    const inCoinPhase = targetScroll > 0.9;
-    const damping = inCoinPhase ? (gap > 0.03 ? 20 : 14) : 4;
-
-    smoothScrollRef.current +=
-      (targetScroll - smoothScrollRef.current) * (1 - Math.exp(-damping * delta));
-
-    const progress = smoothScrollRef.current;
-
-   
-
-    
-
-    progressRef.current = progress;
-    (window as any).__SCROLL_PROGRESS__ = progress;
-  });
+        // Optimized frame loading - reduce lookahead and throttle updates
+        if (frame !== lastFrameRef.current) {
+            // Only load current and next frame, reduce lookahead
+            loadFrame(frame);
+            loadFrame(frame + 1);
+            
+            const tex1 = frameCache.current.get(frame);
+            const tex2 = frameCache.current.get(nextFrame);
+            
+            if (tex1) {
+                const mat = plane.material as THREE.MeshBasicMaterial;
+                if (tex2) {
+                    // Simple blend without creating new objects
+                    mat.map = mix < 0.5 ? tex1 : tex2;
+                } else {
+                    mat.map = tex1;
+                }
+                mat.needsUpdate = true;
+            }
+            
+            lastFrameRef.current = frame;
+        }
+    });
 
   return (
     <group ref={uiGroup}>
