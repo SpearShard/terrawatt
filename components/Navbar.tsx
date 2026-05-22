@@ -354,223 +354,661 @@
 "use client";
 
 import Image from "next/image";
+
 import Link from "next/link";
-import { useState, useRef, useEffect, useCallback } from "react";
-import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
+
+import {
+  motion,
+  AnimatePresence,
+} from "framer-motion";
+
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 
-const ACTIVE_NAV_KEY = "TW_ACTIVE_NAV";
+// ======================================================
+// TYPES
+// ======================================================
 
-export default function Navbar() {
-  const navRef = useRef<HTMLDivElement>(null);
+type Experience =
+  | "home"
+  | "investors"
+  | "insights"
+  | "connect";
 
-  const pathname = usePathname();
+// ======================================================
+// COMPONENT
+// ======================================================
 
-  const [active, setActive] = useState("Pulse");
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export default function Navbar({
+  activeExperience = "home",
+  setActiveExperience,
+}: {
+  activeExperience?: Experience;
 
+  setActiveExperience?:
+  React.Dispatch<
+    React.SetStateAction<Experience>
+  >;
+}) {
+  // ======================================================
+  // REFS
+  // ======================================================
 
-  useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isMobileMenuOpen]);
+  const navRef =
+    useRef<HTMLDivElement>(null);
 
+  // ======================================================
+  // STATE
+  // ======================================================
 
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const [active, setActive] =
+    useState("Pulse");
 
+  const [isScrolled, setIsScrolled] =
+    useState(false);
 
-  useEffect(() => {
-    if (!navRef.current || window.innerWidth < 768) return;
+  const [
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
+  ] = useState(false);
 
-    const nav = navRef.current;
-    let lastScroll = window.scrollY;
-
-    const onScroll = () => {
-  const current = window.scrollY;
-
-  // scrolling down → hide
-  if (current > lastScroll && current > 80) {
-    gsap.to(nav, { y: -120, duration: 0.35, ease: "power2.out" });
-  }
-
-  // scrolling up → show
-  else if (current < lastScroll) {
-    gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
-  }
-
-  lastScroll = current;
-};
-
-    const show = () =>
-      gsap.to(nav, { y: 0, duration: 0.25, ease: "power2.out" });
-
-    const topZone = document.createElement("div");
-    Object.assign(topZone.style, {
-      position: "fixed",
-      top: "0",
-      left: "0",
-      width: "100%",
-      height: "20px",
-      zIndex: "40",
-    });
-
-    document.body.appendChild(topZone);
-
-    window.addEventListener("scroll", onScroll);
-    nav.addEventListener("mouseenter", show);
-    topZone.addEventListener("mouseenter", show);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      nav.removeEventListener("mouseenter", show);
-      topZone.remove();
-    };
-  }, []);
-
-
+  // ======================================================
+  // EXPERIENCE → ACTIVE TAB
+  // ======================================================
 
   useEffect(() => {
-    if (pathname === "/") {
-      const stored = localStorage.getItem(ACTIVE_NAV_KEY);
-      if (stored) {
-        setActive(stored);
-        localStorage.removeItem(ACTIVE_NAV_KEY);
-        return;
-      }
-
-      const action = localStorage.getItem("TW_action");
-
-      if (action === "go_charge") setActive("TeraaCharge");
-      else if (action === "go_mart") setActive("TeraaMart");
-      else setActive("Pulse");
+    if (
+      activeExperience ===
+      "investors"
+    ) {
+      setActive(
+        "Investors & Partners"
+      );
 
       return;
     }
 
-    if (pathname.includes("investors")) setActive("Investors & Partners");
-    else if (pathname.includes("insights")) setActive("Insights");
-    else if (pathname.includes("connect")) setActive("Connect");
+    if (
+      activeExperience ===
+      "insights"
+    ) {
+      setActive("Insights");
 
-  }, [pathname]);
+      return;
+    }
 
+    if (
+      activeExperience ===
+      "connect"
+    ) {
+      setActive("Connect");
 
+      return;
+    }
 
-  useEffect(() => {
-    if (pathname !== "/") return;
+    // HOME EXPERIENCE
 
-    const sync = () => {
-      const v = localStorage.getItem(ACTIVE_NAV_KEY);
-      if (v) setActive(v);
+    const onScroll = () => {
+      const videoSection =
+        document.getElementById(
+          "video-section"
+        );
+
+      if (!videoSection) {
+        sessionStorage.setItem(
+          "ACTIVE_HOME_TAB",
+          "Pulse"
+        );
+
+        setActive("Pulse");
+
+        return;
+      }
+
+      const scrollY =
+        window.scrollY;
+
+      const chargeTrigger =
+        window.innerHeight * 2;
+
+      if (
+        scrollY >=
+        videoSection.offsetTop - 20
+      ) {
+        sessionStorage.setItem(
+          "ACTIVE_HOME_TAB",
+          "TeraaMart"
+        );
+
+        setActive("TeraaMart");
+      }
+
+      else if (
+        scrollY >= chargeTrigger
+      ) {
+        sessionStorage.setItem(
+          "ACTIVE_HOME_TAB",
+          "TeraaCharge"
+        );
+
+        setActive("TeraaCharge");
+      }
+
+      else {
+        sessionStorage.setItem(
+          "ACTIVE_HOME_TAB",
+          "Pulse"
+        );
+
+        setActive("Pulse");
+      }
     };
 
-    window.addEventListener("storage", sync);
-    return () => window.removeEventListener("storage", sync);
-  }, [pathname]);
+    onScroll();
 
+    window.addEventListener(
+      "scroll",
+      onScroll
+    );
 
-  const handleNavigation = useCallback((name: string) => {
-    setIsMobileMenuOpen(false);
+    return () =>
+      window.removeEventListener(
+        "scroll",
+        onScroll
+      );
+  }, [activeExperience]);
 
-    const onHome = window.location.pathname === "/";
+  // ======================================================
+  // MOBILE MENU LOCK
+  // ======================================================
 
-    if (name === "Pulse") {
-      setActive("Pulse");
-      localStorage.setItem(ACTIVE_NAV_KEY, "Pulse");
-      localStorage.removeItem("TW_action");
-      return false;
-    }
+  useEffect(() => {
+    document.body.style.overflow =
+      isMobileMenuOpen
+        ? "hidden"
+        : "auto";
 
-    if (name === "TeraaCharge") {
-      setActive(name);
+    return () => {
+      document.body.style.overflow =
+        "auto";
+    };
+  }, [isMobileMenuOpen]);
 
-      if (onHome) window.dispatchEvent(new CustomEvent("scrollToFrame804"));
-      else {
-        localStorage.setItem("TW_action", "go_charge");
-        window.location.href = "/";
-      }
+  // ======================================================
+  // NAV BACKGROUND
+  // ======================================================
 
-      return true;
-    }
+  useEffect(() => {
+    const onScroll = () =>
+      setIsScrolled(
+        window.scrollY > 20
+      );
 
-    if (name === "TeraaMart") {
-      setActive(name);
+    window.addEventListener(
+      "scroll",
+      onScroll
+    );
 
-      if (onHome) {
-        const globalWindow = window as Window & {
-          __MART_LOCK__?: boolean;
-          __SCROLL_PROGRESS__?: number;
-          __COIN_LOCK__?: boolean;
-        };
-        globalWindow.__MART_LOCK__ = true;
-        globalWindow.__SCROLL_PROGRESS__ = 1;
-        globalWindow.__COIN_LOCK__ = false;
-
-        const videoSection = document.getElementById("video-section");
-
-if (videoSection) {
-  const currentScroll = window.scrollY;
-  const sectionTop = videoSection.offsetTop;
-  const sectionBottom = sectionTop + videoSection.offsetHeight;
-
-  // only jump to section if we are OUTSIDE it
-  if (currentScroll < sectionTop || currentScroll > sectionBottom) {
-    window.scrollTo({
-      top: sectionTop,
-      behavior: "auto",
-    });
-  }
-}
-
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            window.dispatchEvent(new Event("triggerVideoJump"));
-            setTimeout(() => {
-              globalWindow.__MART_LOCK__ = false;
-            }, 1200);
-          });
-        });
-      } else {
-        localStorage.setItem("TW_action", "go_mart");
-        window.location.href = "/";
-      }
-
-      return true;
-    }
-
-
-
-    setActive(name);
-    return false;
+    return () =>
+      window.removeEventListener(
+        "scroll",
+        onScroll
+      );
   }, []);
 
+  // ======================================================
+  // HIDE / SHOW NAV
+  // ======================================================
+
+  useEffect(() => {
+    if (
+      !navRef.current ||
+      window.innerWidth < 768
+    )
+      return;
+
+    const nav = navRef.current;
+
+    let lastScroll =
+      window.scrollY;
+
+    const onScroll = () => {
+      const current =
+        window.scrollY;
+
+      // hide
+      if (
+        current > lastScroll &&
+        current > 80
+      ) {
+        gsap.to(nav, {
+          y: -120,
+
+          duration: 0.35,
+
+          ease: "power2.out",
+        });
+      }
+
+      // show
+      else if (
+        current < lastScroll
+      ) {
+        gsap.to(nav, {
+          y: 0,
+
+          duration: 0.25,
+
+          ease: "power2.out",
+        });
+      }
+
+      lastScroll = current;
+    };
+
+    const show = () =>
+      gsap.to(nav, {
+        y: 0,
+
+        duration: 0.25,
+
+        ease: "power2.out",
+      });
+
+    const topZone =
+      document.createElement(
+        "div"
+      );
+
+    Object.assign(
+      topZone.style,
+
+      {
+        position: "fixed",
+
+        top: "0",
+
+        left: "0",
+
+        width: "100%",
+
+        height: "20px",
+
+        zIndex: "40",
+      }
+    );
+
+    document.body.appendChild(
+      topZone
+    );
+
+    window.addEventListener(
+      "scroll",
+      onScroll
+    );
+
+    nav.addEventListener(
+      "mouseenter",
+      show
+    );
+
+    topZone.addEventListener(
+      "mouseenter",
+      show
+    );
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        onScroll
+      );
+
+      nav.removeEventListener(
+        "mouseenter",
+        show
+      );
+
+      topZone.remove();
+    };
+  }, []);
+
+  // ======================================================
+  // NAVIGATION
+  // ======================================================
+
+  const handleNavigation =
+    useCallback(
+      (name: string) => {
+        setIsMobileMenuOpen(
+          false
+        );
+
+        // ==============================================
+        // PULSE
+        // ==============================================
+
+        if (name === "Pulse") {
+
+          
+          setActiveExperience?.(
+            "home"
+          );
+          sessionStorage.setItem(
+            "ACTIVE_HOME_TAB",
+            "Pulse"
+          );
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+          });
+
+          setActive("Pulse");
+
+          window.scrollTo({
+            top: 0,
+
+            behavior: "auto",
+          });
+
+          requestAnimationFrame(() => {
+
+  requestAnimationFrame(() => {
+
+    ScrollTrigger.refresh(
+      true
+    );
+
+    window.dispatchEvent(
+      new Event(
+        "resetPulseCamera"
+      )
+    );
+
+  });
+
+});
+
+          return false;
+        }
+
+        // ==============================================
+        // TERAACHARGE
+        // ==============================================
+
+        if (
+          name ===
+          "TeraaCharge"
+        ) {
+          setActiveExperience?.(
+            "home"
+          );
+          sessionStorage.setItem(
+            "ACTIVE_HOME_TAB",
+            "TeraaCharge"
+          );
+
+          setActive(
+            "TeraaCharge"
+          );
+
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+
+              ScrollTrigger.refresh(
+                true
+              );
+
+              window.dispatchEvent(
+                new CustomEvent(
+                  "scrollToFrame804"
+                )
+              );
+
+            });
+          });
+
+          return true;
+        }
+
+        // ==============================================
+        // TERAAMART
+        // ==============================================
+
+        if (
+          name === "TeraaMart"
+        ) {
+          setActiveExperience?.(
+            "home"
+          );
+          sessionStorage.setItem(
+            "ACTIVE_HOME_TAB",
+            "TeraaMart"
+          );
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+          });
+
+          requestAnimationFrame(
+            () => {
+              requestAnimationFrame(
+                () => {
+                  const videoSection =
+                    document.getElementById(
+                      "video-section"
+                    );
+
+                  if (
+                    videoSection
+                  ) {
+                    window.scrollTo({
+                      top:
+                        videoSection.offsetTop,
+
+                      behavior:
+                        "auto",
+                    });
+                  }
+
+                  requestAnimationFrame(
+                    () => {
+                      window.dispatchEvent(
+                        new Event(
+                          "triggerVideoJump"
+                        )
+                      );
+                    }
+                  );
+                }
+              );
+            }
+          );
+
+          return true;
+        }
+
+        // ==============================================
+        // INVESTORS
+        // ==============================================
+
+        if (
+          name ===
+          "Investors & Partners"
+        ) {
+          setActiveExperience?.(
+            "investors"
+          );
+          sessionStorage.removeItem(
+            "ACTIVE_HOME_TAB"
+          );
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+          });
+
+          setActive(name);
+
+          window.scrollTo({
+            top: 0,
+
+            behavior: "auto",
+          });
+
+          return true;
+        }
+
+        // ==============================================
+        // INSIGHTS
+        // ==============================================
+
+        if (
+          name === "Insights"
+        ) {
+          setActiveExperience?.(
+            "insights"
+          );
+          sessionStorage.removeItem(
+            "ACTIVE_HOME_TAB"
+          );
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+          });
+
+          setActive(name);
+
+          window.scrollTo({
+            top: 0,
+
+            behavior: "auto",
+          });
+
+          return true;
+        }
+
+        // ==============================================
+        // CONNECT
+        // ==============================================
+
+        if (
+          name === "Connect"
+        ) {
+          setActiveExperience?.(
+            "connect"
+          );
+          sessionStorage.removeItem(
+            "ACTIVE_HOME_TAB"
+          );
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+          });
+
+          setActive(name);
+
+          window.scrollTo({
+            top: 0,
+
+            behavior: "auto",
+          });
+
+          return true;
+        }
+
+        return false;
+      },
+
+      [setActiveExperience]
+    );
+
+  // ======================================================
+  // NAV ITEMS
+  // ======================================================
+
   const navItems = [
-    { name: "Pulse", href: "/" },
-    { name: "TeraaCharge", href: "/", image: "/teraacharge.png", w: 90, h: 28 },
-    { name: "TeraaMart", href: "/", image: "/teraamartlogo.png", w: 80, h: 26 },
-    { name: "Investors & Partners", href: "/investors-and-partners" },
-    { name: "Insights", href: "/insights" },
-    { name: "Connect", href: "/connect", isButton: true },
+    {
+      name: "Pulse",
+
+      href: "/",
+    },
+
+    {
+      name: "TeraaCharge",
+
+      href: "/",
+
+      image:
+        "/teraacharge.png",
+
+      w: 90,
+
+      h: 28,
+    },
+
+    {
+      name: "TeraaMart",
+
+      href: "/",
+
+      image:
+        "/teraamartlogo.png",
+
+      w: 80,
+
+      h: 26,
+    },
+
+    {
+      name:
+        "Investors & Partners",
+
+      href: "/",
+    },
+
+    {
+      name: "Insights",
+
+      href: "/",
+    },
+
+    {
+      name: "Connect",
+
+      href: "/",
+
+      isButton: true,
+    },
   ];
+
+  // ======================================================
+  // JSX
+  // ======================================================
 
   return (
     <nav
       ref={navRef}
-      className={`fixed top-0 left-0 w-full z-50 transition-all ${isScrolled || isMobileMenuOpen
+      className={`fixed top-0 left-0 w-full z-50 transition-all ${isScrolled ||
+        isMobileMenuOpen
         ? "bg-black/90 backdrop-blur-xl shadow-lg"
         : "py-6 bg-transparent"
         }`}
     >
       <div className="flex items-center w-full px-6 justify-between md:w-fit md:mx-auto md:px-10">
 
-        <Link href="/" onClick={() => handleNavigation("Pulse")}>
+        {/* ==================================================
+            LOGO
+        ================================================== */}
+
+        <Link
+          href="/"
+          onClick={() =>
+            handleNavigation(
+              "Pulse"
+            )
+          }
+        >
           <Image
             src="/teraawatt-white.svg"
             alt="logo"
@@ -580,107 +1018,218 @@ if (videoSection) {
           />
         </Link>
 
+        {/* ==================================================
+            MOBILE MENU BUTTON
+        ================================================== */}
+
         <button
           className="md:hidden relative z-50 w-10 h-10 flex items-center justify-center"
-          onClick={() => setIsMobileMenuOpen((v) => !v)}
+          onClick={() =>
+            setIsMobileMenuOpen(
+              (v) => !v
+            )
+          }
         >
           <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
+
             <span
-              className={`block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""
+              className={`block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen
+                ? "rotate-45 translate-y-[6px]"
+                : ""
                 }`}
             />
+
             <span
-              className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : ""
+              className={`block h-[2px] w-full bg-white transition-opacity duration-300 ${isMobileMenuOpen
+                ? "opacity-0"
+                : ""
                 }`}
             />
+
             <span
-              className={`block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""
+              className={`block h-[2px] w-full bg-white transition-transform duration-300 ${isMobileMenuOpen
+                ? "-rotate-45 -translate-y-[6px]"
+                : ""
                 }`}
             />
           </div>
         </button>
 
-        <div className="hidden md:flex space-x-8 text-white">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={(e) => {
-                if (handleNavigation(item.name)) e.preventDefault();
-              }}
-              className={`relative ${active === item.name ? "opacity-100" : "opacity-60"}`}
-            >
-              {item.image ? (
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  width={item.w}
-                  height={item.h}
-                  className={`relative top-[6%] ${active === item.name ? "opacity-100" : "opacity-90"
-                    }`}
-                />
-              ) : item.isButton ? (
-                <Image src="/Contact_page/connect1.svg" alt="connect" width={70} height={48} />
-              ) : (
-                item.name
-              )}
+        {/* ==================================================
+            DESKTOP NAV
+        ================================================== */}
 
-              {!item.isButton && active === item.name && (
-                <motion.div
-                  layoutId="navbar-indicator"
-                  transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
-                  className="absolute left-0 right-0 h-[2px] bg-red-500"
-                />
-              )}
-            </Link>
-          ))}
+        <div className="hidden md:flex space-x-8 text-white">
+          {navItems.map(
+            (item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={(
+                  e
+                ) => {
+                  if (
+                    handleNavigation(
+                      item.name
+                    )
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+                className={`relative ${active ===
+                  item.name
+                  ? "opacity-100"
+                  : "opacity-60"
+                  }`}
+              >
+                {item.image ? (
+                  <Image
+                    src={
+                      item.image
+                    }
+                    alt={
+                      item.name
+                    }
+                    width={item.w}
+                    height={item.h}
+                    className={`relative top-[6%] ${active ===
+                      item.name
+                      ? "opacity-100"
+                      : "opacity-90"
+                      }`}
+                  />
+                ) : item.isButton ? (
+                  <Image
+                    src="/Contact_page/connect1.svg"
+                    alt="connect"
+                    width={70}
+                    height={48}
+                  />
+                ) : (
+                  item.name
+                )}
+
+                {!item.isButton &&
+                  active ===
+                  item.name && (
+                    <motion.div
+                      layoutId="navbar-indicator"
+                      transition={{
+                        type:
+                          "tween",
+
+                        duration:
+                          0.25,
+
+                        ease:
+                          "easeOut",
+                      }}
+                      className="absolute left-0 right-0 h-[2px] bg-red-500"
+                    />
+                  )}
+              </Link>
+            )
+          )}
         </div>
       </div>
+
+      {/* ==================================================
+          MOBILE MENU
+      ================================================== */}
 
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.25,
+            }}
             className="fixed inset-0 top-[70px] bg-black/95 backdrop-blur-2xl z-40 md:hidden flex flex-col items-center pt-8 h-screen"
           >
             <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 20, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 120, damping: 18 }}
+              initial={{
+                y: 20,
+
+                opacity: 0,
+              }}
+              animate={{
+                y: 0,
+
+                opacity: 1,
+              }}
+              exit={{
+                y: 20,
+
+                opacity: 0,
+              }}
+              transition={{
+                type:
+                  "spring",
+
+                stiffness:
+                  120,
+
+                damping:
+                  18,
+              }}
               className="w-full px-6 space-y-3"
             >
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={(e) => {
-                    if (handleNavigation(item.name)) e.preventDefault();
-                  }}
-                >
-                  <div
-                    className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active === item.name ? "bg-white/5" : "hover:bg-white/5"
-                      }`}
+              {navItems.map(
+                (item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={(
+                      e
+                    ) => {
+                      if (
+                        handleNavigation(
+                          item.name
+                        )
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
                   >
-                    <span
-                      className={`relative inline-block text-lg font-medium tracking-wide ${active === item.name ? "text-white" : "text-neutral-400"
+                    <div
+                      className={`relative flex items-center justify-between px-5 py-4 rounded-2xl transition-all ${active ===
+                        item.name
+                        ? "bg-white/5"
+                        : "hover:bg-white/5"
                         }`}
                     >
-                      {!item.isButton ? item.name : "Connect"}
+                      <span
+                        className={`relative inline-block text-lg font-medium tracking-wide ${active ===
+                          item.name
+                          ? "text-white"
+                          : "text-neutral-400"
+                          }`}
+                      >
+                        {!item.isButton
+                          ? item.name
+                          : "Connect"}
 
-                      {!item.isButton && active === item.name && (
-                        <motion.div
-                          layoutId="mobile-indicator"
-                          className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
-                        />
-                      )}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                        {!item.isButton &&
+                          active ===
+                          item.name && (
+                            <motion.div
+                              layoutId="mobile-indicator"
+                              className="absolute left-0 right-0 -bottom-1 h-[2px] bg-red-500 rounded-full"
+                            />
+                          )}
+                      </span>
+                    </div>
+                  </Link>
+                )
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -688,3 +1237,4 @@ if (videoSection) {
     </nav>
   );
 }
+

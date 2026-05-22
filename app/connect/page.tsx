@@ -53,7 +53,7 @@ export default function Connect() {
 
   return (
     <>
-      <Navbar />
+      
 
       <section className="relative overflow-hidden bg-black min-h-screen [min-height:100svh] md:min-h-[250vh]">
         <video

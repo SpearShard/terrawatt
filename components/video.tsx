@@ -1,450 +1,565 @@
 // "use client";
 
-// import { useEffect, useRef, useState } from "react";
+// import {
+//   useEffect,
+//   useRef,
+//   useState,
+// } from "react";
+
 // import { Canvas } from "@react-three/fiber";
+
 // import ScrollingCoin from "./ScrollingCoin";
-// import { gsap, ScrollTrigger } from "../app/lib/gsap";
+
+// import { ScrollTrigger } from "../app/lib/gsap";
 
 // export default function Video() {
-//   const containerRef = useRef<HTMLDivElement>(null);
+//   // ======================================================
+//   // REFS
+//   // ======================================================
 
-//   const bgVideoRef = useRef<HTMLVideoElement>(null);
-//   const fgVideoRef = useRef<HTMLVideoElement>(null);
-//   const canvasRef = useRef<HTMLCanvasElement>(null);
-//   const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
-//   const loadingFrames = useRef<Set<number>>(new Set());
-//   const [isMobile, setIsMobile] = useState(false);
+//   const containerRef =
+//     useRef<HTMLDivElement>(null);
 
-//   useEffect(() => {
-//     (window as any).__VIDEO_READY__ = false;
-//   }, []);
+//   const fgVideoRef =
+//     useRef<HTMLVideoElement>(null);
 
-//   useEffect(() => {
-//     const check = () => setIsMobile(window.innerWidth < 640);
-//     check();
-//     window.addEventListener("resize", check);
-//     return () => window.removeEventListener("resize", check);
-//   }, []);
+//   const bgVideoRef =
+//     useRef<HTMLVideoElement>(null);
 
-//   const scrollProgressRef = useRef(0);
-//   const rawProgressRef = useRef(0);
-//   const smoothProgressRef = useRef(0);
+//   const mobileImageRef =
+//     useRef<HTMLImageElement>(null);
 
-//   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+//   const scrollTriggerRef =
+//     useRef<ScrollTrigger | null>(
+//       null
+//     );
+
+//   const rawProgressRef =
+//     useRef(0);
+
+//   const smoothProgressRef =
+//     useRef(0);
+
+//   const scrollProgressRef =
+//     useRef(0);
+
+//   const lastFrameRef =
+//     useRef(-1);
+
+//   const mobileFramesRef =
+//     useRef<string[]>([]);
+
+//   // ======================================================
+//   // STATE
+//   // ======================================================
+
+//   const [isMobile, setIsMobile] =
+//     useState(false);
+
+//   // ======================================================
+//   // CONSTANTS
+//   // ======================================================
 
 //   const FG_TOTAL_FRAMES = 451;
-//   const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
-//   const MOBILE_TOTAL_FRAMES = 271;
+
+//   const FG_FRAME_MAX =
+//     FG_TOTAL_FRAMES - 1;
+
 //   const START_BG_AT_FRAME = 251;
-//   const targetProgress = 328 / FG_FRAME_MAX;
 
+//   const MOBILE_TOTAL_FRAMES = 82;
 
-//   const loadFrame = (index: number) => {
-//     if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
+//   const TARGET_PROGRESS =
+//     328 / FG_FRAME_MAX;
 
-//     loadingFrames.current.add(index);
+//   // ======================================================
+//   // MOBILE CHECK
+//   // ======================================================
 
-//     const img = new Image();
-//     img.src = `/iphoneframes/potrait_iphone/frame_${String(index + 1).padStart(5, "0")}.webp`;
-    
-
-//     img.onload = async () => {
-//       try {
-//         await img.decode();
-//       } catch { }
-
-//       loadingFrames.current.delete(index);
-//       frameCache.current.set(index, img);
-//     };
-
-//     img.onerror = () => {
-//       loadingFrames.current.delete(index);
-//     };
-//   };
-
-//   const preloadNearbyFrames = (center: number) => {
-//     const BUFFER_AHEAD = 14;
-//     const BUFFER_BEHIND = 8;
-
-//     const start = Math.max(0, center - BUFFER_BEHIND);
-//     const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
-
-//     for (let i = start; i <= end; i++) {
-//       loadFrame(i);
-//     }
-//   };
-
-//   const cleanupFarFrames = (center: number) => {
-//     const MAX_DISTANCE = 80;
-
-//     frameCache.current.forEach((_, key) => {
-//       if (Math.abs(key - center) > MAX_DISTANCE) {
-//         frameCache.current.delete(key);
-//       }
-//     });
-//   };
-
-//   // const preloadNearbyFrames = (center: number) => {
-//   //   const AHEAD = 40;
-//   //   const BEHIND = 20;
-
-//   //   for (let i = Math.max(0, center - BEHIND); i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD); i++) {
-//   //     loadFrame(i);
-//   //   }
-//   // };
-
-//   // const cleanupFarFrames = (center: number) => {
-//   //   const MAX_DISTANCE = 140;
-
-//   //   frameCache.current.forEach((_, key) => {
-//   //     if (Math.abs(key - center) > MAX_DISTANCE) {
-//   //       frameCache.current.delete(key);
-//   //     }
-//   //   });
-//   // };
-
-//   const drawFrame = (index: number) => {
-//     const canvas = canvasRef.current;
-//     const img = frameCache.current.get(index);
-//     if (!canvas || !img) return;
-
-//     const ctx = canvas.getContext("2d");
-//     if (!ctx) return;
-
-//     const dpr = window.devicePixelRatio || 1;
-//     const w = canvas.clientWidth;
-//     const h = canvas.clientHeight;
-
-//     if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-//   canvas.width = w * dpr;
-//   canvas.height = h * dpr;
-// }
-
-//     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-//     ctx.globalCompositeOperation = "copy";
-
-//     const scale = Math.max(w / img.width, h / img.height);
-//     const x = (w - img.width * scale) / 2;
-//     const y = (h - img.height * scale) / 2;
-
-//     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-//   };
-//   /* ---------------- VIDEO SETUP ---------------- */
 //   useEffect(() => {
-//     const fg = fgVideoRef.current;
-//     const bg = bgVideoRef.current;
-//     if (!fg || !bg) return;
-
-//     // Check if we need to wake (already loaded?)
-//     const wake = async (video: HTMLVideoElement) => {
-//       try {
-//         await video.play();
-//         video.pause();
-//         video.currentTime = 0;
-//       } catch (e) {
-//         // Autoplay blocked or not ready, try silencing to be safe
-//         video.currentTime = 0.1;
-//         setTimeout(() => (video.currentTime = 0), 200);
-//       }
+//     const check = () => {
+//       setIsMobile(
+//         window.innerWidth < 640
+//       );
 //     };
 
-//     const setup = (video: HTMLVideoElement, src: string) => {
-//       video.src = src;
-//       video.muted = true;
-//       video.playsInline = true;
-//       video.preload = "auto";
-//       video.crossOrigin = "anonymous";
-//       video.load();
+//     check();
 
-//       // Try to wake it when data loads
-//       video.addEventListener("loadeddata", () => wake(video), { once: true });
-//     };
+//     window.addEventListener(
+//       "resize",
+//       check
+//     );
 
-//     setup(bg, "/iphoneframes/whitetickets.mp4");
-//     if (!isMobile) {
-//       setup(fg, "/iphoneframes/androscrub.webm");
-
-//     }
-
-//     const onReady = () => {
-//       if (!(window as any).__VIDEO_READY__) {
-//         (window as any).__VIDEO_READY__ = true;
-//         window.dispatchEvent(new Event("videoReady"));
-//       }
-//     };
-
-//     let fgReady = false;
-//     let bgReady = false;
-
-//     const checkReady = () => {
-//       if (fgReady && bgReady && !(window as any).__VIDEO_READY__) {
-//         (window as any).__VIDEO_READY__ = true;
-//         window.dispatchEvent(new Event("videoReady"));
-//       }
-//     };
-
-//     fg.addEventListener("loadedmetadata", () => {
-//       fgReady = true;
-//       checkReady();
-//     });
-
-//     bg.addEventListener("loadedmetadata", () => {
-//       bgReady = true;
-//       checkReady();
-//     });
-
-//     return () => {
-//       fg.removeEventListener("loadedmetadata", onReady);
-//     };
+//     return () =>
+//       window.removeEventListener(
+//         "resize",
+//         check
+//       );
 //   }, []);
 
+//   // ======================================================
+//   // MOBILE FRAME PATHS
+//   // ======================================================
 
-//   /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */
 //   useEffect(() => {
+//     mobileFramesRef.current =
+//       Array.from(
+//         {
+//           length:
+//             MOBILE_TOTAL_FRAMES,
+//         },
 
-//     const bgVideo = bgVideoRef.current;
-//     const fgVideo = fgVideoRef.current;
+        
 
-//     if (!bgVideo || (!isMobile && !fgVideo)) return;
+//         (_, i) =>
+//           `/iphoneframes/mobile_avif_frames/frame_${String(
+//             i + 1
+//           ).padStart(3, "0")}.avif`
+//       );
 
-//     // reset smoothing when switching modes
-//     smoothProgressRef.current = 0;
-//     rawProgressRef.current = 0;
-//     scrollProgressRef.current = 0;
+//     // preload mobile images
+//     mobileFramesRef.current.forEach(
+//       (src) => {
+//         const img =
+//           new Image();
 
-//     let raf = 0;
-//     let lastTime = performance.now();
-//     let lastRender = 0;
-//     let lastFrame = -1;
-// let cleanupCounter = 0;
-
-//     // cache durations once
-//     let fgDuration = 0;
-//     let bgDuration = 0;
-
-//     const animate = (time: number) => {
-//       // hard cap ~60fps
-//       if (time - lastRender < 16) {
-//         raf = requestAnimationFrame(animate);
-//         return;
+//         img.src = src;
 //       }
-//       lastRender = time;
+//     );
 
-//       const delta = Math.min((time - lastTime) / 1000, 0.1);
-//       lastTime = time;
+//     // initial frame
+//     if (
+//       mobileImageRef.current
+//     ) {
+//       const targetFrame =
+//         Math.floor(
+//           TARGET_PROGRESS *
+//             (MOBILE_TOTAL_FRAMES -
+//               1)
+//         );
 
-//       // desktop needs foreground duration
-//       if (!isMobile && fgVideo && !fgDuration && fgVideo.duration) {
-//         fgDuration = fgVideo.duration;
-//         bgDuration = bgVideo.duration || 0;
+//       mobileImageRef.current.src =
+//         mobileFramesRef.current[
+//           targetFrame
+//         ];
 
-//         if (!(window as any).__VIDEO_READY__) {
-//           (window as any).__VIDEO_READY__ = true;
-//           window.dispatchEvent(new Event("videoReady"));
-//         }
-//       }
-
-//       // mobile only needs background duration
-//       if (isMobile && !bgDuration && bgVideo.duration) {
-//         bgDuration = bgVideo.duration;
-
-//         if (!(window as any).__VIDEO_READY__) {
-//           (window as any).__VIDEO_READY__ = true;
-//           window.dispatchEvent(new Event("videoReady"));
-//         }
-//       }
-
-//       // desktop needs video duration
-//       // mobile does NOT
-//       if (!isMobile && !fgDuration) {
-//         raf = requestAnimationFrame(animate);
-//         return;
-//       }
-
-//       // physically-smooth damping (better than lerp)
-//       const damping = 1 - Math.exp(-delta * 18);
-//       smoothProgressRef.current +=
-//         (rawProgressRef.current - smoothProgressRef.current) * damping;
-
-//       const smooth = smoothProgressRef.current;
-
-//       /* ---------- FOREGROUND ---------- */
-//       if (!isMobile && fgVideo) {
-//         const fgTargetTime = smooth * fgDuration;
-//         const fgDiff = Math.abs(fgVideo.currentTime - fgTargetTime);
-
-//         if (fgDiff > 0.03) {
-//           fgVideo.currentTime = fgTargetTime;
-//         }
-//       }
-
-//       /* ---------- BACKGROUND ---------- */
-//       const currentFgFrame = smooth * FG_FRAME_MAX;
-
-//       if (currentFgFrame >= START_BG_AT_FRAME && bgDuration) {
-//         const bgProgress =
-//           (currentFgFrame - START_BG_AT_FRAME) /
-//           (FG_FRAME_MAX - START_BG_AT_FRAME);
-
-//         const bgTargetTime = bgProgress * bgDuration;
-//         const bgDiff = Math.abs(bgVideo.currentTime - bgTargetTime);
-
-//         if (bgDiff > 0.03) {
-//           bgVideo.currentTime = bgTargetTime;
-//         }
-//       } else if (bgVideo.currentTime > 0.03) {
-//         bgVideo.currentTime = 0;
-//       }
-
-//       scrollProgressRef.current = smooth;
-
-//       if (isMobile) {
-//   const frame = Math.floor(smooth * (MOBILE_TOTAL_FRAMES - 1));
-
-//   if (frame !== lastFrame) {
-//     preloadNearbyFrames(frame);
-
-//     cleanupCounter++;
-//     if (cleanupCounter > 10) {
-//       cleanupFarFrames(frame);
-//       cleanupCounter = 0;
+//       lastFrameRef.current =
+//         targetFrame;
 //     }
+//   }, []);
 
-//     drawFrame(frame);
-//     lastFrame = frame;
-//   }
-// }
+//   // ======================================================
+//   // DESKTOP VIDEO SETUP
+//   // ======================================================
 
-//       raf = requestAnimationFrame(animate);
+//   useEffect(() => {
+//     if (isMobile) return;
+
+//     const fg =
+//       fgVideoRef.current;
+
+//     const bg =
+//       bgVideoRef.current;
+
+//     if (!fg || !bg) return;
+
+//     const setup = (
+//       video: HTMLVideoElement,
+//       src: string
+//     ) => {
+//       video.src = src;
+
+//       video.muted = true;
+
+//       video.playsInline = true;
+
+//       video.preload = "auto";
+
+//       video.load();
 //     };
 
-//     raf = requestAnimationFrame(animate);
-//     return () => cancelAnimationFrame(raf);
+//     setup(
+//       fg,
+//       "/iphoneframes/androscrub.webm"
+//     );
+
+//     setup(
+//       bg,
+//       "/iphoneframes/whitetickets.mp4"
+//     );
 //   }, [isMobile]);
 
-//   /* ---------------- SCROLLTRIGGER ---------------- */
+//   // ======================================================
+//   // RAF LOOP
+//   // ======================================================
+
 //   useEffect(() => {
-//     if (!containerRef.current) return;
+//     let raf = 0;
 
-//     if (scrollTriggerRef.current) scrollTriggerRef.current.kill();
+//     let lastTime =
+//       performance.now();
 
-//     const st = ScrollTrigger.create({
-//       trigger: containerRef.current,
-//       start: "top top",
-//       end: "+=400%",
-//       pin: true,
-//       anticipatePin: 1,
-//       onUpdate: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
-//       onRefresh: (self) => {
-//         rawProgressRef.current = self.progress;
-//       },
-//     });
+//     let fgDuration = 0;
 
-//     scrollTriggerRef.current = st;
+//     let bgDuration = 0;
 
-//     window.dispatchEvent(new Event("videoScrollReady"));
+//     const fg =
+//       fgVideoRef.current;
+
+//     const bg =
+//       bgVideoRef.current;
+
+//     const animate = (
+//       time: number
+//     ) => {
+//       const delta = Math.min(
+//         (time - lastTime) / 1000,
+//         0.1
+//       );
+
+//       lastTime = time;
+
+//       const damping =
+//         1 -
+//         Math.exp(-delta * 12);
+
+//       smoothProgressRef.current +=
+//         (rawProgressRef.current -
+//           smoothProgressRef.current) *
+//         damping;
+
+//       const smooth =
+//         smoothProgressRef.current;
+
+//       scrollProgressRef.current =
+//         smooth;
+
+//       // ==================================================
+//       // MOBILE IMAGE SEQUENCE
+//       // ==================================================
+
+//       if (
+//         isMobile &&
+//         mobileImageRef.current
+//       ) {
+//         const frame =
+//           Math.floor(
+//             smooth *
+//               (MOBILE_TOTAL_FRAMES -
+//                 1)
+//           );
+
+//         if (
+//           frame !==
+//           lastFrameRef.current
+//         ) {
+//           lastFrameRef.current =
+//             frame;
+
+//           mobileImageRef.current.src =
+//             mobileFramesRef.current[
+//               frame
+//             ];
+//         }
+//       }
+
+//       // ==================================================
+//       // DESKTOP VIDEO SYSTEM
+//       // ==================================================
+
+//       else if (
+//         !isMobile &&
+//         fg &&
+//         bg
+//       ) {
+//         if (
+//           !fgDuration &&
+//           fg.duration
+//         ) {
+//           fgDuration =
+//             fg.duration;
+
+//           bgDuration =
+//             bg.duration || 0;
+//         }
+
+//         if (fgDuration) {
+//           const fgTarget =
+//             smooth *
+//             fgDuration;
+
+//           if (
+//             Math.abs(
+//               fg.currentTime -
+//                 fgTarget
+//             ) > 0.02
+//           ) {
+//             fg.currentTime =
+//               fgTarget;
+//           }
+
+//           const currentFgFrame =
+//             smooth *
+//             FG_FRAME_MAX;
+
+//           if (
+//             currentFgFrame >=
+//               START_BG_AT_FRAME &&
+//             bgDuration
+//           ) {
+//             const bgProgress =
+//               (currentFgFrame -
+//                 START_BG_AT_FRAME) /
+//               (FG_FRAME_MAX -
+//                 START_BG_AT_FRAME);
+
+//             const bgTarget =
+//               bgProgress *
+//               bgDuration;
+
+//             if (
+//               Math.abs(
+//                 bg.currentTime -
+//                   bgTarget
+//               ) > 0.02
+//             ) {
+//               bg.currentTime =
+//                 bgTarget;
+//             }
+//           }
+//         }
+//       }
+
+//       raf =
+//         requestAnimationFrame(
+//           animate
+//         );
+//     };
+
+//     raf =
+//       requestAnimationFrame(animate);
+
+//     return () =>
+//       cancelAnimationFrame(raf);
+//   }, [isMobile]);
+
+//   // ======================================================
+//   // SCROLLTRIGGER
+//   // ======================================================
+
+//   useEffect(() => {
+//     if (!containerRef.current)
+//       return;
+
+//     const st =
+//       ScrollTrigger.create({
+//         trigger:
+//           containerRef.current,
+
+//         start: "top top",
+
+//         end: "+=400%",
+
+//         pin: true,
+
+//         anticipatePin: 1,
+
+//         onUpdate: (self) => {
+//           rawProgressRef.current =
+//             self.progress;
+//         },
+//       });
+
+//     scrollTriggerRef.current =
+//       st;
+
+//     window.dispatchEvent(
+//       new Event(
+//         "videoScrollReady"
+//       )
+//     );
 
 //     return () => st.kill();
 //   }, []);
 
-//   /* ---------------- EXTERNAL JUMP ---------------- */
+//   // ======================================================
+//   // EXTERNAL JUMP
+//   // ======================================================
+
 //   useEffect(() => {
 //     const jump = () => {
-//       const st = scrollTriggerRef.current;
+//       const st =
+//         scrollTriggerRef.current;
+
 //       if (!st) return;
 
-//       ScrollTrigger.refresh();
+//       const scrollPos =
+//         st.start +
+//         TARGET_PROGRESS *
+//           (st.end - st.start);
 
-//       requestAnimationFrame(() => {
-//         const scrollPos = st.start + targetProgress * (st.end - st.start);
-//         window.scrollTo({ top: scrollPos, behavior: "smooth" });
-//         rawProgressRef.current = targetProgress;
+//       rawProgressRef.current =
+//         TARGET_PROGRESS;
+
+//       smoothProgressRef.current =
+//         TARGET_PROGRESS;
+
+//       scrollProgressRef.current =
+//         TARGET_PROGRESS;
+
+//       // mobile exact frame
+//       if (
+//         isMobile &&
+//         mobileImageRef.current
+//       ) {
+//         const targetFrame =
+//           Math.floor(
+//             TARGET_PROGRESS *
+//               (MOBILE_TOTAL_FRAMES -
+//                 1)
+//           );
+
+//         mobileImageRef.current.src =
+//           mobileFramesRef.current[
+//             targetFrame
+//           ];
+
+//         lastFrameRef.current =
+//           targetFrame;
+//       }
+
+//       window.scrollTo({
+//         top: scrollPos,
+//         behavior: "auto",
 //       });
 //     };
 
 //     const handler = () => {
-//       // If video is ready, jump immediately
-//       if ((window as any).__VIDEO_READY__) {
-//         jump();
-//       } else {
-//         // Otherwise wait for ready event (handled in page.tsx mostly, but safety here)
-//         const onReady = () => {
-//           jump();
-//           window.removeEventListener("videoReady", onReady);
-//         };
-//         window.addEventListener("videoReady", onReady);
-//       }
+//       jump();
 //     };
 
-//     window.addEventListener("triggerVideoJump", handler);
+//     window.addEventListener(
+//       "triggerVideoJump",
+//       handler
+//     );
 
-//     // Initial check in case it's pending
-//     if ((window as any).__TERAAMART_PENDING__) {
+//     if (
+//       (window as any)
+//         .__TERAAMART_PENDING__
+//     ) {
 //       handler();
-//       (window as any).__TERAAMART_PENDING__ = false;
+
+//       (
+//         window as any
+//       ).__TERAAMART_PENDING__ =
+//         false;
 //     }
 
 //     return () => {
-//       window.removeEventListener("triggerVideoJump", handler);
+//       window.removeEventListener(
+//         "triggerVideoJump",
+//         handler
+//       );
 //     };
-//   }, []);
-
-//   useEffect(() => {
-//   if (!isMobile) return;
-
-//   for (let i = 0; i < 25; i++) {
-//     loadFrame(i);
-//   }
-
-//     const wait = () => {
-//       if (frameCache.current.has(0)) {
-//         drawFrame(0);
-//       } else {
-//         requestAnimationFrame(wait);
-//       }
-//     };
-
-//     wait();
 //   }, [isMobile]);
 
+//   // ======================================================
+//   // JSX
+//   // ======================================================
 
-//   /* ---------------- JSX ---------------- */
 //   return (
-//     <div ref={containerRef} className="relative w-full bg-black">
-//       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-//         {/* BACKGROUND */}
-//         <video
-//           ref={bgVideoRef}
-//           className="absolute inset-0 w-full h-full object-cover"
-//           style={{ pointerEvents: "none" }}
-//           playsInline
-//           muted
-//         />
+//     <div
+//       ref={containerRef}
+//       className="relative w-full bg-black"
+//     >
+//       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
 
-//         {/* FOREGROUND */}
+//         {/* ==================================================
+//             MOBILE IMAGE SEQUENCE
+//         ================================================== */}
+
 //         {isMobile ? (
-//           <canvas
-//             ref={canvasRef}
-//             className=" z-10 w-full h-full pointer-events-none"
-//           />
-//         ) : (
-//           <video
-//             ref={fgVideoRef}
-//             className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
-//             style={{ imageRendering: "crisp-edges" }}
-//             playsInline
-//             muted
-//           />
-//         )}
+//           <>
+//             <img
+//               ref={mobileImageRef}
+//               alt="mobile-frame"
+//               className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+//               draggable={false}
+//             />
 
-//         {/* 3D COIN */}
-//         <div className="absolute inset-0 z-20 pointer-events-none">
-//           <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
-//             <ScrollingCoin progressRef={scrollProgressRef} />
-//           </Canvas>
-//         </div>
+//             {/* COIN */}
+
+//             <div className="absolute inset-0 z-20 pointer-events-none">
+//               <Canvas
+//                 camera={{
+//                   position: [
+//                     0,
+//                     0,
+//                     2.5,
+//                   ],
+
+//                   near: 0.001,
+
+//                   far: 1000,
+
+//                   fov: 50,
+//                 }}
+//               >
+//                 <ScrollingCoin
+//                   progressRef={
+//                     scrollProgressRef
+//                   }
+//                 />
+//               </Canvas>
+//             </div>
+//           </>
+//         ) : (
+//           <>
+//             {/* BG VIDEO */}
+
+//             <video
+//               ref={bgVideoRef}
+//               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+//               playsInline
+//               muted
+//             />
+
+//             {/* FG VIDEO */}
+
+//             <video
+//               ref={fgVideoRef}
+//               className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
+//               playsInline
+//               muted
+//             />
+
+//             {/* COIN */}
+
+//             <div className="absolute inset-0 z-20 pointer-events-none">
+//               <Canvas
+//                 camera={{
+//                   position: [
+//                     0,
+//                     0,
+//                     2.5,
+//                   ],
+
+//                   near: 0.001,
+
+//                   far: 1000,
+
+//                   fov: 50,
+//                 }}
+//               >
+//                 <ScrollingCoin
+//                   progressRef={
+//                     scrollProgressRef
+//                   }
+//                 />
+//               </Canvas>
+//             </div>
+//           </>
+//         )}
 //       </div>
 //     </div>
 //   );
@@ -462,469 +577,785 @@
 
 
 
+
+
+
+
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
+
 import { Canvas } from "@react-three/fiber";
+
 import ScrollingCoin from "./ScrollingCoin";
-import { gsap, ScrollTrigger } from "../app/lib/gsap";
 
-export default function Video() {
-  const containerRef = useRef<HTMLDivElement>(null);
+import { ScrollTrigger } from "../app/lib/gsap";
 
-  const bgVideoRef = useRef<HTMLVideoElement>(null);
-  const fgVideoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const frameCache = useRef<Map<number, HTMLImageElement>>(new Map());
-  const loadingFrames = useRef<Set<number>>(new Set());
-  const [isMobile, setIsMobile] = useState(false);
+// ======================================================
+// TYPES
+// ======================================================
 
-  useEffect(() => {
-    (window as any).__VIDEO_READY__ = false;
-  }, []);
+type FrameCache = Map<
+  number,
+  HTMLImageElement
+>;
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+// ======================================================
+// COMPONENT
+// ======================================================
 
-  const scrollProgressRef = useRef(0);
-  const rawProgressRef = useRef(0);
-  const smoothProgressRef = useRef(0);
+export default function DashFrame() {
+  // ======================================================
+  // REFS
+  // ======================================================
 
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const containerRef =
+    useRef<HTMLDivElement>(null);
+
+  const fgVideoRef =
+    useRef<HTMLVideoElement>(null);
+
+  const bgVideoRef =
+    useRef<HTMLVideoElement>(null);
+
+  const mobileImageRef =
+    useRef<HTMLImageElement>(null);
+
+  const scrollTriggerRef =
+    useRef<ScrollTrigger | null>(
+      null
+    );
+
+  const rawProgressRef =
+    useRef(0);
+
+  const smoothProgressRef =
+    useRef(0);
+
+  const scrollProgressRef =
+    useRef(0);
+
+  const rafRef =
+    useRef<number>(0);
+
+  const lastFrameRef =
+    useRef(-1);
+
+  const frameCacheRef =
+    useRef<FrameCache>(
+      new Map()
+    );
+
+  // ======================================================
+  // STATE
+  // ======================================================
+
+  const [isMobile, setIsMobile] =
+    useState(false);
+
+  // ======================================================
+  // CONSTANTS
+  // ======================================================
 
   const FG_TOTAL_FRAMES = 451;
-  const FG_FRAME_MAX = FG_TOTAL_FRAMES - 1;
-  const MOBILE_TOTAL_FRAMES = 271;
+
+  const FG_FRAME_MAX =
+    FG_TOTAL_FRAMES - 1;
+
   const START_BG_AT_FRAME = 251;
-  const targetProgress = 328 / FG_FRAME_MAX;
 
+  const MOBILE_TOTAL_FRAMES = 158;
 
-  const loadFrame = (index: number) => {
-    if (frameCache.current.has(index) || loadingFrames.current.has(index)) return;
+  const TARGET_PROGRESS =
+    328 / FG_FRAME_MAX;
 
-    loadingFrames.current.add(index);
+  // ======================================================
+  // MOBILE FRAME PATHS
+  // ======================================================
 
-    const img = new Image();
-    img.decoding = "async";
-    img.src = `/iphoneframes/potrait_iphone/frame_${String(index + 1).padStart(5, "0")}.webp`;
-    
+  const mobileFrames =
+    useMemo(
+      () =>
+        Array.from(
+          {
+            length:
+              MOBILE_TOTAL_FRAMES,
+          },
 
-    img.onload = async () => {
-      try {
-        await img.decode();
-      } catch { }
+          (_, i) =>
+            `/iphoneframes/phoneavif/frame_${String(
+              i + 1
+            ).padStart(
+              3,
+              "0"
+            )}.avif`
+        ),
 
-      loadingFrames.current.delete(index);
-      frameCache.current.set(index, img);
-    };
+      []
+    );
 
-    img.onerror = () => {
-      loadingFrames.current.delete(index);
-    };
-  };
+  // ======================================================
+  // MOBILE DETECTION
+  // ======================================================
 
-  const preloadNearbyFrames = (center: number) => {
-    const BUFFER_AHEAD = 14;
-    const BUFFER_BEHIND = 8;
-
-    const start = Math.max(0, center - BUFFER_BEHIND);
-    const end = Math.min(MOBILE_TOTAL_FRAMES - 1, center + BUFFER_AHEAD);
-
-    for (let i = start; i <= end; i++) {
-      loadFrame(i);
-    }
-  };
-
-  const cleanupFarFrames = (center: number) => {
-    const MAX_DISTANCE = 80;
-
-    frameCache.current.forEach((_, key) => {
-      if (Math.abs(key - center) > MAX_DISTANCE) {
-        frameCache.current.delete(key);
-      }
-    });
-  };
-
-  // const preloadNearbyFrames = (center: number) => {
-  //   const AHEAD = 40;
-  //   const BEHIND = 20;
-
-  //   for (let i = Math.max(0, center - BEHIND); i <= Math.min(MOBILE_TOTAL_FRAMES - 1, center + AHEAD); i++) {
-  //     loadFrame(i);
-  //   }
-  // };
-
-  // const cleanupFarFrames = (center: number) => {
-  //   const MAX_DISTANCE = 140;
-
-  //   frameCache.current.forEach((_, key) => {
-  //     if (Math.abs(key - center) > MAX_DISTANCE) {
-  //       frameCache.current.delete(key);
-  //     }
-  //   });
-  // };
-
-  const drawFrame = (index: number) => {
-    const canvas = canvasRef.current;
-    const img = frameCache.current.get(index);
-    if (!canvas || !img) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-
-    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-  canvas.width = w * dpr;
-  canvas.height = h * dpr;
-}
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.globalCompositeOperation = "copy";
-
-    const scale = Math.max(w / img.width, h / img.height);
-    const x = (w - img.width * scale) / 2;
-    const y = (h - img.height * scale) / 2;
-
-    ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-  };
-  /* ---------------- VIDEO SETUP ---------------- */
   useEffect(() => {
-    const fg = fgVideoRef.current;
-    const bg = bgVideoRef.current;
-    const isMobileViewport = window.innerWidth < 640;
-    if (!bg || (!isMobileViewport && !fg)) return;
-
-    // Check if we need to wake (already loaded?)
-    const wake = async (video: HTMLVideoElement) => {
-      try {
-        await video.play();
-        video.pause();
-        video.currentTime = 0;
-      } catch (e) {
-        // Autoplay blocked or not ready, try silencing to be safe
-        video.currentTime = 0.1;
-        setTimeout(() => (video.currentTime = 0), 200);
-      }
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 640
+      );
     };
 
-    const setup = (video: HTMLVideoElement, src: string) => {
-      video.src = src;
-      video.muted = true;
-      video.playsInline = true;
-      video.preload = "auto";
-      video.crossOrigin = "anonymous";
-      video.load();
+    check();
 
-      // Try to wake it when data loads
-      video.addEventListener("loadeddata", () => wake(video), { once: true });
-    };
+    window.addEventListener(
+      "resize",
+      check
+    );
 
-    setup(bg, "/iphoneframes/whitetickets.mp4");
-    if (!isMobileViewport && fg) {
-      setup(fg, "/iphoneframes/androscrub.webm");
-
-    }
-
-    const markReady = () => {
-      if (!(window as any).__VIDEO_READY__) {
-        (window as any).__VIDEO_READY__ = true;
-        window.dispatchEvent(new Event("videoReady"));
-      }
-    };
-
-    let fgReady = isMobileViewport;
-    let bgReady = false;
-
-    const checkReady = () => {
-      if (fgReady && bgReady) markReady();
-    };
-
-    const onFgMetadata = () => {
-      fgReady = true;
-      checkReady();
-    };
-
-    const onBgMetadata = () => {
-      bgReady = true;
-      checkReady();
-    };
-
-    if (!isMobileViewport && fg) {
-      fg.addEventListener("loadedmetadata", onFgMetadata);
-    }
-    bg.addEventListener("loadedmetadata", onBgMetadata);
-
-    return () => {
-      if (fg) {
-        fg.removeEventListener("loadedmetadata", onFgMetadata);
-      }
-      bg.removeEventListener("loadedmetadata", onBgMetadata);
-    };
+    return () =>
+      window.removeEventListener(
+        "resize",
+        check
+      );
   }, []);
 
+  // ======================================================
+  // MOBILE PRELOAD
+  // ======================================================
 
-  /* ---------------- ULTRA OPTIMIZED RAF LOOP ---------------- */
   useEffect(() => {
+    if (!isMobile) return;
 
-    const bgVideo = bgVideoRef.current;
-    const fgVideo = fgVideoRef.current;
+    // ============================================
+    // PRELOAD ONLY IMPORTANT FRAMES
+    // ============================================
 
-    if (!bgVideo || (!isMobile && !fgVideo)) return;
+    const importantFrames = [
+      0,
 
-    // reset smoothing when switching modes
-    smoothProgressRef.current = 0;
-    rawProgressRef.current = 0;
-    scrollProgressRef.current = 0;
+      Math.floor(
+        0.205 *
+          (MOBILE_TOTAL_FRAMES -
+            1)
+      ),
 
-    let raf = 0;
-    let lastTime = performance.now();
-    let lastRender = 0;
-    let lastFrame = -1;
-let cleanupCounter = 0;
+      Math.floor(
+        TARGET_PROGRESS *
+          (MOBILE_TOTAL_FRAMES -
+            1)
+      ),
+    ];
 
-    // cache durations once
-    let fgDuration = 0;
-    let bgDuration = 0;
-
-    const animate = (time: number) => {
-      // hard cap ~60fps for consistency
-      if (time - lastRender < 16) {
-        raf = requestAnimationFrame(animate);
-        return;
-      }
-      lastRender = time;
-
-      const delta = Math.min((time - lastTime) / 1000, 0.1);
-      lastTime = time;
-
-      // desktop needs foreground duration
-      if (!isMobile && fgVideo && !fgDuration && fgVideo.duration) {
-        fgDuration = fgVideo.duration;
-        bgDuration = bgVideo.duration || 0;
-
-        if (!(window as any).__VIDEO_READY__) {
-          (window as any).__VIDEO_READY__ = true;
-          window.dispatchEvent(new Event("videoReady"));
+    importantFrames.forEach(
+      (frameIndex) => {
+        if (
+          frameCacheRef.current.has(
+            frameIndex
+          )
+        ) {
+          return;
         }
+
+        const img =
+          new Image();
+
+        img.decoding = "async";
+
+        img.loading = "eager";
+
+        img.src =
+          mobileFrames[
+            frameIndex
+          ];
+
+        frameCacheRef.current.set(
+          frameIndex,
+          img
+        );
       }
+    );
 
-      // mobile only needs background duration
-      if (isMobile && !bgDuration && bgVideo.duration) {
-        bgDuration = bgVideo.duration;
+    // ============================================
+    // INITIAL FRAME
+    // ============================================
 
-        if (!(window as any).__VIDEO_READY__) {
-          (window as any).__VIDEO_READY__ = true;
-          window.dispatchEvent(new Event("videoReady"));
-        }
+    const initialFrame =
+      Math.floor(
+        TARGET_PROGRESS *
+          (MOBILE_TOTAL_FRAMES -
+            1)
+      );
+
+    const initialImg =
+      new Image();
+
+    initialImg.decoding =
+      "async";
+
+    initialImg.loading =
+      "eager";
+
+    initialImg.src =
+      mobileFrames[
+        initialFrame
+      ];
+
+    initialImg.onload = () => {
+      if (
+        mobileImageRef.current
+      ) {
+        mobileImageRef.current.src =
+          initialImg.src;
+
+        lastFrameRef.current =
+          initialFrame;
       }
+    };
+  }, [
+    isMobile,
+    mobileFrames,
+  ]);
 
-      // desktop needs video duration
-      // mobile does NOT
-      if (!isMobile && !fgDuration) {
-        raf = requestAnimationFrame(animate);
-        return;
-      }
+  // ======================================================
+  // DESKTOP VIDEO SETUP
+  // ======================================================
 
-      // Optimized damping for better responsiveness
-      // Reduced from 18 to 12 for more immediate response
-      const damping = 1 - Math.exp(-delta * 12);
-      smoothProgressRef.current +=
-        (rawProgressRef.current - smoothProgressRef.current) * damping;
+  useEffect(() => {
+    if (isMobile) return;
 
-      const smooth = smoothProgressRef.current;
+    const fg =
+      fgVideoRef.current;
 
-      /* ---------- FOREGROUND ---------- */
-      if (!isMobile && fgVideo) {
-        const fgTargetTime = smooth * fgDuration;
-        const fgDiff = Math.abs(fgVideo.currentTime - fgTargetTime);
+    const bg =
+      bgVideoRef.current;
 
-        // Reduced threshold for more frequent updates
-        if (fgDiff > 0.02) {
-          fgVideo.currentTime = fgTargetTime;
-        }
-      }
+    if (!fg || !bg) return;
 
-      /* ---------- BACKGROUND ---------- */
-      const currentFgFrame = smooth * FG_FRAME_MAX;
+    const setupVideo = (
+      video: HTMLVideoElement,
+      src: string
+    ) => {
+      video.src = src;
 
-      if (currentFgFrame >= START_BG_AT_FRAME && bgDuration) {
-        const bgProgress =
-          (currentFgFrame - START_BG_AT_FRAME) /
-          (FG_FRAME_MAX - START_BG_AT_FRAME);
+      video.muted = true;
 
-        const bgTargetTime = bgProgress * bgDuration;
-        const bgDiff = Math.abs(bgVideo.currentTime - bgTargetTime);
+      video.playsInline = true;
 
-        // Reduced threshold for more frequent updates
-        if (bgDiff > 0.02) {
-          bgVideo.currentTime = bgTargetTime;
-        }
-      } else if (bgVideo.currentTime > 0.02) {
-        bgVideo.currentTime = 0;
-      }
+      video.preload = "auto";
 
-      scrollProgressRef.current = smooth;
-
-      if (isMobile) {
-        const frame = Math.floor(smooth * (MOBILE_TOTAL_FRAMES - 1));
-
-        if (frame !== lastFrame) {
-          // Optimized preloading - look ahead less to reduce memory pressure
-          preloadNearbyFrames(frame);
-
-          cleanupCounter++;
-          // Reduced cleanup frequency to reduce stalls
-          if (cleanupCounter > 15) {
-            cleanupFarFrames(frame);
-            cleanupCounter = 0;
-          }
-
-          drawFrame(frame);
-          lastFrame = frame;
-        }
-      }
-
-      raf = requestAnimationFrame(animate);
+      video.load();
     };
 
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
+    setupVideo(
+      fg,
+      "/iphoneframes/androscrub.webm"
+    );
+
+    setupVideo(
+      bg,
+      "/iphoneframes/whitetickets.mp4"
+    );
+
+    window.dispatchEvent(
+      new Event(
+        "videoReady"
+      )
+    );
   }, [isMobile]);
 
-  /* ---------------- SCROLLTRIGGER ---------------- */
+  // ======================================================
+  // FRAME RENDER
+  // ======================================================
+
+  const renderMobileFrame = (
+    frame: number
+  ) => {
+    if (
+      !mobileImageRef.current
+    ) {
+      return;
+    }
+
+    if (
+      frame ===
+      lastFrameRef.current
+    ) {
+      return;
+    }
+
+    lastFrameRef.current =
+      frame;
+
+    // ============================================
+    // USE CACHE IF AVAILABLE
+    // ============================================
+
+    const cached =
+      frameCacheRef.current.get(
+        frame
+      );
+
+    if (
+      cached &&
+      cached.complete
+    ) {
+      mobileImageRef.current.src =
+        cached.src;
+
+      return;
+    }
+
+    // ============================================
+    // LOAD FRAME
+    // ============================================
+
+    const img =
+      new Image();
+
+    img.decoding = "async";
+
+    img.loading = "eager";
+
+    img.src =
+      mobileFrames[frame];
+
+    frameCacheRef.current.set(
+      frame,
+      img
+    );
+
+    img.onload = () => {
+      if (
+        mobileImageRef.current
+      ) {
+        mobileImageRef.current.src =
+          img.src;
+      }
+    };
+
+    // ============================================
+    // PRELOAD NEIGHBOR FRAMES
+    // ============================================
+
+    for (
+      let i = frame + 1;
+      i <= frame + 4;
+      i++
+    ) {
+      if (
+        i >=
+        MOBILE_TOTAL_FRAMES
+      ) {
+        continue;
+      }
+
+      if (
+        frameCacheRef.current.has(
+          i
+        )
+      ) {
+        continue;
+      }
+
+      const preload =
+        new Image();
+
+      preload.decoding =
+        "async";
+
+      preload.loading =
+        "lazy";
+
+      preload.src =
+        mobileFrames[i];
+
+      frameCacheRef.current.set(
+        i,
+        preload
+      );
+    }
+  };
+
+  // ======================================================
+  // RAF LOOP
+  // ======================================================
+
   useEffect(() => {
-    if (!containerRef.current) return;
+    let lastTime =
+      performance.now();
 
-    if (scrollTriggerRef.current) scrollTriggerRef.current.kill();
+    let fgDuration = 0;
 
-    const st = ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: "top top",
-      end: "+=400%",
-      pin: true,
-      anticipatePin: 1,
-      onUpdate: (self) => {
-        rawProgressRef.current = self.progress;
-      },
-      onRefresh: (self) => {
-        rawProgressRef.current = self.progress;
-      },
-    });
+    let bgDuration = 0;
 
-    scrollTriggerRef.current = st;
+    const fg =
+      fgVideoRef.current;
 
-    window.dispatchEvent(new Event("videoScrollReady"));
+    const bg =
+      bgVideoRef.current;
 
-    return () => st.kill();
+    const animate = (
+      time: number
+    ) => {
+      const delta = Math.min(
+        (time - lastTime) /
+          1000,
+
+        0.1
+      );
+
+      lastTime = time;
+
+      // ============================================
+      // SMOOTHING
+      // ============================================
+
+      const damping =
+        1 -
+        Math.exp(
+          -delta * 12
+        );
+
+      smoothProgressRef.current +=
+        (rawProgressRef.current -
+          smoothProgressRef.current) *
+        damping;
+
+      const smooth =
+        smoothProgressRef.current;
+
+      scrollProgressRef.current =
+        smooth;
+
+      // ============================================
+      // MOBILE
+      // ============================================
+
+      if (isMobile) {
+        const frame =
+          Math.floor(
+            smooth *
+              (MOBILE_TOTAL_FRAMES -
+                1)
+          );
+
+        renderMobileFrame(
+          frame
+        );
+      }
+
+      // ============================================
+      // DESKTOP
+      // ============================================
+
+      else if (
+        fg &&
+        bg
+      ) {
+        if (
+          !fgDuration &&
+          fg.duration
+        ) {
+          fgDuration =
+            fg.duration;
+
+          bgDuration =
+            bg.duration || 0;
+        }
+
+        if (fgDuration) {
+          const fgTarget =
+            smooth *
+            fgDuration;
+
+          if (
+            Math.abs(
+              fg.currentTime -
+                fgTarget
+            ) > 0.02
+          ) {
+            fg.currentTime =
+              fgTarget;
+          }
+
+          const currentFgFrame =
+            smooth *
+            FG_FRAME_MAX;
+
+          if (
+            currentFgFrame >=
+              START_BG_AT_FRAME &&
+            bgDuration
+          ) {
+            const bgProgress =
+              (currentFgFrame -
+                START_BG_AT_FRAME) /
+              (FG_FRAME_MAX -
+                START_BG_AT_FRAME);
+
+            const bgTarget =
+              bgProgress *
+              bgDuration;
+
+            if (
+              Math.abs(
+                bg.currentTime -
+                  bgTarget
+              ) > 0.02
+            ) {
+              bg.currentTime =
+                bgTarget;
+            }
+          }
+        }
+      }
+
+      rafRef.current =
+        requestAnimationFrame(
+          animate
+        );
+    };
+
+    rafRef.current =
+      requestAnimationFrame(
+        animate
+      );
+
+    return () =>
+      cancelAnimationFrame(
+        rafRef.current
+      );
+  }, [isMobile]);
+
+  // ======================================================
+  // SCROLLTRIGGER
+  // ======================================================
+
+  useEffect(() => {
+    if (!containerRef.current)
+      return;
+
+    const st =
+      ScrollTrigger.create({
+        trigger:
+          containerRef.current,
+
+        start: "top top",
+
+        end: "+=400%",
+
+        pin: true,
+
+        anticipatePin: 1,
+
+        onUpdate: (self) => {
+          rawProgressRef.current =
+            self.progress;
+        },
+      });
+
+    scrollTriggerRef.current =
+      st;
+
+    window.dispatchEvent(
+      new Event(
+        "videoScrollReady"
+      )
+    );
+
+    return () => {
+      st.kill();
+    };
   }, []);
 
-  /* ---------------- EXTERNAL JUMP ---------------- */
+  // ======================================================
+  // EXTERNAL JUMP
+  // ======================================================
+
   useEffect(() => {
     const jump = () => {
-      const st = scrollTriggerRef.current;
+      const st =
+        scrollTriggerRef.current;
+
       if (!st) return;
 
-      ScrollTrigger.refresh();
+      const scrollPos =
+        st.start +
+        TARGET_PROGRESS *
+          (st.end -
+            st.start);
 
-      requestAnimationFrame(() => {
-        const scrollPos = st.start + targetProgress * (st.end - st.start);
-        window.scrollTo({ top: scrollPos, behavior: "smooth" });
-        rawProgressRef.current = targetProgress;
+      rawProgressRef.current =
+        TARGET_PROGRESS;
+
+      smoothProgressRef.current =
+        TARGET_PROGRESS;
+
+      scrollProgressRef.current =
+        TARGET_PROGRESS;
+
+      // ============================================
+      // MOBILE EXACT FRAME
+      // ============================================
+
+      if (isMobile) {
+        const targetFrame =
+          Math.floor(
+            TARGET_PROGRESS *
+              (MOBILE_TOTAL_FRAMES -
+                1)
+          );
+
+        renderMobileFrame(
+          targetFrame
+        );
+      }
+
+      window.scrollTo({
+        top: scrollPos,
+
+        behavior: "auto",
       });
     };
 
-    const handler = () => {
-      // If video is ready, jump immediately
-      if ((window as any).__VIDEO_READY__) {
-        jump();
-      } else {
-        // Otherwise wait for ready event (handled in page.tsx mostly, but safety here)
-        const onReady = () => {
-          jump();
-          window.removeEventListener("videoReady", onReady);
-        };
-        window.addEventListener("videoReady", onReady);
-      }
-    };
-
-    window.addEventListener("triggerVideoJump", handler);
-
-    // Initial check in case it's pending
-    if ((window as any).__TERAAMART_PENDING__) {
-      handler();
-      (window as any).__TERAAMART_PENDING__ = false;
-    }
+    window.addEventListener(
+      "triggerVideoJump",
+      jump
+    );
 
     return () => {
-      window.removeEventListener("triggerVideoJump", handler);
+      window.removeEventListener(
+        "triggerVideoJump",
+        jump
+      );
     };
-  }, []);
-
-  useEffect(() => {
-  if (!isMobile) return;
-
-  for (let i = 0; i < 25; i++) {
-    loadFrame(i);
-  }
-
-    const wait = () => {
-      if (frameCache.current.has(0)) {
-        drawFrame(0);
-      } else {
-        requestAnimationFrame(wait);
-      }
-    };
-
-    wait();
   }, [isMobile]);
 
+  // ======================================================
+  // JSX
+  // ======================================================
 
-  /* ---------------- JSX ---------------- */
   return (
-    <div ref={containerRef} className="relative w-full bg-black">
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
-        {/* BACKGROUND */}
-        <video
-          ref={bgVideoRef}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ pointerEvents: "none" }}
-          playsInline
-          muted
-        />
+    <div
+      ref={containerRef}
+      className="relative w-full bg-black"
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
 
-        {/* FOREGROUND */}
+        {/* ==================================================
+            MOBILE
+        ================================================== */}
+
         {isMobile ? (
-          <canvas
-            ref={canvasRef}
-            className=" z-10 w-full h-full pointer-events-none"
-          />
-        ) : (
-          <video
-            ref={fgVideoRef}
-            className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
-            style={{ imageRendering: "crisp-edges" }}
-            playsInline
-            muted
-          />
-        )}
+          <>
+            <img
+              ref={mobileImageRef}
+              alt="mobile-frame"
+              draggable={false}
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+              style={{
+                imageRendering:
+                  "auto",
+              }}
+            />
 
-        {/* 3D COIN */}
-        <div className="absolute inset-0 z-20 pointer-events-none">
-          <Canvas camera={{ position: [0, 0, 2.5], near: 0.001, far: 1000, fov: 50 }}>
-            <ScrollingCoin progressRef={scrollProgressRef} />
-          </Canvas>
-        </div>
+            {/* COIN */}
+
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              <Canvas
+                camera={{
+                  position: [
+                    0,
+                    0,
+                    2.5,
+                  ],
+
+                  near: 0.001,
+
+                  far: 1000,
+
+                  fov: 50,
+                }}
+              >
+                <ScrollingCoin
+                  progressRef={
+                    scrollProgressRef
+                  }
+                />
+              </Canvas>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* ==========================================
+                BG VIDEO
+            ========================================== */}
+
+            <video
+              ref={bgVideoRef}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+              playsInline
+              muted
+            />
+
+            {/* ==========================================
+                FG VIDEO
+            ========================================== */}
+
+            <video
+              ref={fgVideoRef}
+              className="relative z-10 max-w-full max-h-screen object-contain pointer-events-none"
+              playsInline
+              muted
+            />
+
+            {/* ==========================================
+                COIN
+            ========================================== */}
+
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              <Canvas
+                camera={{
+                  position: [
+                    0,
+                    0,
+                    2.5,
+                  ],
+
+                  near: 0.001,
+
+                  far: 1000,
+
+                  fov: 50,
+                }}
+              >
+                <ScrollingCoin
+                  progressRef={
+                    scrollProgressRef
+                  }
+                />
+              </Canvas>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
 
 
 

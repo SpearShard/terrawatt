@@ -396,7 +396,7 @@ export default function BlogPost({ params }: { params: Promise<{ slug: string }>
 
   return (
     <div className="min-h-screen bg-[#050505] text-neutral-200 font-sans selection:bg-cyan-500/30">
-      <Navbar />
+      
 
       {/* Scroll Progress Bar */}
       <motion.div
