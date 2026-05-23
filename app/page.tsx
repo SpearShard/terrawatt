@@ -1889,13 +1889,80 @@ export default function Home() {
     return "home";
   }
 
+  const path =
+    window.location.pathname;
+
+  const routeMap: Record<
+    string,
+    Experience
+  > = {
+    "/": "home",
+    "/investors": "investors",
+    "/insights": "insights",
+    "/connect": "connect",
+  };
+
   return (
+    routeMap[path] ||
     (sessionStorage.getItem(
       "ACTIVE_EXPERIENCE"
     ) as Experience) ||
     "home"
   );
 });
+
+useEffect(() => {
+  const handler = (
+    e: Event
+  ) => {
+    const customEvent =
+      e as CustomEvent;
+
+    setActiveExperience(
+      customEvent.detail
+    );
+  };
+
+  window.addEventListener(
+    "switchExperience",
+    handler
+  );
+
+  return () => {
+    window.removeEventListener(
+      "switchExperience",
+      handler
+    );
+  };
+}, []);
+
+useEffect(() => {
+  const routeMap: Record<
+    Experience,
+    string
+  > = {
+    home: "/",
+    investors: "/investors",
+    insights: "/insights",
+    connect: "/connect",
+  };
+
+  const targetPath =
+    routeMap[
+      activeExperience
+    ];
+
+  window.history.replaceState(
+    {},
+    "",
+    targetPath
+  );
+
+  sessionStorage.setItem(
+    "ACTIVE_EXPERIENCE",
+    activeExperience
+  );
+}, [activeExperience]);
 
   // ======================================================
   // PRELOADER

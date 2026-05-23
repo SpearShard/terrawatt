@@ -226,11 +226,21 @@ export default function About() {
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-10">
           The smarter way to drive electric starts here.
         </h2>
-        <Link href="/connect">
-          <button className="px-10 py-4 cursor-pointer bg-white text-black font-bold rounded-full hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all duration-300 text-sm tracking-wide">
-            Join TeraaWatt
-          </button>
-        </Link>
+        <button
+  onClick={() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "switchExperience",
+        {
+          detail: "connect",
+        }
+      )
+    );
+  }}
+  className="px-10 py-4 cursor-pointer bg-white text-black font-bold rounded-full hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all duration-300 text-sm tracking-wide"
+>
+  Join TeraaWatt
+</button>
       </section>
 
     </div>
