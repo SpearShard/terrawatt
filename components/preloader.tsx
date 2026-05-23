@@ -64,7 +64,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    setSrc(isMobile ? "https://ik.imagekit.io/0s6dxbeae/Logo%20reveal_Portrait_4K.mp4" : "https://ik.imagekit.io/0s6dxbeae/DL.mp4");
+    setSrc(isMobile ? "https://ik.imagekit.io/0s6dxbeae/loader-mobile-lite.mp4" : "https://ik.imagekit.io/0s6dxbeae/DL.mp4");
   }, []);
 
   useEffect(() => {
