@@ -1897,6 +1897,7 @@ export default function Home() {
     Experience
   > = {
     "/": "home",
+    "/investors": "investors",
     "/investors-and-partners": "investors",
     "/insights": "insights",
     "/connect": "connect",
@@ -1942,7 +1943,7 @@ useEffect(() => {
     string
   > = {
     home: "/",
-    investors: "/investors-and-partners",
+    investors: "/investors",
     insights: "/insights",
     connect: "/connect",
   };

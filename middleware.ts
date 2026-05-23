@@ -14,6 +14,7 @@ export function middleware(
       "/connect" ||
     pathname ===
       "/insights" ||
+    pathname === "/investors" ||
     pathname ===
       "/investors-and-partners"
   ) {
@@ -32,8 +33,9 @@ export function middleware(
 
 export const config = {
   matcher: [
-    "/connect",
-    "/insights",
-    "/investors-and-partners",
-  ],
+  "/connect",
+  "/insights",
+  "/investors",
+  "/investors-and-partners",
+],
 };
