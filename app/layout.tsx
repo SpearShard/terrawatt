@@ -311,60 +311,6 @@ export default function RootLayout({
     <html lang="en">
       <head>
 
-    <link
-  rel="preload"
-  as="image"
-  href="/investwebp/investpc/atlas_output/atlas1.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/investwebp/investpc/atlas_output/atlas2.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/investwebp/investpc/atlas_output/atlas3.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/investwebp/investpc/atlas_output/atlas4.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/investwebp/investpc/atlas_output/atlas5.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/investwebp/mobileinvestor/atlas_output/atlas1.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/investwebp/mobileinvestor/atlas_output/atlas2.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/iphoneframes/potrait_iphone/atlas_output/atlas1.webp"
-/>
-
-<link
-  rel="preload"
-  as="image"
-  href="/iphoneframes/potrait_iphone/atlas_output/atlas2.webp"
-/>
-
   {/* Google Analytics */}
   <Script
     src="https://www.googletagmanager.com/gtag/js?id=G-NVFT6GFMX0"
@@ -379,63 +325,6 @@ export default function RootLayout({
       gtag('config', 'G-NVFT6GFMX0');
     `}
   </Script>
-  <script
-  dangerouslySetInnerHTML={{
-    __html: `
-      window.__PRELOADED_BITMAPS__ = new Map();
-
-      (() => {
-        const paths = [
-          "/investwebp/investpc/atlas_output/atlas1.webp",
-          "/investwebp/investpc/atlas_output/atlas2.webp",
-          "/investwebp/investpc/atlas_output/atlas3.webp",
-          "/investwebp/investpc/atlas_output/atlas4.webp",
-          "/investwebp/investpc/atlas_output/atlas5.webp",
-
-          "/investwebp/mobileinvestor/atlas_output/atlas1.webp",
-          "/investwebp/mobileinvestor/atlas_output/atlas2.webp",
-
-          "/iphoneframes/potrait_iphone/atlas_output/atlas1.webp",
-          "/iphoneframes/potrait_iphone/atlas_output/atlas2.webp",
-        ];
-
-        paths.forEach(async (src) => {
-          try {
-            const img = new Image();
-
-            img.fetchPriority = "high";
-
-            img.loading = "eager";
-
-            img.src = src;
-
-            await new Promise(
-              (resolve, reject) => {
-                img.onload = resolve;
-                img.onerror = reject;
-              }
-            );
-
-            const bitmap =
-              await createImageBitmap(img);
-
-            window.__PRELOADED_BITMAPS__.set(
-              src,
-              bitmap
-            );
-
-          } catch (err) {
-            console.error(
-              "Bitmap preload failed:",
-              src,
-              err
-            );
-          }
-        });
-      })();
-    `,
-  }}
-/>
 
 </head>
 

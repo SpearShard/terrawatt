@@ -1543,6 +1543,28 @@ type Experience =
   | "insights"
   | "connect";
 
+function shouldUseLiteExperience() {
+  if (
+    typeof window === "undefined" ||
+    typeof navigator === "undefined"
+  ) {
+    return false;
+  }
+
+  const ua = navigator.userAgent;
+  const isIOS =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === "MacIntel" &&
+      navigator.maxTouchPoints > 1);
+  const isSafari =
+    /^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
+  const isTabletLike =
+    navigator.maxTouchPoints > 1 &&
+    window.innerWidth <= 1180;
+
+  return (isIOS && isSafari) || isTabletLike;
+}
+
 // ======================================================
 // CAR
 // ======================================================
@@ -1879,6 +1901,13 @@ export default function Home() {
   ] = useState(1.2);
 
   const [
+    useLiteExperience,
+    setUseLiteExperience,
+  ] = useState(
+    shouldUseLiteExperience
+  );
+
+  const [
   activeExperience,
   setActiveExperience,
 ] = useState<Experience>(() => {
@@ -1938,12 +1967,45 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
+  const updateLiteExperience =
+    () => {
+      setUseLiteExperience(
+        shouldUseLiteExperience()
+      );
+    };
+
+  updateLiteExperience();
+
+  window.addEventListener(
+    "resize",
+    updateLiteExperience
+  );
+
+  window.addEventListener(
+    "orientationchange",
+    updateLiteExperience
+  );
+
+  return () => {
+    window.removeEventListener(
+      "resize",
+      updateLiteExperience
+    );
+
+    window.removeEventListener(
+      "orientationchange",
+      updateLiteExperience
+    );
+  };
+}, []);
+
+useEffect(() => {
   const routeMap: Record<
     Experience,
     string
   > = {
     home: "/",
-    investors: "/investors",
+    investors: "/investors-and-partners",
     insights: "/insights",
     connect: "/connect",
   };
@@ -1991,6 +2053,7 @@ useEffect(() => {
     ) || "Pulse";
 
   const shouldShowLoader =
+    !useLiteExperience &&
     savedExperience === "home" &&
     savedHomeTab === "Pulse" &&
     (isFirstVisit || wasReload);
@@ -2009,7 +2072,7 @@ useEffect(() => {
   );
 
   setReady(true);
-}, []);
+}, [useLiteExperience]);
 
   // ======================================================
   // BODY SCROLL
@@ -2107,6 +2170,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (
+    useLiteExperience ||
     activeExperience !== "home" ||
     showPreloader
   ) {
@@ -2200,6 +2264,7 @@ useEffect(() => {
 }, [
   activeExperience,
   showPreloader,
+  useLiteExperience,
 ]);
 
   // ======================================================
@@ -2297,7 +2362,9 @@ useEffect(() => {
     window.innerWidth < 768;
 
   const scrollHeight =
-    isMobile
+    useLiteExperience
+      ? "100vh"
+      : isMobile
       ? "2000vh"
       : "5000vh";
 
@@ -2374,7 +2441,33 @@ useEffect(() => {
           }}
         >
           {activeExperience ===
-            "home" && (
+            "home" &&
+            useLiteExperience && (
+              <section className="relative flex min-h-[100svh] items-end overflow-hidden bg-black px-6 pb-16 pt-28 text-white sm:px-10">
+                <img
+                  src="/Terracharge.png"
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover opacity-70"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black" />
+                <div className="relative z-10 max-w-3xl">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-red-400">
+                    Teraawatt
+                  </p>
+                  <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-6xl">
+                    Recharge. Renew.
+                    Repurpose.
+                  </h1>
+                  <p className="mt-5 max-w-xl text-base leading-7 text-white/75 sm:text-lg">
+                    EV charging, smart mobility, and clean energy tools built for every screen.
+                  </p>
+                </div>
+              </section>
+            )}
+
+          {activeExperience ===
+            "home" &&
+            !useLiteExperience && (
             <ScrollCanvasWrapper
               cameraFov={
                 cameraFov
@@ -2403,7 +2496,25 @@ useEffect(() => {
           id="video-section"
           className="min-h-screen relative z-10 bg-black"
         >
-          <Video />
+          {useLiteExperience ? (
+            <section className="flex min-h-screen items-center justify-center px-6 text-center text-white">
+              <div className="max-w-2xl">
+                <img
+                  src="/TeraaMart.png"
+                  alt=""
+                  className="mx-auto mb-8 max-h-[46vh] w-full max-w-md object-contain"
+                />
+                <h2 className="text-3xl font-semibold sm:text-5xl">
+                  TeraaMart
+                </h2>
+                <p className="mt-4 text-base leading-7 text-white/70 sm:text-lg">
+                  Discover the Teraawatt ecosystem without the heavy 3D scene on memory-constrained browsers.
+                </p>
+              </div>
+            </section>
+          ) : (
+            <Video />
+          )}
         </div>
 
         {/* ==================================================

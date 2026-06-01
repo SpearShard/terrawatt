@@ -964,19 +964,19 @@ export default function Navbar({
       name:
         "Investors & Partners",
 
-      href: "/",
+      href: "/investors-and-partners",
     },
 
     {
       name: "Insights",
 
-      href: "/",
+      href: "/insights",
     },
 
     {
       name: "Connect",
 
-      href: "/",
+      href: "/connect",
 
       isButton: true,
     },
@@ -1068,10 +1068,14 @@ export default function Navbar({
                 onClick={(
                   e
                 ) => {
-                  if (
+                  const handled =
                     handleNavigation(
                       item.name
-                    )
+                    );
+
+                  if (
+                    handled &&
+                    setActiveExperience
                   ) {
                     e.preventDefault();
                   }
@@ -1190,10 +1194,14 @@ export default function Navbar({
                     onClick={(
                       e
                     ) => {
-                      if (
+                      const handled =
                         handleNavigation(
                           item.name
-                        )
+                        );
+
+                      if (
+                        handled &&
+                        setActiveExperience
                       ) {
                         e.preventDefault();
                       }
