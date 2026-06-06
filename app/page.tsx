@@ -1551,18 +1551,7 @@ function shouldUseLiteExperience() {
     return false;
   }
 
-  const ua = navigator.userAgent;
-  const isIOS =
-    /iPad|iPhone|iPod/.test(ua) ||
-    (navigator.platform === "MacIntel" &&
-      navigator.maxTouchPoints > 1);
-  const isSafari =
-    /^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
-  const isTabletLike =
-    navigator.maxTouchPoints > 1 &&
-    window.innerWidth <= 1180;
-
-  return (isIOS && isSafari) || isTabletLike;
+  return false;
 }
 
 // ======================================================
